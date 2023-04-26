@@ -1,4 +1,4 @@
-import {
+import sight_lib, {
 	Sight,
 	General as G,
 	Toolbox as T,
@@ -7,12 +7,12 @@ import {
 	ShellDistancesBlock,
 	CirclesBlock,
 	Circle,
+	LinesBlock,
 	Line,
 } from "./sight_lib.js";
 
-
 // Prepare sight file with sight name
-let s = new Sight("testgen_g_vr_hizoom_lus_sf_g_3AroA")
+let s = new Sight()
 
 // Basic settings
 s.append([
@@ -96,71 +96,23 @@ for (let p of vertRfParams) {
 	circles.add(c);
 	circles.add(c.copy().mirrorSegmentY());
 }
-circles.addComment("", "");
-
+//   empty line
+// circles.addComment("", "");
 s.append(circles.getCode());
 
 
+// Lines
+let lines = new LinesBlock();
+lines.addComment("Test line");
+let frags = new Line({from: [1, 1], to: [11, 11]}, [{x: 5, y: 5, r: Math.sqrt(2)}]);
+lines.add(frags.getAllFragCodes())
+lines.add(frags.copy().mirrorX().getAllFragCodes())
+lines.add(frags.copy().mirrorY().getAllFragCodes())
+lines.add(frags.copy().mirrorX().mirrorY().getAllFragCodes())
+
+s.append(lines.getCode());
 
 
-// let circleTextLines = [];
-
-// // Vertical Rangefinder
-// // 100, 200, 400, 800m
-// let vrCurveSegments = [[90, 100], [90, 100], [82, 98], [85, 95]]
-// let vrCurveDiameters = (() => {
-// 	let ds = [];
-// 	let dNum = 33;
-// 	for (let c=0; c<4; c++) {
-// 		ds.push(dNum);
-// 		dNum /= 2;
-// 	}
-// 	return ds;
-// })();
-// let vrDetails = (() => {
-// 	let rs = [];
-// 	for (let i=0; i < vrCurveDiameters.length; i++) {
-// 		rs.push({
-// 			segment: vrCurveSegments[i],
-// 			pos: [0, 0],
-// 			diameter: vrCurveDiameters[i],
-// 			size: 1.6,
-// 			move: false,
-// 			thousandth: true
-// 		})
-// 	}
-// 	return rs;
-// })();
-// let vrs = (() => {
-// 	let rs = [];
-// 	for (let d of vrDetails) {
-// 		rs.push((new Circle(d)).getCode())
-// 		rs.push((new Circle(d)).mirrorSegmentY().getCode())
-// 	}
-// 	return rs;
-// })();
-// s.append(G.block(Sight.blockName.circles, vrs))
-
-
-// let hLineXs = [[450, 17.25], [15.75, 9], [7.5, 4.825]]
-// let ld = []
-// for (let x of hLineXs) {
-// 	Line.templateSimpleDetails()
-// 	ld.push({
-// 		line: [x[0], 0, x[1], 0],
-// 		move: false,
-// 		thousandth: true
-// 	})
-// }
-// let ls = (() => {
-// 	let rs = [];
-// 	for (let d of ld) {
-// 		rs.push((new Line(d)).getCode())
-// 		rs.push((new Line(d)).mirrorY().getCode())
-// 	}
-// 	return rs;
-// })();
-// s.append(G.block(Sight.blockName.lines, vrs))
 
 
 console.log(s.getCurrentText());
