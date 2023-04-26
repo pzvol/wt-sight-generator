@@ -50,10 +50,10 @@ s.append([
 ])
 
 // Vehicle match
-s.append(MatchVehicleClassBlock.buildBlock([
+s.append((new MatchVehicleClassBlock([
 	"exp_tank",
 	"germ_erprobungstrager_3_achs_turm"
-]))
+]).getCode()))
 
 // Horizontal thousandths
 let horiThous = new HorizontalThousandthsBlock()
