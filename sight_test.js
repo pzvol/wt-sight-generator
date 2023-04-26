@@ -1,4 +1,4 @@
-import sight_lib, {
+import {
 	Sight,
 	General as G,
 	Toolbox as T,
@@ -9,9 +9,9 @@ import sight_lib, {
 	Circle,
 	LinesBlock,
 	Line,
-} from "./sight_lib.js";
+} from "./_lib/sight_lib.js";
 
-// Prepare sight file with sight name
+// Prepare sight file
 let s = new Sight()
 
 // Basic settings
