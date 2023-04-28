@@ -5,8 +5,47 @@ export default {
 	SIGHT_LIB_VER: "0.1.0",
 	TODO: [
 		"drawQuads",
-		"drawTexts"
 	]
+};
+
+
+export class SightComponentCollection {
+	constructor() {
+		this.sight = new SightFile();
+		this.matchVehicleClasses = new MatchVehicleClassBlock();
+		this.horizontalThousandths = new HorizontalThousandthsBlock();
+		this.shellDistances = new ShellDistancesBlock();
+		this.circles = new CirclesBlock();
+		this.lines = new LinesBlock();
+		this.texts = new TextsBlock();
+	}
+
+	getComponents() {
+		return {
+			sight: this.sight,
+			matchVehicleClasses: this.matchVehicleClasses,
+			horizontalThousandths: this.horizontalThousandths,
+			shellDistances: this.shellDistances,
+			circles: this.circles,
+			lines: this.lines,
+			texts: this.texts,
+		};
+	}
+
+	compileSightBlocks() {
+		return this.sight.append([
+			this.matchVehicleClasses, "",
+			this.horizontalThousandths, "",
+			this.shellDistances, "",
+			this.circles, "",
+			this.lines, "",
+			this.texts, "",
+		]);
+	}
+
+	printCode() {
+		console.log(this.sight.getCurrentText());
+	}
 }
 
 
@@ -15,7 +54,7 @@ export default {
 //// GENERALS ////
 
 /** A sight (text) file */
-export class Sight {
+export class SightFile {
 	constructor() {
 		this.text = "";
 	}
@@ -23,20 +62,29 @@ export class Sight {
 	getCurrentText() { return this.text; }
 
 	/**
-	 * Append new text
-	 *
-	 * @param {string|string[]} text
+	 * Append a piece of new code
+	 * @param {string|BlockLevel} input
 	 * @param {string} end
 	 */
-	append(text, end="\n") {
-		if (typeof text == "string") {
-			this.text += text + end;
+	appendOne(input, end = "\n") {
+		if (typeof input === "string") {
+			this.text += input + end;
 		} else {
-			for (let line of text) {
-				this.text += line + end;
-			}
+			this.text += input.getCode() + end;
 		}
+	}
 
+	/**
+	 *
+	 * @param {string|string[]|BlockLevel|BlockLevel[]} input
+	 * @param {string} end
+	 */
+	append(input, end = "\n") {
+		if (Array.isArray(input)) {
+			for (let ele of input) { this.appendOne(ele, end); }
+		} else {
+			this.appendOne(input, end);
+		}
 		return this;
 	}
 }
@@ -61,7 +109,7 @@ export class Toolbox {
 
 	/** Clacuate thousandth value with given data (in meter) */
 	static calcThousandth(tgtWidth, distance) {
-		return ((1000 * tgtWidth) / distance)
+		return ((1000 * tgtWidth) / distance);
 	}
 
 	static round(value, digit) {
@@ -102,7 +150,7 @@ export class Toolbox {
  */
 export class General {
 	/** Max number of digits for numbers in code output */
-	static NUMBER_DIGIT = 8
+	static NUMBER_DIGIT = 8;
 
 	/**
 	 * Generates a new line of compiled variable info
@@ -125,37 +173,37 @@ export class General {
 		let vTypeOut = vType;
 
 		if (typeof vValue == "number") {
-			if (!vTypeOut) { vTypeOut = "r" }
+			if (!vTypeOut) { vTypeOut = "r"; }
 			vValueOut = Toolbox.round(vValue, this.NUMBER_DIGIT).toString(10);
 
 		} else if (typeof vValue == "boolean") {
-			if (!vTypeOut) { vTypeOut = "b" }
+			if (!vTypeOut) { vTypeOut = "b"; }
 			vValueOut = vValue ? "yes" : "no";
 
 		} else if (typeof vValue == "string") {
-			if (!vTypeOut) { vTypeOut = "t" }
+			if (!vTypeOut) { vTypeOut = "t"; }
 			vValueOut = `"${vValue.replace(/["]/gm, "")}"`;
 
 		} else if (Array.isArray(vValue) && vValue.length >= 2 && vValue.length <= 4) {
 			if (!vTypeOut) { vTypeOut = "p" + vValue.length.toString(10); }
-			let vValueRound = []
+			let vValueRound = [];
 			for (let v of vValue) { vValueRound.push(Toolbox.round(v, this.NUMBER_DIGIT)); }
 			vValueOut = vValueRound.join(", ");
 		} else {
 			console.warn(`WARN: Unidentified sight variable type from '${vName}'`);
 		}
 
-		return `${vName}:${vTypeOut} = ${vValueOut}${end}`
+		return `${vName}:${vTypeOut} = ${vValueOut}${end}`;
 	}
 
 	/** Generates code of compiled general block inBlockLineEnd="\n", inBlockLineIndent="\t"*/
-	static block(bName, bLines=[], {
+	static block(bName, bLines = [], {
 		useOneLine = false,
 		baseIndentLevel = 0,
 		lineIndent = "\t",
 		oneLineSeparator = "; ",
 		multiLineEnd = "\n",
-	}={}) {
+	} = {}) {
 		// Empty block:
 		if (bLines.length === 0) {
 			return `${bName} {}`;
@@ -200,14 +248,22 @@ export class General {
 
 //// BLOCKS ////
 
+/** General block class */
+class BlockLevel {
+	constructor() { }
+	getCode() { return "ERROR: Unset class method 'getCode'"; }
+}
+
+
 /** Matched vehicle types (originall named as `matchExpClass`) */
-export class MatchVehicleClassBlock {
+export class MatchVehicleClassBlock extends BlockLevel {
 	static vehicleTypeGroundDefaults = [
 		"exp_tank", "exp_heavy_tank", "exp_tank_destroyer"
 	];
 	static vehicleTypeSPAAs = ["exp_SPAA"];
 
 	constructor(includeClasses = [], excludeClasses = []) {
+		super();
 		this.includeClasses = includeClasses;
 		this.excludeClasses = excludeClasses;
 	}
@@ -240,7 +296,7 @@ export class MatchVehicleClassBlock {
 			innerLines.push(General.variable(c, false));
 		}
 
-		return General.block("matchExpClass", innerLines)
+		return General.block("matchExpClass", innerLines);
 	}
 }
 
@@ -249,8 +305,11 @@ export class MatchVehicleClassBlock {
  * Thousandth lines on the sight horizon for measuring enemy distance
  * (originall named as `crosshair_hor_ranges`)
  */
-export class HorizontalThousandthsBlock {
-	constructor() { this.thousandthLines = []; }
+export class HorizontalThousandthsBlock extends BlockLevel {
+	constructor() {
+		super();
+		this.thousandthLines = [];
+	}
 
 	/**
 	 * Adds a new line
@@ -259,13 +318,13 @@ export class HorizontalThousandthsBlock {
 	 * @param {number} shown displayed number value, `0` to hide the number
 	 */
 	add(thousandth, shown = 0) {
-		this.thousandthLines.push([thousandth, shown])
+		this.thousandthLines.push([thousandth, shown]);
 	}
 
 	getCode() {
-		this.thousandthLines.sort((a, b) => (a[0] - b[0]))
+		this.thousandthLines.sort((a, b) => (a[0] - b[0]));
 
-		let compiledLines = []
+		let compiledLines = [];
 		for (let lineInfo of this.thousandthLines) {
 			compiledLines.push(General.variable("range", lineInfo));
 		}
@@ -275,9 +334,10 @@ export class HorizontalThousandthsBlock {
 
 
 /** Shell distance block (originall named as `crosshair_distances`) */
-export class ShellDistancesBlock {
+export class ShellDistancesBlock extends BlockLevel {
 	constructor() {
-		this.distanceLines = []
+		super();
+		this.distanceLines = [];
 	}
 
 	/**
@@ -287,8 +347,23 @@ export class ShellDistancesBlock {
 	 * @param {number} shown displayed number value, `0` to hide the number
 	 * @param {[number, number]} shownPos position of displayed number
 	 */
-	add(distance, shown = 0, shownPos = [0 ,0]) {
-		this.distanceLines.push({distance, shown, shownPos})
+	addOne(distance, shown = 0, shownPos = [0, 0]) {
+		this.distanceLines.push({ distance, shown, shownPos });
+		return this;
+	}
+
+	/**
+	 * Adds multiple new shell distance lines
+	 *
+	 * @param {Object[]} distances
+	 * @param {number} distances.distance shell distance line value
+	 * @param {number} distances.shown displayed number value, `0` to hide the number
+	 * @param {[number, number]} distances.shownPos position of displayed number
+	 */
+	addMulti(distances) {
+		for (let d of distances) {
+			this.addOne(d.distance, (d.shown || 0), (d.shownPos || [0,0]))
+		}
 		return this;
 	}
 
@@ -296,21 +371,21 @@ export class ShellDistancesBlock {
 	 *  until this distance
 	 */
 	addMax(maxDistance = 20000) {
-		this.distanceLines.push({distance: maxDistance, shown: 0, shownPos: [0, 0]})
+		this.distanceLines.push({ distance: maxDistance, shown: 0, shownPos: [0, 0] });
 		return this;
 	}
 
 	getCode(autoAddMax = true) {
 		if (autoAddMax) { this.addMax(); }
 
-		this.distanceLines.sort((a, b) => (a.distance - b.distance))
+		this.distanceLines.sort((a, b) => (a.distance - b.distance));
 
-		let compiledLines = []
+		let compiledLines = [];
 		for (let distanceInfo of this.distanceLines) {
 			compiledLines.push(General.block("distance", [
-				General.variable("distance", [ distanceInfo.distance, distanceInfo.shown, 0 ]),
+				General.variable("distance", [distanceInfo.distance, distanceInfo.shown, 0]),
 				General.variable("textPos", distanceInfo.shownPos)
-			], {useOneLine: true}))
+			], { useOneLine: true }));
 		}
 
 		return General.block("crosshair_distances", compiledLines);
@@ -318,9 +393,10 @@ export class ShellDistancesBlock {
 }
 
 
-export class CirclesBlock {
+export class CirclesBlock extends BlockLevel {
 	constructor() {
-		this.blockLines = []
+		super();
+		this.blockLines = [];
 	}
 
 	/**
@@ -358,9 +434,10 @@ export class CirclesBlock {
 }
 
 
-export class LinesBlock {
+export class LinesBlock extends BlockLevel {
 	constructor() {
-		this.blockLines = []
+		super();
+		this.blockLines = [];
 	}
 
 	/**
@@ -399,9 +476,50 @@ export class LinesBlock {
 	}
 }
 
+export class TextsBlock extends BlockLevel {
+	constructor() {
+		super();
+		this.blockLines = [];
+	}
+
+	/**
+	 * Adds a new text. Only its code will be kept
+	 * @param {TextSnippet|string} t
+	 */
+	addOne(t) {
+		if (typeof t == "string") {
+			this.blockLines.push(t);
+		} else {
+			this.blockLines.push(t.getCode());
+		}
+		return this;
+	}
+
+	/**
+	 * Add one/multiple new texts. Only code will be kept
+	 * @param {TextSnippet|string|TextSnippet[]|string[]} l
+	 */
+	add(t) {
+		if (Array.isArray(t)) { for (let te of t) { this.addOne(te); } }
+		else { this.addOne(t); }
+		return this;
+	}
+
+	/** Adds a text line. Note leading double slash is auto generated by default */
+	addComment(s, prefix = "// ") {
+		this.blockLines.push(prefix + s);
+		return this;
+	}
+
+	getCode() {
+		return General.block("drawTexts", this.blockLines);
+	}
+}
+
 // TODO:
 // quads: "drawQuads",
-// texts: "drawTexts",
+
+
 
 
 //// ELEMENTS ////
@@ -410,7 +528,7 @@ export class LinesBlock {
 export class Circle {
 	/**
 	 * @param {Object} obj
-	 * @param {[number, number]} obj.segment - start/end degree of curve
+	 * @param {[number, number]} obj.segment - (default `[0,360]`) start/end degree of curve
 	 * @param {[number, number]} obj.pos - center position
 	 * @param {number} obj.diameter - circle diameter
 	 * @param {number} obj.size - (default `1`) line width
@@ -424,7 +542,7 @@ export class Circle {
 		size = 1,
 		move = false,
 		thousandth = true
-	}={}) {
+	} = {}) {
 		this.details = {
 			segment,
 			pos,
@@ -442,7 +560,7 @@ export class Circle {
 	}
 
 	mirrorSegmentY() {
-		let newSegment = [ (360-this.details.segment[1]), (360-this.details.segment[0]) ]
+		let newSegment = [(360 - this.details.segment[1]), (360 - this.details.segment[0])];
 		this.details.segment[0] = newSegment[0];
 		this.details.segment[1] = newSegment[1];
 		return this;
@@ -456,7 +574,7 @@ export class Circle {
 		for (let k in this.details) {
 			subVars.push(General.variable(k, this.details[k]));
 		}
-		return General.block("circle", subVars, {useOneLine: true})
+		return General.block("circle", subVars, { useOneLine: true });
 	}
 }
 
@@ -486,13 +604,13 @@ export class Line {
 		move = false,
 		thousandth = true,
 		moveRadial, radialCenter, radialMoveSpeed, radialAngle
-	}={}, lineBreakPoints = []) {
+	} = {}, lineBreakPoints = []) {
 		this.lineEnds = { from, to };
 		/** Difference of x/y values ("to" - "from") */
-		this.lineEndDiffs = { x: (to[0]-from[0]), y: (to[1]-from[1]) };
+		this.lineEndDiffs = { x: (to[0] - from[0]), y: (to[1] - from[1]) };
 		this.lineEndDistance = Math.sqrt(
-			(to[0]-from[0]) ** 2 +
-			(to[1]-from[1]) ** 2
+			(to[0] - from[0]) ** 2 +
+			(to[1] - from[1]) ** 2
 		);
 
 		this.detailsMisc = {
@@ -520,7 +638,7 @@ export class Line {
 			((x - this.lineEnds.from[0]) / this.lineEndDiffs.x * this.lineEndDiffs.y) +
 			this.lineEnds.from[1];
 
-		this.lineBreakPoints.push({ x: x, y: y, r: width/2 });
+		this.lineBreakPoints.push({ x: x, y: y, r: width / 2 });
 		return this;
 	}
 
@@ -538,7 +656,7 @@ export class Line {
 			((y - this.lineEnds.from[1]) / this.lineEndDiffs.y * this.lineEndDiffs.x) +
 			this.lineEnds.from[0];
 
-		this.lineBreakPoints.push({ x: x, y: y, r: width/2 });
+		this.lineBreakPoints.push({ x: x, y: y, r: width / 2 });
 		return this;
 	}
 
@@ -558,33 +676,33 @@ export class Line {
 	}
 
 	mirrorX() {
-		this.lineEnds.from[0] = -(this.lineEnds.from[0])
-		this.lineEnds.to[0] = -(this.lineEnds.to[0])
-		this.lineEndDiffs.x = -(this.lineEndDiffs.x)
+		this.lineEnds.from[0] = -(this.lineEnds.from[0]);
+		this.lineEnds.to[0] = -(this.lineEnds.to[0]);
+		this.lineEndDiffs.x = -(this.lineEndDiffs.x);
 		// TODO: deal with radial values
-		for (let bp of this.lineBreakPoints) { bp.x = -(bp.x) }
+		for (let bp of this.lineBreakPoints) { bp.x = -(bp.x); }
 
 		return this;
 	}
 	mirrorY() {
-		this.lineEnds.from[1] = -(this.lineEnds.from[1])
-		this.lineEnds.to[1] = -(this.lineEnds.to[1])
-		this.lineEndDiffs.y = -(this.lineEndDiffs.y)
+		this.lineEnds.from[1] = -(this.lineEnds.from[1]);
+		this.lineEnds.to[1] = -(this.lineEnds.to[1]);
+		this.lineEndDiffs.y = -(this.lineEndDiffs.y);
 		// TODO: deal with radial values
-		for (let bp of this.lineBreakPoints) { bp.y = -(bp.y) }
+		for (let bp of this.lineBreakPoints) { bp.y = -(bp.y); }
 
 		return this;
 	}
 
-	move(x, y) {
-		this.lineEnds.from[0] += x
-		this.lineEnds.from[1] += y
-		this.lineEnds.to[0] += x
-		this.lineEnds.to[1] += y
+	move([x, y]) {
+		this.lineEnds.from[0] += x;
+		this.lineEnds.from[1] += y;
+		this.lineEnds.to[0] += x;
+		this.lineEnds.to[1] += y;
 		// TODO: deal with radial center
 		for (let bp of this.lineBreakPoints) {
-			bp.x += x
-			bp.y += y
+			bp.x += x;
+			bp.y += y;
 		}
 
 		return this;
@@ -600,50 +718,50 @@ export class Line {
 		//   Note that same from & to is not supported
 		if (this.lineEndDiffs.x !== 0) {
 			if (this.lineEndDiffs.x > 0) {
-				this.lineBreakPoints.sort((a, b) => (a.x - b.x))
+				this.lineBreakPoints.sort((a, b) => (a.x - b.x));
 			} else {
-				this.lineBreakPoints.sort((a, b) => -(a.x - b.x))
+				this.lineBreakPoints.sort((a, b) => -(a.x - b.x));
 			}
 		} else {
 			if (this.lineEndDiffs.y > 0) {
-				this.lineBreakPoints.sort((a, b) => (a.y - b.y))
+				this.lineBreakPoints.sort((a, b) => (a.y - b.y));
 			} else {
-				this.lineBreakPoints.sort((a, b) => -(a.y - b.y))
+				this.lineBreakPoints.sort((a, b) => -(a.y - b.y));
 			}
 		}
 
 		// Find all line frags
-		let lineFragStarts = [ this.lineEnds.from ];
+		let lineFragStarts = [this.lineEnds.from];
 		let lineFragEnds = [];  // Whole line ending will be added later
 
 		for (let bp of this.lineBreakPoints) {
 			if (this.lineEndDiffs.x === 0) {  // Vert line
 				if (this.lineEndDiffs.y > 0) {
-					lineFragEnds.push([bp.x, bp.y-bp.r])
-					lineFragStarts.push([bp.x, bp.y+bp.r])
+					lineFragEnds.push([bp.x, bp.y - bp.r]);
+					lineFragStarts.push([bp.x, bp.y + bp.r]);
 				} else {
-					lineFragEnds.push([bp.x, bp.y+bp.r])
-					lineFragStarts.push([bp.x, bp.y-bp.r])
+					lineFragEnds.push([bp.x, bp.y + bp.r]);
+					lineFragStarts.push([bp.x, bp.y - bp.r]);
 				}
 
 			} else if (this.lineEndDiffs.y === 0) {  // Hori line
 				if (this.lineEndDiffs.x > 0) {
-					lineFragEnds.push([bp.x-bp.r, bp.y])
-					lineFragStarts.push([bp.x+bp.r, bp.y])
+					lineFragEnds.push([bp.x - bp.r, bp.y]);
+					lineFragStarts.push([bp.x + bp.r, bp.y]);
 				} else {
-					lineFragEnds.push([bp.x+bp.r, bp.y])
-					lineFragStarts.push([bp.x-bp.r, bp.y])
+					lineFragEnds.push([bp.x + bp.r, bp.y]);
+					lineFragStarts.push([bp.x - bp.r, bp.y]);
 				}
 
 			} else {
 				lineFragEnds.push([
 					bp.x - (this.lineEndDiffs.x / this.lineEndDistance * bp.r),
 					bp.y - (this.lineEndDiffs.y / this.lineEndDistance * bp.r)
-				])
+				]);
 				lineFragStarts.push([
 					bp.x + (this.lineEndDiffs.x / this.lineEndDistance * bp.r),
 					bp.y + (this.lineEndDiffs.y / this.lineEndDistance * bp.r)
-				])
+				]);
 			}
 		}
 		// Add whole line ending
@@ -651,23 +769,95 @@ export class Line {
 
 		// Print line frags
 		let lineAllFragCodes = [];
-		let lineFragLen = lineFragStarts.length
-		for (let i=0; i<lineFragLen; i++) {
+		let lineFragLen = lineFragStarts.length;
+		for (let i = 0; i < lineFragLen; i++) {
 			let fragDetails = Toolbox.copyValue(this.detailsMisc);
 			fragDetails.line = [
 				lineFragStarts[i][0], lineFragStarts[i][1],
 				lineFragEnds[i][0], lineFragEnds[i][1],
-			]
+			];
 
 			let fragVarCodes = [];
 			for (let k in fragDetails) {
 				if (fragDetails[k] === null) { continue; }
-				fragVarCodes.push(General.variable(k, fragDetails[k]))
+				fragVarCodes.push(General.variable(k, fragDetails[k]));
 			}
 
-			lineAllFragCodes.push(General.block("line", fragVarCodes, {useOneLine: true}))
+			lineAllFragCodes.push(General.block("line", fragVarCodes, { useOneLine: true }));
 		}
 
 		return lineAllFragCodes;
+	}
+}
+
+
+export class TextSnippet {
+	/**
+	 * @param {Object} obj
+	 * @param {string} obj.text
+	 * @param {"center"|"left"|"right"|0|1|2} obj.align
+	 * @param {[number, number]} obj.pos
+	 * @param {number} obj.size - (default `1`)
+	 * @param {boolean} obj.move - (default `false`)
+	 * @param {boolean} obj.thousandth - (default `true`)
+	 * @param {boolean} obj.highlight - (default `true`)
+	 */
+	constructor({
+		text = "",
+		align = "center",
+		pos,
+		size = 1,
+		move = false,
+		thousandth = true,
+		highlight = true
+	} = {}) {
+		this.details = {
+			text,
+			align: (align === "center") ? 0 : (align === "left") ? 1 : (align === "right") ? 2 : align,
+			pos,
+			size,
+			highlight,
+			move,
+			thousandth
+		};
+	}
+
+	copy() {
+		return (new TextSnippet(
+			JSON.parse(JSON.stringify(this.details))
+		));
+	}
+
+	mirrorX() {
+		this.details.pos[0] = -(this.details.pos[0]);
+		if (this.details.align === 1) {
+			this.details.align = 2;
+		} else if (this.details.align === 2) {
+			this.details.align = 1;
+		}
+		return this;
+	}
+
+	mirrorY() {
+		this.details.pos[1] = -(this.details.pos[1]);
+		return this;
+	}
+
+	move([x, y]) {
+		this.details.pos[0] += x
+		this.details.pos[1] += y
+		return this;
+	}
+
+	/**
+	 * Returns the code for drawing a text
+	 */
+	getCode() {
+		let subVars = [];
+		for (let k in this.details) {
+			let type = (k === "align") ? "i" : null;
+			subVars.push(General.variable(k, this.details[k], type));
+		}
+		return General.block("text", subVars, { useOneLine: true });
 	}
 }
