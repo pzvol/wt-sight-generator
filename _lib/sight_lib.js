@@ -2,7 +2,7 @@
 
 
 const SIGHT_LIB = {
-	VER: "0.2.0",
+	VER: "20230504",
 	TODO: [
 		"drawQuads",
 	]
@@ -40,7 +40,7 @@ export class SightComponentCollection {
 			this.shellDistances, "",
 			this.circles, "",
 			this.lines, "",
-			this.texts, "",
+			this.texts,
 		]);
 	}
 

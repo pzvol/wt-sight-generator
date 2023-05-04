@@ -1,10 +1,11 @@
 #!/bin/sh
 
+## Settings ##
 auto_overwrite=1
-
-code_file="$1"
 tgt_dir="/cygdrive/x/SteamGames/steamapps/common/War Thunder/UserSights/all_tanks"
 
+
+code_file="$1"
 code_file_basename="`basename "$code_file"`"
 tgt_file="$tgt_dir/${code_file_basename%.*}.blk"
 

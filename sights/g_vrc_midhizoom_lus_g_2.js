@@ -85,8 +85,8 @@ let horiLine = new comp.Line({
 texts.addComment("Vertical rangefinder on the horizon");
 for (let t of [
 	{ distance: 100, textPosMove: [0, -0.3], textSize: 1 },
-	{ distance: 200, textPosMove: [0, -0.15], textSize: 0.6 },
-	{ distance: 400, textPosMove: [1, -0.15], textSize: 0.6 },
+	{ distance: 200, textPosMove: [0, -0.15], textSize: 0.7 },
+	{ distance: 400, textPosMove: [1, -0.15], textSize: 0.65 },
 ]) {
 	let thHalfWidth = comp.Toolbox.calcThousandth(rgfdAssumeWidth, t.distance) / 2;
 	let textPos = [(thHalfWidth + t.textPosMove[0]), (0 + t.textPosMove[1])];

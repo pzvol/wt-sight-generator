@@ -73,7 +73,8 @@ export const basic = {
 	},
 
 	scales: {
-		getMidHighZoom: ({ font = 0.8, line = 1.2 }={}) => basicBuild.scale({ font, line }),
+		getCommon: ({ font = 0.8, line = 1.1 }={}) => basicBuild.scale({ font, line }),
+		getMidHighZoom: ({ font = 0.75, line = 1.2 }={}) => basicBuild.scale({ font, line }),
 		getHighZoom: ({ font = 0.9, line = 1.5 }={}) => basicBuild.scale({ font, line }),
 	},
 
@@ -114,6 +115,18 @@ export const concatAllBasics = (zoomScale, color, rgfdPos, detectAllyPos, gunDis
 
 
 export const shellDistances = {
+	getFull: () => {
+		let result = [];
+		for (let r of T.rangeIE(200, 4000, 400)) {  // small ticks
+			result.push({ distance: r });
+		}
+		for (let r of T.rangeIE(400, 4000, 400)) {  // large ticks
+			result.push({ distance: r, shown: Math.round(r / 100) });
+		}
+		result.sort((a, b) => (a.distance, b.distance));
+		return result;
+	},
+
 	getFullLoose: () => {
 		let result = [];
 		for (let r of T.rangeIE(400, 4000, 800)) {  // small ticks
@@ -125,6 +138,7 @@ export const shellDistances = {
 		result.sort((a, b) => (a.distance, b.distance));
 		return result;
 	},
+
 	getFullLooseTwoSides: ({rightOffset} = {}) => {
 		let result = [];
 		for (let r of T.rangeIE(400, 4000, 800)) {  // small ticks
@@ -175,20 +189,26 @@ export const rgfdBuild = {
 	 * @param {boolean} obj.mirrorY - if rangefinder is mirrored in Y direction
 	 * @param {number} obj.assumeWidth - assumed target width
 	 * @param {number[]} obj.distances - included distance values
-	 * @param {number[]} obj.distancesDashed - values in `distances` who use dashed lines
+	 * @param {number[]} obj.distancesDashed - values in `distances` who use dashed lines.
+	 *                                        Must not be a line-connected one
+	 * @param {number[]} obj.distancesLined - values in `distances` who use a line to connect two sides.
+	 *                                        Must not be a dashed one
 	 * @param {number} obj.tickLength - line length for each distances
 	 * @param {number} obj.tickInterval - space between distance lines
 	 * @param {number} obj.tickDashWidth - empty space between dashed line fragments
 	 * @param {number} obj.textSize - prompt text size
+	 * @param {number} obj.textSpace - prompt text horizontal distance from tick lines
+	 * @param {number} obj.textPosYAdjust - adjust text vertical position
 	 *
 	 * @returns {{lines: (Line|string)[], texts: (TextSnippet|string)[]}} an object with all components.
 	 *          Note that in arrays there could be string elements included
 	 */
 	linedVertical: ([posX, posY], {
 		showMiddleLine, mirrorY,
-		assumeWidth, distances, distancesDashed,
+		assumeWidth, distances, distancesDashed, distancesLined,
 		tickLength, tickInterval, tickDashWidth,
-		textSize,
+		textSize, textSpace,
+		textPosYAdjust = 0
 	} = {}) => {
 		let lines = [];
 		let texts = [];
@@ -197,12 +217,20 @@ export const rgfdBuild = {
 		for (let dist of distances) {
 			let thWidth = T.calcThousandth(assumeWidth, dist);
 
-			let startLine = new Line({ from: [0, 0], to: [0, tickLength] });
-			let endLine = new Line({ from: [-thWidth, 0], to: [-thWidth, tickLength] });
+			// Is two-side-connected tick?
+			let lineFromPosY = 0;
+			let additionalLine = null;
+			if (distancesLined.findIndex(v => v === dist) > -1) {
+				lineFromPosY = tickLength / 2;
+				additionalLine = new Line({ from: [0, lineFromPosY], to: [-thWidth, lineFromPosY] });
+			}
+
+			let startLine = new Line({ from: [0, lineFromPosY], to: [0, tickLength] });
+			let endLine = new Line({ from: [-thWidth, lineFromPosY], to: [-thWidth, tickLength] });
 			let text = new TextSnippet({
 				text: (dist / 100).toFixed(0),
 				align: "right",
-				pos: [0.235, tickLength / 2],
+				pos: [textSpace, tickLength / 2],
 				size: textSize
 			});
 
@@ -214,16 +242,21 @@ export const rgfdBuild = {
 			startLine.move([0, currStartY]);
 			endLine.move([0, currStartY]);
 			text.move([0, currStartY]);
+			if (additionalLine) { additionalLine.move([0, currStartY]); }
 
 			if (mirrorY) {
 				startLine.mirrorY();
 				endLine.mirrorY();
 				text.mirrorY();
+				if (additionalLine) { additionalLine.mirrorY(); }
 			}
+
+			text.move([0, textPosYAdjust]);
 
 			startLine.move([posX, posY]);
 			endLine.move([posX, posY]);
 			text.move([posX, posY]);
+			if (additionalLine) { additionalLine.move([posX, posY]); }
 
 			lines.push(`// ${dist}m`);
 			if (showMiddleLine || startLine.lineEnds.from[0] !== 0) {
@@ -233,6 +266,7 @@ export const rgfdBuild = {
 				lines.push(endLine);
 			}
 			texts.push(text);
+			if (additionalLine) { lines.push(additionalLine); }
 
 			currStartY += tickLength + tickInterval;
 		}
@@ -254,18 +288,15 @@ export const rgfdBuild = {
 	 *                                         if no specification in `circleSizes`
 	 * @param {number} obj.circleCenterHeightInterval - Y distance between circle centers
 	 * @param {number} obj.textSize - prompt text size
+	 * @param {number} obj.textSpace - prompt text horizontal distance from tick lines
 	 * @returns {{circles: (Circle|string)[], texts: (TextSnippet|string)[]}} an object with all components.
 	 *          Note that in arrays there could be string elements included
 	 */
 	circledVerticle: ([posX, posY], {
 		mirrorY,
-		assumeWidth,
-		distances,
-		circleSegmentRight,
-		circleSizes,
-		circleSizeDefault,
-		circleCenterHeightInterval,
-		textSize
+		assumeWidth, distances, circleSegmentRight,
+		circleSizes, circleSizeDefault, circleCenterHeightInterval,
+		textSize, textSpace
 	}={}) => {
 		let circles = [];
 		let texts = [];
@@ -283,7 +314,7 @@ export const rgfdBuild = {
 			let t = new TextSnippet({
 				text: (dist / 100).toFixed(0),
 				align: "right",
-				pos: [0.675, currStartY],
+				pos: [textSpace, currStartY],
 				size: textSize
 			});
 
@@ -309,19 +340,39 @@ export const rgfdBuild = {
 
 
 export const rgfd = {
+	getCommon: ([posX, posY] = [0, 0], {
+		showMiddleLine = false,
+		mirrorY = false,
+		assumeWidth = 3.3,
+		distances = [400, 600, 800, 1000, 1200, 1600, 2000],
+		distancesDashed = [400],
+		distancesLined = [1200, 1600, 2000],
+		tickLength = 2,
+		tickInterval = 1,
+		tickDashWidth = 0.75,
+		textSize = 0.6,
+		textSpace = 0.75,
+		textPosYAdjust = -0.3
+	} = {}) => rgfdBuild.linedVertical([posX, posY], {
+		showMiddleLine, mirrorY, assumeWidth, distances, distancesDashed, distancesLined,
+		tickLength, tickInterval, tickDashWidth, textSize, textSpace, textPosYAdjust
+	}),
+
 	getHighZoom: ([posX, posY] = [0, 0], {
 		showMiddleLine = false,
 		mirrorY = false,
 		assumeWidth = 3.3,
 		distances = [800, 1000, 1200, 1400, 1600, 2000],
 		distancesDashed = [800],
+		distancesLined = [],
 		tickLength = 0.75,
 		tickInterval = 0.25,
 		tickDashWidth = 0.35,
 		textSize = 0.65,
+		textSpace = 0.235
 	} = {}) => rgfdBuild.linedVertical([posX, posY], {
-		showMiddleLine, mirrorY, assumeWidth, distances, distancesDashed,
-		tickLength, tickInterval, tickDashWidth, textSize,
+		showMiddleLine, mirrorY, assumeWidth, distances, distancesDashed, distancesLined,
+		tickLength, tickInterval, tickDashWidth, textSize, textSpace
 	}),
 
 	getCircledMidHighZoom: ([posX, posY] = [0, 0], {
@@ -334,9 +385,11 @@ export const rgfd = {
 		},
 		circleSizeDefault = 1.3,
 		circleCenterHeightInterval = 2,
-		textSize = 0.6
+		textSize = 0.6,
+		textSpace = 0.675
 	}={}) => rgfdBuild.circledVerticle([posX, posY], {
 		mirrorY, assumeWidth, distances, circleSegmentRight,
-		circleSizes, circleSizeDefault, circleCenterHeightInterval, textSize
+		circleSizes, circleSizeDefault, circleCenterHeightInterval,
+		textSize, textSpace
 	}),
 };
