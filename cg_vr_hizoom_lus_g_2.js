@@ -18,11 +18,11 @@ let {
 
 //// BASIC
 sight.append(pd.concatAllBasics(
-	pd.basic.sizeScales.getHighZoom(),
+	pd.basic.scales.getHighZoom(),
 	pd.basic.colors.getGreenRed(),
 	pd.basicBuild.rgfdPos([90, -0.01625]),
 	pd.basicBuild.detectAllyPos([90, 0.04]),
-	pd.basicBuild.distanceValuePos([-0.13, 0.03]),
+	pd.basicBuild.gunDistanceValuePos([-0.13, 0.03]),
 	pd.basic.shellDistanceTicks.getHighZoomCentral()
 ));
 

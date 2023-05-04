@@ -1,12 +1,13 @@
 'use strict';
 
 
-export default {
-	SIGHT_LIB_VER: "0.1.0",
+const SIGHT_LIB = {
+	VER: "0.2.0",
 	TODO: [
 		"drawQuads",
 	]
 };
+export default SIGHT_LIB;
 
 
 export class SightComponentCollection {
@@ -55,8 +56,14 @@ export class SightComponentCollection {
 
 /** A sight (text) file */
 export class SightFile {
-	constructor() {
+	constructor(addAutoGenComment = true) {
 		this.text = "";
+
+		if (addAutoGenComment) {
+			this.append(General.comment(
+				"GENERATED FROM CODE WITH wt-sight-generator"
+			)).append("");
+		}
 	}
 
 	getCurrentText() { return this.text; }
@@ -357,8 +364,8 @@ export class ShellDistancesBlock extends BlockLevel {
 	 *
 	 * @param {Object[]} distances
 	 * @param {number} distances.distance shell distance line value
-	 * @param {number} distances.shown displayed number value, `0` to hide the number
-	 * @param {[number, number]} distances.shownPos position of displayed number
+	 * @param {number} [distances.shown=] displayed number value, `0` to hide the number
+	 * @param {[number, number]} [distances.shownPos=] position of displayed number
 	 */
 	addMulti(distances) {
 		for (let d of distances) {
@@ -448,7 +455,7 @@ export class LinesBlock extends BlockLevel {
 		if (typeof l == "string") {
 			this.blockLines.push(l);
 		} else {
-			for (let f of l.getAllFragCodes()) {
+			for (let f of l.getCodeFrags()) {
 				this.blockLines.push(f);
 			}
 		}
@@ -528,12 +535,12 @@ export class TextsBlock extends BlockLevel {
 export class Circle {
 	/**
 	 * @param {Object} obj
-	 * @param {[number, number]} obj.segment - (default `[0,360]`) start/end degree of curve
+	 * @param {[number, number]=} obj.segment - (default `[0,360]`) start/end degree of curve
 	 * @param {[number, number]} obj.pos - center position
 	 * @param {number} obj.diameter - circle diameter
-	 * @param {number} obj.size - (default `1`) line width
-	 * @param {boolean} obj.move - (default `false`) if move with gun zero changes
-	 * @param {boolean} obj.thousandth - (default `true`) if use thousandth
+	 * @param {number=} obj.size - (default `1`) line width
+	 * @param {boolean=} obj.move - (default `false`) if move with gun zero changes
+	 * @param {boolean=} obj.thousandth - (default `true`) if use thousandth
 	 */
 	constructor({
 		segment = [0, 360],
@@ -559,10 +566,26 @@ export class Circle {
 		));
 	}
 
-	mirrorSegmentY() {
+	move([x, y]) {
+		this.details.pos[0] += x;
+		this.details.pos[1] += y;
+		return this;
+	}
+
+	mirrorSegmentX() {
 		let newSegment = [(360 - this.details.segment[1]), (360 - this.details.segment[0])];
 		this.details.segment[0] = newSegment[0];
 		this.details.segment[1] = newSegment[1];
+		return this;
+	}
+
+	mirrorPosX() {
+		this.details.pos[0] = -(this.details.pos[0]);
+		return this;
+	}
+
+	mirrorPosY() {
+		this.details.pos[1] = -(this.details.pos[1]);
 		return this;
 	}
 
@@ -576,6 +599,13 @@ export class Circle {
 		}
 		return General.block("circle", subVars, { useOneLine: true });
 	}
+
+	getCodeMulti({ mirrorSegmentX = false } = {}) {
+		let result = [];
+		result.push(this.getCode());
+		if (mirrorSegmentX) { result.push(this.copy().mirrorSegmentX().getCode()); }
+		return result;
+	}
 }
 
 
@@ -585,13 +615,13 @@ export class Line {
 	 * @param {Object} obj
 	 * @param {[number, number]} obj.from
 	 * @param {[number, number]} obj.to
-	 * @param {boolean} obj.move - (default `false`) if move with gun zero changes
-	 * @param {boolean} obj.thousandth - (default `true`) if use thousandth
+	 * @param {boolean=} obj.move - (default `false`) if move with gun zero changes
+	 * @param {boolean=} obj.thousandth - (default `true`) if use thousandth
 	 *
-	 * @param {?boolean} obj.moveRadial - if radial move
-	 * @param {?[number, number]} obj.radialCenter - radial move center position `[x, y]`
-	 * @param {?number} obj.radialMoveSpeed
-	 * @param {?number} obj.radialAngle
+	 * @param {boolean=} obj.moveRadial - if radial move
+	 * @param {[number, number]=} obj.radialCenter - radial move center position `[x, y]`
+	 * @param {number=} obj.radialMoveSpeed
+	 * @param {number=} obj.radialAngle
 	 *
 	 * @param {Object[]} lineBreakPoints
 	 * @param {number} lineBreakPoints.x
@@ -713,7 +743,7 @@ export class Line {
 	 * Get code for all line frags into an array
 	 * @returns {string[]}
 	 */
-	getAllFragCodes() {
+	getCodeFrags() {
 		// Sort breakpoints
 		//   Note that same from & to is not supported
 		if (this.lineEndDiffs.x !== 0) {
@@ -788,19 +818,32 @@ export class Line {
 
 		return lineAllFragCodes;
 	}
+
+	/**
+	 * Get code for all frags of multiple lines into an array
+	 * @returns {string[]}
+	 */
+	getCodeFragsMulti({ mirrorX = false, mirrorY = false } = {}) {
+		let result = [];
+		result = result.concat(this.getCodeFrags());
+		if (mirrorX) { result = result.concat(this.copy().mirrorX().getCodeFrags()); }
+		if (mirrorY) { result = result.concat(this.copy().mirrorY().getCodeFrags()); }
+		if (mirrorX && mirrorY) { result = result.concat(this.copy().mirrorX().mirrorY().getCodeFrags()); }
+		return result;
+	}
 }
 
 
 export class TextSnippet {
 	/**
 	 * @param {Object} obj
-	 * @param {string} obj.text
-	 * @param {"center"|"left"|"right"|0|1|2} obj.align
+	 * @param {string=} obj.text - (default `""`)
+	 * @param {"center"|"left"|"right"|0|1|2=} obj.align - (default `"center"`)
 	 * @param {[number, number]} obj.pos
-	 * @param {number} obj.size - (default `1`)
-	 * @param {boolean} obj.move - (default `false`)
-	 * @param {boolean} obj.thousandth - (default `true`)
-	 * @param {boolean} obj.highlight - (default `true`)
+	 * @param {number=} obj.size - (default `1`)
+	 * @param {boolean=} obj.move - (default `false`)
+	 * @param {boolean=} obj.thousandth - (default `true`)
+	 * @param {boolean=} obj.highlight - (default `true`)
 	 */
 	constructor({
 		text = "",
@@ -859,5 +902,14 @@ export class TextSnippet {
 			subVars.push(General.variable(k, this.details[k], type));
 		}
 		return General.block("text", subVars, { useOneLine: true });
+	}
+
+	getCodeMulti({ mirrorX = false, mirrorY = false } = {}) {
+		let result = [];
+		result.push(this.getCode());
+		if (mirrorX) { result.push(this.copy().mirrorX().getCode()); }
+		if (mirrorY) { result.push(this.copy().mirrorY().getCode()); }
+		if (mirrorX && mirrorY) { result.push(this.copy().mirrorX().mirrorY().getCode()); }
+		return result;
 	}
 }

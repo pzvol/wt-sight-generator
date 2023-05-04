@@ -1,0 +1,54 @@
+{
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"Sight file initialization": {
+		"description": "Create a sight code template",
+		"scope": "javascript,typescript",
+		"prefix": "init-sight",
+		"body": [
+			"import * as comp from \"../_lib/sight_lib.js\";",
+			"import * as pd from \"../_lib/sight_predefined_info.js\";",
+			"",
+			"",
+			"let code = new comp.SightComponentCollection();",
+			"let {",
+			"\tsight,",
+			"\tmatchVehicleClasses,",
+			"\thorizontalThousandths,",
+			"\tshellDistances,",
+			"\tcircles,",
+			"\tlines,",
+			"\ttexts",
+			"} = code.getComponents();",
+			"",
+			"",
+			"//// BASIC",
+			"sight.append(pd.concatAllBasics(/*TODO*/));",
+			"",
+			"",
+			"//// VEHICLE TYPES",
+			"matchVehicleClasses.addInclude(/*TODO*/);",
+			"",
+			"",
+			"//// SHELL DISTANCES",
+			"/*TODO*/",
+			"",
+			"",
+			"//// SIGHT DESIGNS",
+			"/*TODO*/",
+			"",
+			"",
+			"//// OUTPUT",
+			"code.compileSightBlocks();",
+			"code.printCode();",
+		]
+	}
+}
