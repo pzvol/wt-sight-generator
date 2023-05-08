@@ -1,3 +1,5 @@
+// SCRIPT_DO_NOT_DIRECTLY_COMPILE
+
 import * as comp from "../../_lib/sight_lib.js";
 import * as pd from "../../_lib/sight_predefined_info.js";
 
@@ -124,7 +126,7 @@ export const ABOUT = {
 	DEFINED_INFO: {
 		zoomLevel: "common",
 		fontLevel: "default",
-		color: "green/black",
+		color: "green/red",
 	},
 	MUST_CALL_FIRST: "selectAdditionalParts",
 	NEED_INFO: [

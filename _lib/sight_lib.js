@@ -2,7 +2,7 @@
 
 
 const SIGHT_LIB = {
-	VER: "20230504",
+	VER: "20230508",
 	TODO: [
 		"drawQuads",
 	]
@@ -101,6 +101,34 @@ export class SightFile {
  * Tools for writing
  */
 export class Toolbox {
+	/** Mil(aka thousandth) value for different types.
+	 *
+	 * Keys are used by sight code files' variable `thousandth:t = "xxxx"`
+	 *
+	 * `value` indicates the percentage of 1mil on a 360 degree
+	 */
+	static MIL = {
+		/** 360 deg is divided by 6000 */
+		ussr: {
+			value: 1 / 6000,
+			deg: 360 / 6000,
+			rad: 2 * Math.PI / 6000,
+		},
+		/** 360 deg is divided by 6400 */
+		nato: {
+			value: 1 / 6400,
+			deg: 360 / 6400,
+			rad: 2 * Math.PI / 6400,
+		},
+		/** 1 mil is defined as arctan(1/1000), degree of an 1m target on 1000m.
+		 * Apporiximately, 360 deg is divided by 6283 */
+		real: {
+			value: 1 / 6283,
+			deg: 360 / 6283,
+			rad: 2 * Math.PI / 6283,
+		},
+	};
+
 	/** Get a number range array */
 	static range(start, end, step = 1.0) {
 		let result = [];
@@ -114,9 +142,38 @@ export class Toolbox {
 		return result;
 	}
 
-	/** Clacuate thousandth value with given data (in meter) */
-	static calcThousandth(tgtWidth, distance) {
-		return ((1000 * tgtWidth) / distance);
+	/**
+	 * Calcuate thousandth value of a specific distance
+	 * for an object with given size (in meter)
+	 *
+	 * Thousandth value is under "real" standard (1/6283) by default,
+	 * where 1 mil is for a 1m object on 1000m ( arctan(1/1000) )
+	 * @param {"ussr"|"nato"|"real"} type - (default `"real"`) Thousandth (mil) type
+	 */
+	static calcThousandth(tgtWidth, distance, type = "real") {
+		// Number below are `1 / tan(2pi / x)`, where x is the mil number in 360 deg
+		return (
+			(type === "ussr") ? ((955 * tgtWidth) / distance) :
+			(type === "nato") ? ((1019 * tgtWidth) / distance) :
+			((1000 * tgtWidth) / distance)  // "real"
+		);
+	}
+
+	/**
+	 * Calcuate thousandth value for shooting of given target with a specific speed
+	 *
+	 * @param {number} shellSpeed - shell speed, should have the same unit as target speed
+	 * @param {number} tgtSpeed - target speed, should have the same unit as shell speed
+	 * @param {number} tgtAspectAngle - (default `1`) target angle,
+	 *                                  equals to (visual length / real length).
+	 *                                  For transversal targets, the number is 1;
+	 *                                  for parallel targets, the number is 0;
+	 *                                  for 45 deg targets, the number is sqrt(2)/2
+	 * @param {"ussr"|"nato"|"real"} type - (default `"real"`) Thousandth (mil) type
+	 * @returns {number} the mil angle between target position and shooting direction for hitting the target
+	 */
+	static calcLeadingThousandth(shellSpeed, tgtSpeed, tgtAspectAngle = 1, type = "real") {
+		return Math.asin(tgtSpeed / shellSpeed) / Toolbox.MIL[type].rad * tgtAspectAngle;
 	}
 
 	static round(value, digit) {
@@ -536,7 +593,7 @@ export class Circle {
 	/**
 	 * @param {Object} obj
 	 * @param {[number, number]=} obj.segment - (default `[0,360]`) start/end degree of curve
-	 * @param {[number, number]} obj.pos - center position
+	 * @param {[number, number]=} obj.pos - (default `[0, 0]`) center position
 	 * @param {number} obj.diameter - circle diameter
 	 * @param {number=} obj.size - (default `1`) line width
 	 * @param {boolean=} obj.move - (default `false`) if move with gun zero changes
@@ -544,7 +601,7 @@ export class Circle {
 	 */
 	constructor({
 		segment = [0, 360],
-		pos,
+		pos = [0, 0],
 		diameter,
 		size = 1,
 		move = false,
@@ -574,6 +631,17 @@ export class Circle {
 
 	mirrorSegmentX() {
 		let newSegment = [(360 - this.details.segment[1]), (360 - this.details.segment[0])];
+		if (newSegment[0] > 360) { newSegment[0] = newSegment[0] % 360; }
+		if (newSegment[1] > 360) { newSegment[1] = newSegment[1] % 360; }
+		this.details.segment[0] = newSegment[0];
+		this.details.segment[1] = newSegment[1];
+		return this;
+	}
+
+	mirrorSegmentY() {
+		let newSegment = [(540 - this.details.segment[1]), (540 - this.details.segment[0])];
+		if (newSegment[0] > 360) { newSegment[0] = newSegment[0] % 360; }
+		if (newSegment[1] > 360) { newSegment[1] = newSegment[1] % 360; }
 		this.details.segment[0] = newSegment[0];
 		this.details.segment[1] = newSegment[1];
 		return this;
@@ -600,10 +668,12 @@ export class Circle {
 		return General.block("circle", subVars, { useOneLine: true });
 	}
 
-	getCodeMulti({ mirrorSegmentX = false } = {}) {
+	getCodeMulti({ mirrorSegmentX = false, mirrorSegmentY = false } = {}) {
 		let result = [];
 		result.push(this.getCode());
 		if (mirrorSegmentX) { result.push(this.copy().mirrorSegmentX().getCode()); }
+		if (mirrorSegmentY) { result.push(this.copy().mirrorSegmentY().getCode()); }
+		if (mirrorSegmentX && mirrorSegmentY) { result.push(this.copy().mirrorSegmentX().mirrorSegmentY().getCode()); }
 		return result;
 	}
 }

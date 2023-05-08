@@ -16,7 +16,7 @@ let {
 
 // Run required initialization
 sightBase.selectAdditionalParts({
-	binocularCalibrationTickIntervalPrompt: true,
+	binocularCalibrationTickIntervalPrompt: false,
 	boldCrossingBias: 0.05
 });
 
