@@ -9,10 +9,64 @@
 	// 	],
 	// 	"description": "Log output to console"
 	// }
+	"DoNotCompile flag": {
+		"description": "Heading comment line for flaging the file to not compile directly",
+		"prefix": "flag-no-direct-compile",
+		"body": [
+			"// SCRIPT_DO_NOT_DIRECTLY_COMPILE"
+		]
+	},
+
+	"CompileToSpecificDir flag": {
+		"description": "Heading comment line for flaging the file to be compiled to given sight dir",
+		"prefix": "flag-compile-to",
+		"body": [
+			"// SCRIPT_COMPILE_TO=${0:targetSightDir}"
+		]
+	},
+
 	"Sight file initialization": {
-		"description": "Create a sight code template",
+		"description": "Create a sight code template (V1)",
 		"scope": "javascript,typescript",
 		"prefix": "init-sight",
+		"body": [
+			"import Sight from \"../_lib2/sight_lib.js\";",
+			"import Toolbox from \"../_lib2/sight_toolbox.js\";",
+			"import { Circle, Line, TextSnippet } from \"../_lib2/sight_elements.js\";",
+			"import * as pd from \"../_lib2/predefined.js\";",
+			"",
+			"",
+			"let sight = new Sight();",
+			"",
+			"",
+			"//// BASIC SETTINGS ////",
+			"sight.addSettings(pd.concatAllBasics(/*TODO*/));",
+			"",
+			"",
+			"//// VEHICLE TYPES ////",
+			"sight.matchVehicle(/*TODO*/);",
+			"",
+			"",
+			"//// SHELL DISTANCES ////",
+			"sight.addShellDistances(/*TODO*/);",
+			"",
+			"",
+			"//// SIGHT DESIGNS ////",
+			"/*TODO*/",
+			"",
+			"",
+			"",
+			"",
+			"//// OUTPUT ////",
+			"sight.printCode();",
+			"",
+		]
+	},
+
+	"Sight file initialization for V1": {
+		"description": "Create a sight code template (V1)",
+		"scope": "javascript,typescript",
+		"prefix": "init-sight-v1",
 		"body": [
 			"import * as comp from \"../_lib/sight_lib.js\";",
 			"import * as pd from \"../_lib/sight_predefined_info.js\";",
