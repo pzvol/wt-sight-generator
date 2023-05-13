@@ -124,10 +124,6 @@ export function compileSightDesign({
 		sub: {
 			fromMil: getMil(leadingInfo.sub.aa, assumeTgtSpeedSubRange[0]),
 			toMil: getMil(leadingInfo.sub.aa, assumeTgtSpeedSubRange[1]),
-		},
-		speedDiff: {
-			fromDiff: assumeTgtSpeedSubRange[0] - assumeTgtSpeedMain,
-			toDiff: assumeTgtSpeedSubRange[1] - assumeTgtSpeedMain,
 		}
 	};
 
@@ -142,7 +138,7 @@ export function compileSightDesign({
 
 	circles.addComment(`Leading value circles - ${assumeTgtSpeedMain}km/h`);
 	circles.add(new comp.Circle({
-		diameter: leadingInfo.main.mil * 2, size: 2,
+		diameter: leadingInfo.main.mil * 2, size: 2.2,
 	}));
 	circles.add(new comp.Circle({
 		diameter: leadingInfo.sub.mil * 2, size: 1.6,
@@ -207,16 +203,26 @@ export function compileSightDesign({
 		align: "right", size: 0.8,
 		pos: [2, -(leadingInfo.main.mil + 3.5)]
 	}));
+	texts.addComment("Leading value inner circle equivalent speed");
+	texts.add(new comp.TextSnippet({
+		text: (assumeTgtSpeedMain / leadingInfo.main.aa * leadingInfo.sub.aa).toFixed(),
+		align: "right", size: 0.8,
+		pos: [2, -(leadingInfo.sub.mil + 3.5)]
+	}));
+
+
+	let getDiffDisplayed = (num) => (num >= 0 ? num.toFixed() : ("-" + num.toFixed()));
 
 	texts.addComment("Leading value range diffs");
 	texts.add(new comp.TextSnippet({
-		text: (leadingSubRangeInfo.speedDiff.toDiff >= 0 ? "+" : "") +
-			leadingSubRangeInfo.speedDiff.toDiff,
+		// text: getDiffDisplayed(assumeTgtSpeedSubRange[1] - assumeTgtSpeedMain),
+		text: assumeTgtSpeedSubRange[1].toFixed(),
 		align: "center", pos: [0, -(leadingSubRangeInfo.main.toMil + 3.5)],
 		size: 0.8
 	}));
 	texts.add(new comp.TextSnippet({
-		text: "" + leadingSubRangeInfo.speedDiff.fromDiff,
+		// text: getDiffDisplayed(assumeTgtSpeedSubRange[0] - assumeTgtSpeedMain),
+		text: assumeTgtSpeedSubRange[0].toFixed(),
 		align: "center", pos: [0, -(leadingSubRangeInfo.main.fromMil - 3)],
 		size: 0.8
 	}));

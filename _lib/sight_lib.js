@@ -2,7 +2,7 @@
 
 
 const SIGHT_LIB = {
-	VER: "20230508",
+	VER: "20230513",
 	TODO: [
 		"drawQuads",
 	]
@@ -205,6 +205,14 @@ export class Toolbox {
 	/** Use JSON object to deep copy a value */
 	static copyValue(from) {
 		return JSON.parse(JSON.stringify(from));
+	}
+
+	static radToDeg(rad) {
+		return (rad / (2 * Math.PI) * 360);
+	}
+
+	static degToRad(deg) {
+		return (deg / 360 * (2 * Math.PI));
 	}
 }
 
@@ -721,8 +729,6 @@ export class Line {
 		this.lineBreakPoints = lineBreakPoints;
 	}
 
-	//
-	//
 
 	/** Adds a line break on X. Note that break widths should never overlap. */
 	addBreakAtX(x, width) {

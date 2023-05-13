@@ -1,4 +1,4 @@
-// SCRIPT_COMPILE_TO=germ_flakpanzer_IV_Ostwind
+// SCRIPT_COMPILE_TO=ussr_zsu_57_2
 
 import * as comp from "../_lib/sight_lib.js";
 import * as pd from "../_lib/sight_predefined_info.js";
@@ -23,9 +23,9 @@ let {
 //// SIGHT DESIGNS
 sightBase.compileSightDesign({
 	showCenteralCircle: true,
-	shellSpeed: 914 * 3.6,  // m/s * 3.6
-	assumeTgtSpeedMain: 400, // km/h
-	assumeTgtSpeedSubRange: [350, 450]
+	shellSpeed: 1000 * 3.6,  // m/s * 3.6
+	assumeTgtSpeedMain: 500, // km/h
+	assumeTgtSpeedSubRange: [400, 550],
 });
 
 

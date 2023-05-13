@@ -4,7 +4,7 @@ import * as comp from "../_lib/sight_lib.js";
 import * as pd from "../_lib/sight_predefined_info.js";
 
 
-import code, * as sightBase from "./sight_bases/base_aa_lc_cmn_r.js"
+import code, * as sightBase from "./sight_bases/base_aa_lc_cmn_r.js";
 let {
 	sight,
 	matchVehicleClasses,
@@ -24,9 +24,11 @@ let {
 sightBase.compileSightDesign({
 	showCenteralCircle: true,
 	shellSpeed: 920 * 3.6,  // m/s * 3.6
-	assumeTgtSpeedMain: 450, // km/h
-	assumeTgtSpeedSubRange: [350, 500]
-})
+	assumeTgtSpeedMain: 500, // km/h
+	assumeTgtSpeedSubRange: [400, 550],
+	rgfdNumPosX: 120,
+	gunDistValuePosX: -0.2
+});
 
 
 //// OUTPUT
