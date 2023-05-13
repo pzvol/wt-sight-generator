@@ -19,7 +19,7 @@
  *
  *
  *
- * Usually used code blocks
+ * (Personally) frequently used code blocks
  */
 
 'use strict';
