@@ -1,5 +1,5 @@
 /**
- * Main module for the sight lib
+ * Main module for the sight
  *
  * V2 - overhauled version for cleaner files and simpler code writing
  */
@@ -26,16 +26,12 @@
 
 import * as block from "./sight_blocks.js";
 import { BlkVariable, BlkBlock, BlkComment, BlkFile } from "./sight_code_basis.js";
-import { Circle, Line, TextSnippet } from "./sight_elements.js";
-
-
-// TODO:
-//   drawQuads
+import { Quad, Circle, Line, TextSnippet } from "./sight_elements.js";
 
 
 /** An all-in-one entrance for creating a user sight */
 export default class Sight {
-	static libVersion = "20230513";
+	static libVersion = "20230514";
 
 	static commonVehicleTypes = block.MatchVehicleClassBlock.commonTypes;
 
@@ -45,12 +41,14 @@ export default class Sight {
 			matchVehicleClasses: new block.MatchVehicleClassBlock(),
 			horiThousandths: new block.HoriThousandthsBlock(),
 			shellDistances: new block.ShellDistancesBlock(),
+			quads: new block.QuadsBlock(),
 			circles: new block.CirclesBlock(),
 			lines: new block.LinesBlock(),
 			texts: new block.TextsBlock(),
 		}
 
 		// Shorthands
+		this.quads = this.components.quads;
 		this.circles = this.components.circles;
 		this.lines = this.components.lines;
 		this.texts = this.components.texts;
@@ -108,7 +106,7 @@ export default class Sight {
 
 	/**
 	 * Draw one/multiple circles/lines/texts
-	 * @param {Circle|Line|TextSnippet|(Circle|Line|TextSnippet)[]} input
+	 * @param {Quad|Circle|Line|TextSnippet|(Quad|Circle|Line|TextSnippet)[]} input
 	 */
 	add(input) {
 		let arr;
@@ -116,7 +114,9 @@ export default class Sight {
 		else { arr = [input]; }
 
 		for (let element of arr) {
-			if (element instanceof Circle) {
+			if (element instanceof Quad) {
+				this.components.quads.add(element);
+			} else if (element instanceof Circle) {
 				this.components.circles.add(element);
 			} else if (element instanceof Line) {
 				this.components.lines.add(element);
@@ -132,7 +132,7 @@ export default class Sight {
 	 * Add comment to specified (one/multiple) blocks
 	 *
 	 * @param {string} content
-	 * @param {"settings"|"circles"|"lines"|"texts"|("settings"|"circles"|"lines"|"texts")[]} toBlock
+	 * @param {"settings"|"quads"|"circles"|"lines"|"texts"|("settings"|"quads"|"circles"|"lines"|"texts")[]} toBlock
 	 */
 	addComment(content, toBlock) {
 		let toArr;
@@ -142,6 +142,8 @@ export default class Sight {
 		for (let t of toArr) {
 			if (t === "settings") {
 				this.components.sightSettings.addComment(content);
+			} else if (t === "quads") {
+				this.components.quads.addComment(content);
 			} else if (t === "circles") {
 				this.components.circles.addComment(content);
 			} else if (t === "lines") {
@@ -163,6 +165,7 @@ export default class Sight {
 			this.components.matchVehicleClasses, "",
 			this.components.horiThousandths, "",
 			this.components.shellDistances, "",
+			this.components.quads, "",
 			this.components.circles, "",
 			this.components.lines, "",
 			this.components.texts,

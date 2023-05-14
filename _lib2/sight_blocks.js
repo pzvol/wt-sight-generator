@@ -30,7 +30,7 @@ import {
 	BlkBlock,
 	BlkComment
 } from "./sight_code_basis.js";
-import { Circle, Line, TextSnippet } from "./sight_elements.js";
+import { Quad, Circle, Line, TextSnippet } from "./sight_elements.js";
 
 
 export default {
@@ -167,8 +167,8 @@ export class HoriThousandthsBlock extends SightBlock {
 	 */
 	add(input) {
 		if (Array.isArray(input)) {
-			for (let t of input) { this._addOne(t); }
-		} else { this._addOne(input); }
+			for (let t of input) { this.p_addOne(t); }
+		} else { this.p_addOne(input); }
 		return this;
 	}
 
@@ -187,7 +187,7 @@ export class HoriThousandthsBlock extends SightBlock {
 	 * Adds a new thousandth tick
 	 * @param {{thousandth: number, shown?: number}} input - added tick
 	 */
-	_addOne(input) {
+	p_addOne(input) {
 		this.thousandthLines.push({
 			thousandth: input.thousandth,
 			shown: (input.hasOwnProperty("shown")) ? input.shown : 0
@@ -217,10 +217,10 @@ export class ShellDistancesBlock extends SightBlock {
 	add(input) {
 		if (Array.isArray(input)) {
 			for (let d of input) {
-				this._addOne(d.distance, (d.shown || 0), (d.shownPos || [0, 0]));
+				this.p_addOne(d.distance, (d.shown || 0), (d.shownPos || [0, 0]));
 			}
 		} else {
-			this._addOne(input.distance, (input.shown || 0), (input.shownPos || [0, 0]));
+			this.p_addOne(input.distance, (input.shown || 0), (input.shownPos || [0, 0]));
 		}
 		return this;
 	}
@@ -245,7 +245,7 @@ export class ShellDistancesBlock extends SightBlock {
 	}
 
 
-	_addOne(distance, shown = 0, shownPos = [0, 0]) {
+	p_addOne(distance, shown = 0, shownPos = [0, 0]) {
 		this.distLines.push({ distance, shown, shownPos });
 		return this;
 	}
@@ -317,7 +317,7 @@ export class LinesBlock extends SightBlock {
 export class TextsBlock extends SightBlock {
 	constructor() {
 		super("drawTexts");
-		/** @type {(string|Line|BlkComment)[]} */
+		/** @type {(string|TextSnippet|BlkComment)[]} */
 		this.blockLines = [];
 	}
 
@@ -328,6 +328,37 @@ export class TextsBlock extends SightBlock {
 	add(t) {
 		if (Array.isArray(t)) { for (let te of t) { this.blockLines.push(te); } }
 		else { this.blockLines.push(t); }
+		return this;
+	}
+
+	/**
+	 * @param {string} s
+	 */
+	addComment(s) {
+		this.blockLines.push(new BlkComment(s));
+		return this;
+	}
+
+	getCode() {
+		return (new BlkBlock(this.blockName, this.blockLines)).getCode();
+	}
+}
+
+
+export class QuadsBlock extends SightBlock {
+	constructor() {
+		super("drawQuads");
+		/** @type {(string|Quad|BlkComment)[]} */
+		this.blockLines = [];
+	}
+
+	/**
+	 * Add one/multiple new quads
+	 * @param {string|Quad|(string|Quad)[]} q
+	 */
+	add(q) {
+		if (Array.isArray(q)) { for (let qe of q) { this.blockLines.push(qe); } }
+		else { this.blockLines.push(q); }
 		return this;
 	}
 

@@ -24,7 +24,7 @@
 
 'use strict';
 
-import Toolbox from "./sight_toolbox.js"
+import Toolbox from "./sight_toolbox.js";
 import {
 	SETTINGS,
 	BlkVariable,
@@ -34,11 +34,15 @@ import {
 
 export default {
 	description: "Fundamental elements of a user sight"
-}
+};
 
 
 /** A circle element */
 export class Circle {
+	static extraSegHori = { mirrorSegmentX: true, mirrorSegmentY: false };
+	static extraSegVert = { mirrorSegmentX: false, mirrorSegmentY: true };
+	static extraSegFourQuad = { mirrorSegmentX: true, mirrorSegmentY: true };
+
 	/**
 	 * @param {Object} obj
 	 * @param {[number, number]=} obj.segment - (default `[0,360]`) start/end degree of curve
@@ -58,7 +62,7 @@ export class Circle {
 	} = {}, extraDrawn = { mirrorSegmentX: false, mirrorSegmentY: false }) {
 		this.details = { segment, pos, diameter, size, move, thousandth };
 		/** On what axes will extra curves be generated */
-		this.extraDrawn = extraDrawn
+		this.extraDrawn = Toolbox.copyValue(extraDrawn);
 	}
 
 	copy() {
@@ -75,20 +79,22 @@ export class Circle {
 	}
 
 	mirrorSegmentX() {
-		let newSegment = [(360 - this.details.segment[1]), (360 - this.details.segment[0])];
-		if (newSegment[0] > 360) { newSegment[0] = newSegment[0] % 360; }
-		if (newSegment[1] > 360) { newSegment[1] = newSegment[1] % 360; }
-		this.details.segment[0] = newSegment[0];
-		this.details.segment[1] = newSegment[1];
+		let newSeg = [
+			Circle.p_degLimited(-(this.details.segment[1])),
+			Circle.p_degLimited(-(this.details.segment[0])),
+		];
+		this.details.segment[0] = newSeg[0];
+		this.details.segment[1] = newSeg[1];
 		return this;
 	}
 
 	mirrorSegmentY() {
-		let newSegment = [(540 - this.details.segment[1]), (540 - this.details.segment[0])];
-		if (newSegment[0] > 360) { newSegment[0] = newSegment[0] % 360; }
-		if (newSegment[1] > 360) { newSegment[1] = newSegment[1] % 360; }
-		this.details.segment[0] = newSegment[0];
-		this.details.segment[1] = newSegment[1];
+		let newSeg = [
+			Circle.p_degLimited(180 - this.details.segment[1]),
+			Circle.p_degLimited(180 - this.details.segment[0]),
+		];
+		this.details.segment[0] = newSeg[0];
+		this.details.segment[1] = newSeg[1];
 		return this;
 	}
 
@@ -103,7 +109,7 @@ export class Circle {
 	}
 
 	/** Set flag(s) for drawing extra curves */
-	withExtra({ mirrorSegmentX = null, mirrorSegmentY = null }={}) {
+	withExtra({ mirrorSegmentX = null, mirrorSegmentY = null } = {}) {
 		if (mirrorSegmentX !== null) {
 			this.extraDrawn.mirrorSegmentX = mirrorSegmentX;
 		}
@@ -115,17 +121,17 @@ export class Circle {
 
 	getCode() {
 		let resultCodeLines = [];
-		resultCodeLines.push(this._getSelfCode());
+		resultCodeLines.push(this.p_getSelfCode());
 
 		// Add extra drawn code
 		if (this.extraDrawn.mirrorSegmentX) {
-			resultCodeLines.push(this.copy().mirrorSegmentX()._getSelfCode());
+			resultCodeLines.push(this.copy().mirrorSegmentX().p_getSelfCode());
 		}
 		if (this.extraDrawn.mirrorSegmentY) {
-			resultCodeLines.push(this.copy().mirrorSegmentY()._getSelfCode());
+			resultCodeLines.push(this.copy().mirrorSegmentY().p_getSelfCode());
 		}
 		if (this.extraDrawn.mirrorSegmentX && this.extraDrawn.mirrorSegmentY) {
-			resultCodeLines.push(this.copy().mirrorSegmentX().mirrorSegmentY()._getSelfCode());
+			resultCodeLines.push(this.copy().mirrorSegmentX().mirrorSegmentY().p_getSelfCode());
 		}
 
 		return resultCodeLines.join(SETTINGS.LINE_ENDING);
@@ -134,18 +140,29 @@ export class Circle {
 	/**
 	 * Returns the text for drawing the circle without extra segments
 	 */
-	_getSelfCode() {
+	p_getSelfCode() {
 		let subVars = [];
 		for (let k in this.details) {
 			subVars.push(new BlkVariable(k, this.details[k]));
 		}
 		return (new BlkBlock("circle", subVars, { useOneLine: true }).getCode());
 	}
+
+	/** Limits a degree into +-360 (including two ends) */
+	static p_degLimited(deg) {
+		if (deg >= -360 && deg <= 360) { return deg; }
+		if (deg % 360 === 0) { return (deg > 0) ? 360 : -360; }
+		return (deg % 360);
+	}
 }
 
 
 /** A line element */
 export class Line {
+	static extraHori = { mirrorX: true, mirrorY: false };
+	static extraVert = { mirrorX: false, mirrorY: true };
+	static extraFourQuad = { mirrorX: true, mirrorY: true };
+
 	/**
 	 * @param {Object} obj
 	 * @param {[number, number]} obj.from
@@ -169,7 +186,7 @@ export class Line {
 		move = false,
 		thousandth = true,
 		moveRadial, radialCenter, radialMoveSpeed, radialAngle
-	} = {}, lineBreakPoints = [], extraDrawn = {mirrorX: false, mirrorY: false}) {
+	} = {}, lineBreakPoints = [], extraDrawn = { mirrorX: false, mirrorY: false }) {
 		this.lineEnds = { from, to };
 		/** Difference of x/y values ("to" - "from") */
 		this.lineEndDiffs = { x: (to[0] - from[0]), y: (to[1] - from[1]) };
@@ -184,7 +201,7 @@ export class Line {
 		this.lineBreakPoints = lineBreakPoints;
 
 		/** On what axes will extra lines be generated */
-		this.extraDrawn = extraDrawn;
+		this.extraDrawn = Toolbox.copyValue(extraDrawn);
 	}
 
 
@@ -227,15 +244,15 @@ export class Line {
 	copy() {
 		return (new Line(
 			{
-			from: Toolbox.copyValue(this.lineEnds.from),
-			to: Toolbox.copyValue(this.lineEnds.to),
-			move: this.detailsMisc.move,
-			thousandth: this.detailsMisc.thousandth,
+				from: Toolbox.copyValue(this.lineEnds.from),
+				to: Toolbox.copyValue(this.lineEnds.to),
+				move: this.detailsMisc.move,
+				thousandth: this.detailsMisc.thousandth,
 
-			moveRadial: this.detailsMisc.moveRadial || null,
-			radialCenter: this.detailsMisc.radialCenter || null,
-			radialMoveSpeed: this.detailsMisc.radialMoveSpeed || null,
-			radialAngle: this.detailsMisc.radialAngle || null
+				moveRadial: this.detailsMisc.moveRadial || null,
+				radialCenter: this.detailsMisc.radialCenter || null,
+				radialMoveSpeed: this.detailsMisc.radialMoveSpeed || null,
+				radialAngle: this.detailsMisc.radialAngle || null
 			},
 			Toolbox.copyValue(this.lineBreakPoints),
 			Toolbox.copyValue(this.extraDrawn)
@@ -273,7 +290,7 @@ export class Line {
 	}
 
 	/** Set flag(s) for drawing extra lines */
-	withExtra({ mirrorX = null, mirrorY = null }={}) {
+	withExtra({ mirrorX = null, mirrorY = null } = {}) {
 		if (mirrorX !== null) {
 			this.extraDrawn.mirrorX = mirrorX;
 		}
@@ -285,17 +302,17 @@ export class Line {
 
 	getCode() {
 		let resultCodeLines = [];
-		resultCodeLines = resultCodeLines.concat(this._getSelfCodeFrags());
+		resultCodeLines = resultCodeLines.concat(this.p_getSelfCodeFrags());
 
 		// Add extra drawn code
 		if (this.extraDrawn.mirrorX) {
-			resultCodeLines = resultCodeLines.concat(this.copy().mirrorX()._getSelfCodeFrags());
+			resultCodeLines = resultCodeLines.concat(this.copy().mirrorX().p_getSelfCodeFrags());
 		}
 		if (this.extraDrawn.mirrorY) {
-			resultCodeLines = resultCodeLines.concat(this.copy().mirrorY()._getSelfCodeFrags());
+			resultCodeLines = resultCodeLines.concat(this.copy().mirrorY().p_getSelfCodeFrags());
 		}
 		if (this.extraDrawn.mirrorX && this.extraDrawn.mirrorY) {
-			resultCodeLines = resultCodeLines.concat(this.copy().mirrorX().mirrorY()._getSelfCodeFrags());
+			resultCodeLines = resultCodeLines.concat(this.copy().mirrorX().mirrorY().p_getSelfCodeFrags());
 		}
 
 		return resultCodeLines.join(SETTINGS.LINE_ENDING);
@@ -306,7 +323,7 @@ export class Line {
 	 * Get code for all line frags into an array without extras
 	 * @returns {string[]}
 	 */
-	_getSelfCodeFrags() {
+	p_getSelfCodeFrags() {
 		// Sort breakpoints
 		//   Note that same from & to is not supported
 		if (this.lineEndDiffs.x !== 0) {
@@ -386,6 +403,10 @@ export class Line {
 
 /** A piece of displayed text */
 export class TextSnippet {
+	static extraHori = { mirrorX: true, mirrorY: false };
+	static extraVert = { mirrorX: false, mirrorY: true };
+	static extraFourQuad = { mirrorX: true, mirrorY: true };
+
 	/**
 	 * @param {Object} obj
 	 * @param {string=} obj.text - (default `""`)
@@ -415,7 +436,7 @@ export class TextSnippet {
 			thousandth
 		};
 		/** On what axes will extra text(s) be generated */
-		this.extraDrawn = extraDrawn;
+		this.extraDrawn = Toolbox.copyValue(extraDrawn);
 	}
 
 	copy() {
@@ -423,8 +444,8 @@ export class TextSnippet {
 	}
 
 	move([x, y]) {
-		this.details.pos[0] += x
-		this.details.pos[1] += y
+		this.details.pos[0] += x;
+		this.details.pos[1] += y;
 		return this;
 	}
 
@@ -444,7 +465,7 @@ export class TextSnippet {
 	}
 
 	/** Set flag(s) for drawing extra texts */
-	withExtra({ mirrorX = null, mirrorY = null }={}) {
+	withExtra({ mirrorX = null, mirrorY = null } = {}) {
 		if (mirrorX !== null) {
 			this.extraDrawn.mirrorX = mirrorX;
 		}
@@ -456,17 +477,17 @@ export class TextSnippet {
 
 	getCode() {
 		let resultCodeLines = [];
-		resultCodeLines.push(this._getSelfCode());
+		resultCodeLines.push(this.p_getSelfCode());
 
 		// Add extra drawn code
 		if (this.extraDrawn.mirrorX) {
-			resultCodeLines.push(this.copy().mirrorX()._getSelfCode());
+			resultCodeLines.push(this.copy().mirrorX().p_getSelfCode());
 		}
 		if (this.extraDrawn.mirrorY) {
-			resultCodeLines.push(this.copy().mirrorY()._getSelfCode());
+			resultCodeLines.push(this.copy().mirrorY().p_getSelfCode());
 		}
 		if (this.extraDrawn.mirrorX && this.extraDrawn.mirrorY) {
-			resultCodeLines.push(this.copy().mirrorX().mirrorY()._getSelfCode());
+			resultCodeLines.push(this.copy().mirrorX().mirrorY().p_getSelfCode());
 		}
 
 		return resultCodeLines.join(SETTINGS.LINE_ENDING);
@@ -476,12 +497,292 @@ export class TextSnippet {
 	/**
 	 * Returns the code for drawing a text
 	 */
-	_getSelfCode() {
+	p_getSelfCode() {
 		let subVars = [];
 		for (let k in this.details) {
 			let type = (k === "align") ? "i" : null;
 			subVars.push(new BlkVariable(k, this.details[k], type));
 		}
 		return (new BlkBlock("text", subVars, { useOneLine: true }).getCode());
+	}
+}
+
+
+/** A quadrangle */
+export class Quad {
+	/** Findable keyname in compiled sight file */
+	static p_realKey = {
+		topLeft: "tl", topRight: "tr", bottomLeft: "bl", bottomRight: "br"
+	};
+
+	static extraHori = { mirrorX: true, mirrorY: false };
+	static extraVert = { mirrorX: false, mirrorY: true };
+	static extraFourQuad = { mirrorX: true, mirrorY: true };
+
+
+	/**
+	 * ONE of following value combinations are required for creating a quad:
+	 *
+	 * 1. Arbitrary quad: four corners
+	 *   - `{ topLeft, topRight, bottomLeft, bottomRight }`
+
+	 * 2. Parallelogram, with 2 opposite sides on a axis direction:
+	 *   1. two corners on one side + x/y width
+	 *     - `{ topLeft, topRight, yWidth }`
+	 *     - `{ bottomLeft, bottomRight, yWidth }`
+	 *     - `{ topLeft, bottomLeft, xWidth }`
+	 *     - `{ topRight, bottomRight, xWidth }`
+	 *
+	 *   2. two side centers of opposite sides + x/y width
+	 *     - `{ topCenter, bottomCenter, xWidth }`
+	 *     - `{ leftCenter, rightCenter, yWidth }`
+	 *
+	 * 3. Rectangle
+	 *   1. one corner + x & y width
+	 *     - `{ topLeft, xWidth, yWidth }`
+	 *     - `{ topRight, xWidth, yWidth }`
+	 *     - `{ bottomLeft, xWidth, yWidth }`
+	 *     - `{ bottomRight, xWidth, yWidth }`
+	 *
+	 *   2. one side center + x & y width
+	 *     - `{ topCenter, xWidth, yWidth }`
+	 *     - `{ bottomCenter, xWidth, yWidth }`
+	 *     - `{ leftCenter, xWidth, yWidth }`
+	 *     - `{ rightCenter, xWidth, yWidth }`
+	 *
+	 *   3. rect center + x & y width
+	 *     - `{ center, xWidth, yWidth }`
+	 *
+	 *
+	 * @param {Object} info
+	 * @param {[number, number]=} info.topLeft
+	 * @param {[number, number]=} info.topRight
+	 * @param {[number, number]=} info.bottomLeft
+	 * @param {[number, number]=} info.bottomRight
+	 * @param {[number, number]=} info.center
+	 * @param {[number, number]=} info.topCenter
+	 * @param {[number, number]=} info.leftCenter
+	 * @param {[number, number]=} info.bottomCenter
+	 * @param {[number, number]=} info.rightCenter
+	 * @param {number=} info.xWidth - width on X direction
+	 * @param {number=} info.yWidth - width on Y direction
+	 * @param {boolean=} info.thousandth - (default `true`)
+	 */
+	constructor(
+		info,
+		extraDrawn = { mirrorX: false, mirrorY: false }
+	) {
+		// Extract 4 corner coordinates
+		let corner = {
+			topLeft: null, topRight: null, bottomLeft: null, bottomRight: null
+		};
+		// Arbitrary quad: four corners
+		if (Quad.p_hasAllProps(["topLeft", "topRight", "bottomLeft", "bottomRight"], info)) {
+			corner.topLeft = info.topLeft;
+			corner.topRight = info.topRight;
+			corner.bottomLeft = info.bottomLeft;
+			corner.bottomRight = info.bottomRight;
+
+		// Parallelogram, with 2 opposite sides on a axis direction:
+		// two corners on one side + x/y width
+		} else if (Quad.p_hasAllProps(["topLeft", "topRight", "yWidth"], info)) {
+			corner.topLeft = info.topLeft;
+			corner.topRight = info.topRight;
+			corner.bottomLeft = [info.topLeft[0], info.topLeft[1] + info.yWidth];
+			corner.bottomRight = [info.bottomRight[0], info.bottomRight[1] + info.yWidth];
+		} else if (Quad.p_hasAllProps(["bottomLeft", "bottomRight", "yWidth"], info)) {
+			corner.topLeft = [info.bottomLeft[0], info.bottomLeft[1] - info.yWidth];
+			corner.topRight = [info.bottomRight[0], info.bottomRight[1] - info.yWidth];
+			corner.bottomLeft = info.bottomLeft;
+			corner.bottomRight = info.bottomRight;
+		} else if (Quad.p_hasAllProps(["topLeft", "bottomLeft", "xWidth"], info)) {
+			corner.topLeft = info.topLeft;
+			corner.topRight = [info.topLeft[0] + info.xWidth, info.topLeft[1]];
+			corner.bottomLeft = info.bottomLeft;
+			corner.bottomRight = [info.bottomLeft[0] + info.xWidth, info.bottomLeft[1]];
+		} else if (Quad.p_hasAllProps(["topRight", "bottomRight", "xWidth"], info)) {
+			corner.topLeft = [info.topRight[0] - info.xWidth, info.topRight[1]];
+			corner.topRight = info.topRight;
+			corner.bottomLeft = [info.bottomRight[0] - info.xWidth, info.bottomRight[1]];
+			corner.bottomRight = info.bottomRight;
+
+		// two side centers of opposite sides + x/y width
+		} else if (Quad.p_hasAllProps(["topCenter", "bottomCenter", "xWidth"], info)) {
+			corner.topLeft = [info.topCenter[0] - info.xWidth/2, info.topCenter[1]];
+			corner.topRight = [info.topCenter[0] + info.xWidth/2, info.topCenter[1]];
+			corner.bottomLeft = [info.bottomCenter[0] - info.xWidth/2, info.bottomCenter[1]];
+			corner.bottomRight = [info.bottomCenter[0] + info.xWidth/2, info.bottomCenter[1]];
+		} else if (Quad.p_hasAllProps(["leftCenter", "rightCenter", "yWidth"], info)) {
+			corner.topLeft = [info.leftCenter[0], info.leftCenter[1] - info.yWidth/2];
+			corner.topRight = [info.rightCenter[0], info.rightCenter[1] - info.yWidth/2];
+			corner.bottomLeft = [info.leftCenter[0], info.leftCenter[1] + info.yWidth/2];
+			corner.bottomRight = [info.rightCenter[0], info.rightCenter[1] + info.yWidth/2];
+
+		// Rectangle
+		// one corner + x & y width
+		} else if (Quad.p_hasAllProps(["topLeft", "xWidth", "yWidth"], info)) {
+			corner.topLeft = info.topLeft;
+			corner.topRight = [info.topLeft[0] + info.xWidth, info.topLeft[1]];
+			corner.bottomLeft = [info.topLeft[0], info.topLeft[1] + info.yWidth];
+			corner.bottomRight = [info.topLeft[0] + info.xWidth, info.topLeft[1] + info.yWidth];
+		} else if (Quad.p_hasAllProps(["topRight", "xWidth", "yWidth"], info)) {
+			corner.topLeft = [info.topRight[0] - info.xWidth, info.topRight[1]];
+			corner.topRight = info.topRight;
+			corner.bottomLeft = [info.topRight[0], info.topRight[1] + info.yWidth];
+			corner.bottomRight = [info.topRight[0] - info.xWidth, info.topRight[1] + info.yWidth];
+		} else if (Quad.p_hasAllProps(["bottomLeft", "xWidth", "yWidth"], info)) {
+			corner.topLeft = [info.bottomLeft[0], info.bottomLeft[1] - info.yWidth];
+			corner.topRight = [info.bottomLeft[0] + info.xWidth, info.bottomLeft[1] - info.yWidth];
+			corner.bottomLeft = info.bottomLeft;
+			corner.bottomRight = [info.bottomLeft[0] + info.xWidth, info.bottomLeft[1]];
+		} else if (Quad.p_hasAllProps(["bottomRight", "xWidth", "yWidth"], info)) {
+			corner.topLeft = [info.bottomRight[0] - info.xWidth, info.bottomRight[1] - info.yWidth];
+			corner.topRight = [info.bottomRight[0], info.bottomRight[1] - info.yWidth];
+			corner.bottomLeft = [info.bottomRight[0] - info.xWidth, info.bottomRight[1]];
+			corner.bottomRight = info.bottomRight;
+
+		// one side center + x & y width
+		} else if (Quad.p_hasAllProps(["topCenter", "xWidth", "yWidth"], info)) {
+			corner.topLeft = [info.topCenter[0] - info.xWidth/2, info.topCenter[1]];
+			corner.topRight = [info.topCenter[0] + info.xWidth/2, info.topCenter[1]];
+			corner.bottomLeft = [info.topCenter[0] - info.xWidth/2, info.topCenter[1] + info.yWidth];
+			corner.bottomRight = [info.topCenter[0] + info.xWidth/2, info.topCenter[1] + info.yWidth];
+		} else if (Quad.p_hasAllProps(["bottomCenter", "xWidth", "yWidth"], info)) {
+			corner.topLeft = [info.bottomCenter[0] - info.xWidth/2, info.bottomCenter[1] - info.yWidth];
+			corner.topRight = [info.bottomCenter[0] + info.xWidth/2, info.bottomCenter[1] - info.yWidth];
+			corner.bottomLeft = [info.bottomCenter[0] - info.xWidth/2, info.bottomCenter[1]];
+			corner.bottomRight = [info.bottomCenter[0] + info.xWidth/2, info.bottomCenter[1]];
+		} else if (Quad.p_hasAllProps(["leftCenter", "xWidth", "yWidth"], info)) {
+			corner.topLeft = [info.leftCenter[0], info.leftCenter[1] - info.yWidth/2];
+			corner.topRight = [info.leftCenter[0] + info.xWidth, info.leftCenter[1] - info.yWidth/2];
+			corner.bottomLeft = [info.leftCenter[0], info.leftCenter[1] + info.yWidth/2];
+			corner.bottomRight = [info.leftCenter[0] + info.xWidth, info.leftCenter[1] + info.yWidth/2];
+		} else if (Quad.p_hasAllProps(["rightCenter", "xWidth", "yWidth"], info)) {
+			corner.topLeft = [info.rightCenter[0] - info.xWidth, info.rightCenter[1] - info.yWidth/2];
+			corner.topRight = [info.rightCenter[0], info.rightCenter[1] - info.yWidth/2];
+			corner.bottomLeft = [info.rightCenter[0] - info.xWidth, info.rightCenter[1] + info.yWidth/2];
+			corner.bottomRight = [info.rightCenter[0], info.rightCenter[1] + info.yWidth/2];
+
+		// rect center + x & y width
+		} else if (Quad.p_hasAllProps(["center", "xWidth", "yWidth"], info)) {
+			corner.topLeft = [info.center[0] - info.xWidth/2, info.center[1] - info.yWidth/2];
+			corner.topRight = [info.center[0] + info.xWidth/2, info.center[1] - info.yWidth/2];
+			corner.bottomLeft = [info.center[0] - info.xWidth/2, info.center[1] + info.yWidth/2];
+			corner.bottomRight = [info.center[0] + info.xWidth/2, info.center[1] + info.yWidth/2];
+		}
+
+		/** @type {{topLeft: [number, number]|null, topRight: [number, number]|null, bottomLeft: [number, number]|null, bottomRight: [number, number]|null,}} */
+		this.corner = Toolbox.copyValue(corner);
+		this.detailsMisc = {
+			thousandth:
+				info.hasOwnProperty("thousandth") ?
+					info.thousandth : true,
+		};
+		/** @type {{mirrorX: boolean, mirrorY: boolean}} */
+		this.extraDrawn = Toolbox.copyValue(extraDrawn);
+	}
+
+	copy() {
+		return (new Quad(
+			{...Toolbox.copyValue(this.corner), ...Toolbox.copyValue(this.detailsMisc)},
+			Toolbox.copyValue(this.extraDrawn)
+		));
+	}
+
+	move([x, y]) {
+		for (let k in this.corner) {
+			let pos = this.corner[k];
+			if (pos) { pos[0] += x; pos[1] += y }
+		}
+		return this;
+	}
+
+	mirrorX() {
+		let newCorner = {
+			topLeft: [-this.corner.topRight[0], this.corner.topRight[1]],
+			topRight: [-this.corner.topLeft[0], this.corner.topLeft[1]],
+			bottomLeft: [-this.corner.bottomRight[0], this.corner.bottomRight[1]],
+			bottomRight: [-this.corner.bottomLeft[0], this.corner.bottomLeft[1]],
+		}
+
+		for (let k in newCorner) {
+			this.corner[k][0] = newCorner[k][0];
+			this.corner[k][1] = newCorner[k][1];
+		}
+		return this;
+	}
+
+	mirrorY() {
+		let newCorner = {
+			topLeft: [this.corner.bottomLeft[0], -this.corner.bottomLeft[1]],
+			topRight: [this.corner.bottomRight[0], -this.corner.bottomRight[1]],
+			bottomLeft: [this.corner.topLeft[0], -this.corner.topLeft[1]],
+			bottomRight: [this.corner.topRight[0], -this.corner.topRight[1]],
+		}
+
+		for (let k in newCorner) {
+			this.corner[k][0] = newCorner[k][0];
+			this.corner[k][1] = newCorner[k][1];
+		}
+		return this;
+	}
+
+	/** Set flag(s) for drawing extra texts */
+	withExtra({ mirrorX = null, mirrorY = null } = {}) {
+		if (mirrorX !== null) {
+			this.extraDrawn.mirrorX = mirrorX;
+		}
+		if (mirrorY !== null) {
+			this.extraDrawn.mirrorY = mirrorY;
+		}
+		return this;
+	}
+
+	getCode() {
+		let resultCodeLines = [];
+		resultCodeLines.push(this.p_getSelfCode());
+
+		// Add extra drawn code
+		if (this.extraDrawn.mirrorX) {
+			resultCodeLines.push(this.copy().mirrorX().p_getSelfCode());
+		}
+		if (this.extraDrawn.mirrorY) {
+			resultCodeLines.push(this.copy().mirrorY().p_getSelfCode());
+		}
+		if (this.extraDrawn.mirrorX && this.extraDrawn.mirrorY) {
+			resultCodeLines.push(this.copy().mirrorX().mirrorY().p_getSelfCode());
+		}
+
+		return resultCodeLines.join(SETTINGS.LINE_ENDING);
+	}
+
+
+	/**
+	 * Returns the code for drawing a text
+	 */
+	p_getSelfCode() {
+		let subVars = [];
+		for(let ck in this.corner) {
+			subVars.push(new BlkVariable(
+				Quad.p_realKey[ck],
+				this.corner[ck]
+			))
+		}
+
+		for (let k in this.detailsMisc) {
+			subVars.push(new BlkVariable(k, this.detailsMisc[k]));
+		}
+		return (new BlkBlock("quad", subVars, { useOneLine: true }).getCode());
+	}
+
+	/**
+	 * @param {string[]} properties
+	 * @param {Object} checkedObj
+	 */
+	static p_hasAllProps(properties, checkedObj) {
+		for (let p of properties) {
+			if (!checkedObj.hasOwnProperty(p)) { return false; }
+		}
+		return true;
 	}
 }
