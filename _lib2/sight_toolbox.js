@@ -126,7 +126,7 @@ export default class Toolbox {
 	 * where 1 mil is for a 1m object on 1000m ( arctan(1/1000) )
 	 * @param {"ussr"|"nato"|"real"} type - (default `"real"`) Thousandth (mil) type
 	 */
-	static getDistanceMil(tgtWidth, distance, type = "real") {
+	static calcDistanceMil(tgtWidth, distance, type = "real") {
 		// Number below are `1 / tan(2pi / x)`, where x is the mil number in 360 deg
 		return (
 			(type === "ussr") ? ((955 * tgtWidth) / distance) :
@@ -148,7 +148,7 @@ export default class Toolbox {
 	 * @param {"ussr"|"nato"|"real"} type - (default `"real"`) Thousandth (mil) type
 	 * @returns {number} the mil angle between target position and shooting direction for hitting the target
 	 */
-	static getLeadinMil(shellSpeed, tgtSpeed, tgtAspectAngle = 1, type = "real") {
+	static calcLeadingMil(shellSpeed, tgtSpeed, tgtAspectAngle = 1, type = "real") {
 		return Math.asin(tgtSpeed / shellSpeed) / Toolbox.MIL[type].rad * tgtAspectAngle;
 	}
 }
