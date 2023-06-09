@@ -31,6 +31,11 @@ code_file="$1"
 code_file_basename="`basename "$code_file"`"
 tgt_file="$tgt_dir_default/${code_file_basename%.*}.blk"
 
+if [ "${code_file_basename##*.}"x != "js"x -a "${code_file_basename##*.}"x != "JS"x ]; then
+	echo "ERROR: Not a JS file - exit now"
+	exit 1
+fi
+
 echo "Compiling '$code_file' to '$tgt_file'..."
 
 # Check if there is any supported instruction

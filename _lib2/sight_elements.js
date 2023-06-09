@@ -118,6 +118,18 @@ export class Circle {
 		}
 		return this;
 	}
+	/**
+	 * Shorthand for additionally mirroring curves
+	 * @param {""|"x"|"y"|"xy"|null} mirrorStr - a string specifying mirroring type.
+	 *        Empty `""` to unset any mirroring and `null` for making no change
+	 */
+	withMirroredSeg(mirrorStr = null) {
+		if (mirrorStr === "") { this.withExtra({ mirrorSegmentX: false, mirrorSegmentY: false }); }
+		else if (mirrorStr === "x") { this.withExtra(Circle.extraSegHori); }
+		else if (mirrorStr === "y") { this.withExtra(Circle.extraSegVert); }
+		else if (mirrorStr === "xy") { this.withExtra(Circle.extraSegFourQuad); }
+		return this;
+	}
 
 	getCode() {
 		let resultCodeLines = [];
@@ -157,7 +169,7 @@ export class Circle {
 }
 
 
-/** A line element */
+/** A line element. NOTE that starting and ending points should not be the same. */
 export class Line {
 	static extraHori = { mirrorX: true, mirrorY: false };
 	static extraVert = { mirrorX: false, mirrorY: true };
@@ -175,10 +187,9 @@ export class Line {
 	 * @param {number=} obj.radialMoveSpeed
 	 * @param {number=} obj.radialAngle
 	 *
-	 * @param {Object[]} lineBreakPoints
-	 * @param {number} lineBreakPoints.x
-	 * @param {number} lineBreakPoints.y
-	 * @param {number} lineBreakPoints.r
+	 * @param {Object[]} lineBreaks
+	 * @param {[number, number]} lineBreaks.from
+	 * @param {[number, number]} lineBreaks.to
 	 */
 	constructor({
 		from,
@@ -186,58 +197,133 @@ export class Line {
 		move = false,
 		thousandth = true,
 		moveRadial, radialCenter, radialMoveSpeed, radialAngle
-	} = {}, lineBreakPoints = [], extraDrawn = { mirrorX: false, mirrorY: false }) {
+	} = {}, lineBreaks = [], extraDrawn = { mirrorX: false, mirrorY: false }) {
 		this.lineEnds = { from, to };
-		/** Difference of x/y values ("to" - "from") */
-		this.lineEndDiffs = { x: (to[0] - from[0]), y: (to[1] - from[1]) };
-		this.lineEndDistance = Math.sqrt(
-			(to[0] - from[0]) ** 2 +
-			(to[1] - from[1]) ** 2
-		);
 		this.detailsMisc = {
 			move, thousandth,
 			moveRadial, radialCenter, radialMoveSpeed, radialAngle
 		};
-		this.lineBreakPoints = lineBreakPoints;
+		this.lineBreaks = lineBreaks;
 
 		/** On what axes will extra lines be generated */
 		this.extraDrawn = Toolbox.copyValue(extraDrawn);
+
+		// Reserved info for various calculation
+		/** Difference of x/y values ("to" - "from") */
+		this.lineEndDiffs = { x: (to[0] - from[0]), y: (to[1] - from[1]) };
+		/** Distance between two ends */
+		this.lineEndDistance = Math.sqrt(
+			Math.pow(this.lineEndDiffs.x, 2) +
+			Math.pow(this.lineEndDiffs.y, 2)
+		);
+		/** Line(vector) direction */
+		this.lineDirection = {
+			sin: this.lineEndDiffs.y / this.lineEndDistance,
+			cos: this.lineEndDiffs.x / this.lineEndDistance,
+		};
 	}
 
 
-	/** Adds a line break on X. Note that break widths should never overlap. */
-	addBreakAtX(x, width) {
-		if (!Toolbox.valueInRange(x, [this.lineEnds.from[0], this.lineEnds.to[0]])) {
-			console.warn(`WARN: Line.addBreakAtX - x value ${x} is not in line range, break ignored`);
-			return this;
-		}
+	/**
+	 * Adds a line break on X. Note that break widths should never overlap.
+	 * TODO: Detect overlap and merge breaks
+	 * @param {number} x
+	 * @param {number} width
+	 */
+	addBreakAtX(x, width, showWarn = false) {
+		if (width === 0) { return this; }
 		if (this.lineEndDiffs.x === 0) {
-			console.warn(`WARN: Line.addBreakAtX - vert line, break at x=${x} ignored`);
+			if (showWarn) { console.warn(`WARN: Line.addBreakAtX - vert line, break at x=${x} ignored`); }
 			return this;
 		}
+
+		// y of new break center on the line's direction
 		let y =
 			((x - this.lineEnds.from[0]) / this.lineEndDiffs.x * this.lineEndDiffs.y) +
 			this.lineEnds.from[1];
+		// find break two ends
+		let lineBreak = {
+			from: [
+				x - (width / 2 * this.lineDirection.cos),
+				y - (width / 2 * this.lineDirection.sin),
+			],
+			to: [
+				x + (width / 2 * this.lineDirection.cos),
+				y + (width / 2 * this.lineDirection.sin),
+			],
+		};
 
-		this.lineBreakPoints.push({ x: x, y: y, r: width / 2 });
+		// Break two ends both outside the line - ignore
+		if (
+			!Toolbox.valueInRange(lineBreak.from[0], [this.lineEnds.from[0], this.lineEnds.to[0]]) &&
+			!Toolbox.valueInRange(lineBreak.to[0], [this.lineEnds.from[0], this.lineEnds.to[0]])
+		) {
+			if (showWarn) { console.warn(`WARN: Line.addBreakAtX - x=${x}, width=${width} is not in line range, break ignored`); }
+			return this;
+		}
+		// Break start is outside the line - new line start
+		if (!Toolbox.valueInRange(lineBreak.from[0], [this.lineEnds.from[0], this.lineEnds.to[0]])) {
+			this.p_updateLineEnds({ newFrom: lineBreak.to });
+			return this;
+		}
+		// Break end is outside the line - new line end
+		if (!Toolbox.valueInRange(lineBreak.to[0], [this.lineEnds.from[0], this.lineEnds.to[0]])) {
+			this.p_updateLineEnds({ newTo: lineBreak.from });
+			return this;
+		}
+		// Break totally inside the line
+		this.lineBreaks.push(lineBreak);
 		return this;
 	}
 
-	/** Adds a line break on Y. Note that break widths should never overlap. */
-	addBreakAtY(y, width) {
-		if (!Toolbox.valueInRange(y, [this.lineEnds.from[1], this.lineEnds.to[1]])) {
-			console.warn(`WARN: Line.addBreakAtY - y value ${y} is not in line range, break ignored`);
-			return this;
-		}
+	/**
+	 * Adds a line break on Y. Note that break widths should never overlap.
+	 * TODO: Detect break overlap and merge breaks
+	 * @param {number} y
+	 * @param {number} width
+	 */
+	addBreakAtY(y, width, showWarn = false) {
+		if (width === 0) { return this; }
 		if (this.lineEndDiffs.y === 0) {
-			console.warn(`WARN: Line.addBreakAtY - hori line, break at y=${y} ignored`);
+			if (showWarn) { console.warn(`WARN: Line.addBreakAtY - hori line, break at y=${y} ignored`); }
 			return this;
 		}
+		// x of new break center on the line's direction
 		let x =
 			((y - this.lineEnds.from[1]) / this.lineEndDiffs.y * this.lineEndDiffs.x) +
 			this.lineEnds.from[0];
+		// find break two ends
+		let lineBreak = {
+			from: [
+				x - (width / 2 * this.lineDirection.cos),
+				y - (width / 2 * this.lineDirection.sin),
+			],
+			to: [
+				x + (width / 2 * this.lineDirection.cos),
+				y + (width / 2 * this.lineDirection.sin),
+			],
+		};
 
-		this.lineBreakPoints.push({ x: x, y: y, r: width / 2 });
+		// Break two ends both outside the line - ignore
+		if (
+			!Toolbox.valueInRange(lineBreak.from[1], [this.lineEnds.from[1], this.lineEnds.to[1]]) &&
+			!Toolbox.valueInRange(lineBreak.to[1], [this.lineEnds.from[1], this.lineEnds.to[1]])
+		) {
+			if (showWarn) { console.warn(`WARN: Line.addBreakAtY - y=${y}, width=${width} is not in line range, break ignored`); }
+			return this;
+		}
+		// Break start is outside the line - new line start
+		if (!Toolbox.valueInRange(lineBreak.from[1], [this.lineEnds.from[1], this.lineEnds.to[1]])) {
+			this.p_updateLineEnds({ newFrom: lineBreak.to });
+			return this;
+		}
+		// Break end is outside the line - new line end
+		if (!Toolbox.valueInRange(lineBreak.to[1], [this.lineEnds.from[1], this.lineEnds.to[1]])) {
+			this.p_updateLineEnds({ newTo: lineBreak.from });
+			return this;
+		}
+		// Break totally inside the line
+		this.lineBreaks.push(lineBreak);
 		return this;
 	}
 
@@ -254,7 +340,7 @@ export class Line {
 				radialMoveSpeed: this.detailsMisc.radialMoveSpeed || null,
 				radialAngle: this.detailsMisc.radialAngle || null
 			},
-			Toolbox.copyValue(this.lineBreakPoints),
+			Toolbox.copyValue(this.lineBreaks),
 			Toolbox.copyValue(this.extraDrawn)
 		));
 	}
@@ -265,9 +351,11 @@ export class Line {
 		this.lineEnds.to[0] += x;
 		this.lineEnds.to[1] += y;
 		// TODO: deal with radial center
-		for (let bp of this.lineBreakPoints) {
-			bp.x += x;
-			bp.y += y;
+		for (let b of this.lineBreaks) {
+			b.from[0] += x;
+			b.from[1] += y;
+			b.to[0] += x;
+			b.to[1] += y;
 		}
 		return this;
 	}
@@ -277,15 +365,22 @@ export class Line {
 		this.lineEnds.to[0] = -(this.lineEnds.to[0]);
 		this.lineEndDiffs.x = -(this.lineEndDiffs.x);
 		// TODO: deal with radial values
-		for (let bp of this.lineBreakPoints) { bp.x = -(bp.x); }
+		for (let b of this.lineBreaks) {
+			b.from[0] = -(b.from[0]);
+			b.to[0] = -(b.to[0]);
+		}
 		return this;
 	}
+
 	mirrorY() {
 		this.lineEnds.from[1] = -(this.lineEnds.from[1]);
 		this.lineEnds.to[1] = -(this.lineEnds.to[1]);
 		this.lineEndDiffs.y = -(this.lineEndDiffs.y);
 		// TODO: deal with radial values
-		for (let bp of this.lineBreakPoints) { bp.y = -(bp.y); }
+		for (let b of this.lineBreaks) {
+			b.from[1] = -(b.from[1]);
+			b.to[1] = -(b.to[1]);
+		}
 		return this;
 	}
 
@@ -297,6 +392,18 @@ export class Line {
 		if (mirrorY !== null) {
 			this.extraDrawn.mirrorY = mirrorY;
 		}
+		return this;
+	}
+	/**
+	 * Shorthand for additionally mirroring
+	 * @param {""|"x"|"y"|"xy"|null} mirrorStr - a string specifying mirroring type.
+	 *        Empty `""` to unset any mirroring and `null` for making no change
+	 */
+	withMirrored(mirrorStr = null) {
+		if (mirrorStr === "") { this.withExtra({ mirrorX: false, mirrorY: false }); }
+		else if (mirrorStr === "x") { this.withExtra(Line.extraHori); }
+		else if (mirrorStr === "y") { this.withExtra(Line.extraVert); }
+		else if (mirrorStr === "xy") { this.withExtra(Line.extraFourQuad); }
 		return this;
 	}
 
@@ -318,75 +425,78 @@ export class Line {
 		return resultCodeLines.join(SETTINGS.LINE_ENDING);
 	}
 
+	/**
+	 * Update one or both ends of the line.
+	 *
+	 * Line direction should NOT be changed if line breaks have been added -
+	 * they are not considered here.
+	 */
+	p_updateLineEnds({ newFrom = null, newTo = null } = {}) {
+		if (!newFrom && !newTo) { return this; }
+		if (newFrom) {
+			this.lineEnds.from[0] = newFrom[0];
+			this.lineEnds.from[1] = newFrom[1];
+		}
+		if (newTo) {
+			this.lineEnds.to[0] = newTo[0];
+			this.lineEnds.to[1] = newTo[1];
+		}
+		// Update additional info.
+		// Some (line-direction-related ones) are not necessary, but still written here
+		// for potential future update regarding direction changes
+		this.lineEndDiffs.x = (this.lineEnds.to[0] - this.lineEnds.from[0]);
+		this.lineEndDiffs.y = (this.lineEnds.to[1] - this.lineEnds.from[1]);
+		this.lineEndDistance = Math.sqrt(
+			Math.pow(this.lineEndDiffs.x, 2) +
+			Math.pow(this.lineEndDiffs.y, 2)
+		);
+		this.lineDirection.sin = this.lineEndDiffs.y / this.lineEndDistance;
+		this.lineDirection.cos = this.lineEndDiffs.x / this.lineEndDistance;
+
+		return this;
+	}
 
 	/**
 	 * Get code for all line frags into an array without extras
 	 * @returns {string[]}
 	 */
 	p_getSelfCodeFrags() {
-		// Sort breakpoints
-		//   Note that same from & to is not supported
+		// Sort breakpoints.
+		// (Same start & end will potentially cause error - it's not allowed anyway)
 		if (this.lineEndDiffs.x !== 0) {
 			if (this.lineEndDiffs.x > 0) {
-				this.lineBreakPoints.sort((a, b) => (a.x - b.x));
+				this.lineBreaks.sort((a, b) => (a.from[0] - b.from[0]));
 			} else {
-				this.lineBreakPoints.sort((a, b) => -(a.x - b.x));
+				this.lineBreaks.sort((a, b) => -(a.from[0] - b.from[0]));
 			}
 		} else {
 			if (this.lineEndDiffs.y > 0) {
-				this.lineBreakPoints.sort((a, b) => (a.y - b.y));
+				this.lineBreaks.sort((a, b) => (a.from[1] - b.from[1]));
 			} else {
-				this.lineBreakPoints.sort((a, b) => -(a.y - b.y));
+				this.lineBreaks.sort((a, b) => -(a.from[1] - b.from[1]));
 			}
 		}
 
 		// Find all line frags
 		let lineFragStarts = [this.lineEnds.from];
-		let lineFragEnds = [];  // Whole line ending will be added later
-
-		for (let bp of this.lineBreakPoints) {
-			if (this.lineEndDiffs.x === 0) {  // Vert line
-				if (this.lineEndDiffs.y > 0) {
-					lineFragEnds.push([bp.x, bp.y - bp.r]);
-					lineFragStarts.push([bp.x, bp.y + bp.r]);
-				} else {
-					lineFragEnds.push([bp.x, bp.y + bp.r]);
-					lineFragStarts.push([bp.x, bp.y - bp.r]);
-				}
-
-			} else if (this.lineEndDiffs.y === 0) {  // Hori line
-				if (this.lineEndDiffs.x > 0) {
-					lineFragEnds.push([bp.x - bp.r, bp.y]);
-					lineFragStarts.push([bp.x + bp.r, bp.y]);
-				} else {
-					lineFragEnds.push([bp.x + bp.r, bp.y]);
-					lineFragStarts.push([bp.x - bp.r, bp.y]);
-				}
-
-			} else {
-				lineFragEnds.push([
-					bp.x - (this.lineEndDiffs.x / this.lineEndDistance * bp.r),
-					bp.y - (this.lineEndDiffs.y / this.lineEndDistance * bp.r)
-				]);
-				lineFragStarts.push([
-					bp.x + (this.lineEndDiffs.x / this.lineEndDistance * bp.r),
-					bp.y + (this.lineEndDiffs.y / this.lineEndDistance * bp.r)
-				]);
-			}
+		let lineFragEnds = [];  // whole line ending will be added later
+		for (let b of this.lineBreaks) {
+			lineFragEnds.push(b.from);
+			lineFragStarts.push(b.to);
 		}
-		// Add whole line ending
-		lineFragEnds.push(this.lineEnds.to);
+		lineFragEnds.push(this.lineEnds.to);  // adds whole line ending
 
 		// Print line frags
 		let lineAllFragCodes = [];
 		let lineFragLen = lineFragStarts.length;
 		for (let i = 0; i < lineFragLen; i++) {
 			let fragDetails = Toolbox.copyValue(this.detailsMisc);
+			// Adds variable for line ends (namely "line")
 			fragDetails.line = [
 				lineFragStarts[i][0], lineFragStarts[i][1],
 				lineFragEnds[i][0], lineFragEnds[i][1],
 			];
-
+			// Compile variables used in blk
 			let fragVars = [];
 			for (let k in fragDetails) {
 				if (fragDetails[k] === null) { continue; }
@@ -472,6 +582,18 @@ export class TextSnippet {
 		if (mirrorY !== null) {
 			this.extraDrawn.mirrorY = mirrorY;
 		}
+		return this;
+	}
+	/**
+	 * Shorthand for additionally mirroring
+	 * @param {""|"x"|"y"|"xy"|null} mirrorStr - a string specifying mirroring type.
+	 *        Empty `""` to unset any mirroring and `null` for making no change
+	 */
+	withMirrored(mirrorStr = null) {
+		if (mirrorStr === "") { this.withExtra({ mirrorX: false, mirrorY: false }); }
+		else if (mirrorStr === "x") { this.withExtra(TextSnippet.extraHori); }
+		else if (mirrorStr === "y") { this.withExtra(TextSnippet.extraVert); }
+		else if (mirrorStr === "xy") { this.withExtra(TextSnippet.extraFourQuad); }
 		return this;
 	}
 
@@ -735,6 +857,18 @@ export class Quad {
 		if (mirrorY !== null) {
 			this.extraDrawn.mirrorY = mirrorY;
 		}
+		return this;
+	}
+	/**
+	 * Shorthand for additionally mirroring
+	 * @param {""|"x"|"y"|"xy"|null} mirrorStr - a string specifying mirroring type.
+	 *        Empty `""` to unset any mirroring and `null` for making no change
+	 */
+	withMirrored(mirrorStr = null) {
+		if (mirrorStr === "") { this.withExtra({ mirrorX: false, mirrorY: false }); }
+		else if (mirrorStr === "x") { this.withExtra(Quad.extraHori); }
+		else if (mirrorStr === "y") { this.withExtra(Quad.extraVert); }
+		else if (mirrorStr === "xy") { this.withExtra(Quad.extraFourQuad); }
 		return this;
 	}
 

@@ -48,7 +48,7 @@
 			"",
 			"",
 			"//// SHELL DISTANCES ////",
-			"// sight.addShellDistances(/*TODO*/);",
+			"// sight.addShellDistance(/*TODO*/);",
 			"",
 			"",
 			"//// SIGHT DESIGNS ////",
@@ -63,46 +63,19 @@
 		]
 	},
 
-	"Sight file initialization for V1": {
-		"description": "Create a sight code template (V1)",
-		"scope": "javascript,typescript",
-		"prefix": "init-sight-v1",
-		"body": [
-			"import * as comp from \"../_lib/sight_lib.js\";",
-			"import * as pd from \"../_lib/sight_predefined_info.js\";",
-			"",
-			"",
-			"let code = new comp.SightComponentCollection();",
-			"let {",
-			"\tsight,",
-			"\tmatchVehicleClasses,",
-			"\thorizontalThousandths,",
-			"\tshellDistances,",
-			"\tcircles,",
-			"\tlines,",
-			"\ttexts",
-			"} = code.getComponents();",
-			"",
-			"",
-			"//// BASIC",
-			"sight.append(pd.concatAllBasics(/*TODO*/));",
-			"",
-			"",
-			"//// VEHICLE TYPES",
-			"matchVehicleClasses.addInclude(/*TODO*/);",
-			"",
-			"",
-			"//// SHELL DISTANCES",
-			"/*TODO*/",
-			"",
-			"",
-			"//// SIGHT DESIGNS",
-			"/*TODO*/",
-			"",
-			"",
-			"//// OUTPUT",
-			"code.compileSightBlocks();",
-			"code.printCode();",
-		]
+	"Add a new circle": {
+		"prefix": "new-circle",
+		"body": "new Circle({ $0 })"
+	},
+
+	"Add a new line": {
+		"prefix": "new-line",
+		"body": "new Line({ from: [$1], to: [$2] })"
+	},
+
+	"Add a new text": {
+		"prefix": "new-text",
+		"body": "new TextSnippet({ text: \"$1\", pos: [$2], size: $3 })"
 	}
+
 }

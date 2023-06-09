@@ -23,6 +23,7 @@
 'use strict';
 
 import { BlkComment, BlkVariable } from "./sight_code_basis.js";
+import Toolbox from "./sight_toolbox.js";
 
 
 
@@ -92,21 +93,22 @@ export const concatAllBasics = (zoomScale, color, rgfdPos, detectAllyPos, gunDis
  */
 export const basic = {
 	colors: {
-		getGreenRed: ({ main = [0, 200, 40, 255], sub = [180, 0, 0, 255] }={}) => basicBuild.color({ main, sub }),
-		getRedGreen: ({ main = [180, 0, 0, 255], sub = [0, 200, 40, 255] }={}) => basicBuild.color({ main, sub }),
-		getBlackYellow: ({ main = [0, 0, 0, 255], sub = [200, 200, 0, 255] }={}) => basicBuild.color({ main, sub }),
+		getGreenRed: ({ main = [0, 200, 40, 255], sub = [180, 0, 0, 255] } = {}) => basicBuild.color({ main, sub }),
+		getRedGreen: ({ main = [180, 0, 0, 255], sub = [0, 200, 40, 255] } = {}) => basicBuild.color({ main, sub }),
+		getBlackYellow: ({ main = [0, 0, 0, 255], sub = [200, 200, 0, 255] } = {}) => basicBuild.color({ main, sub }),
 	},
 
 	scales: {
-		getCommon: ({ font = 0.8, line = 1.1 }={}) => basicBuild.scale({ font, line }),
-		getMidHighZoom: ({ font = 0.75, line = 1.2 }={}) => basicBuild.scale({ font, line }),
-		getHighZoom: ({ font = 0.9, line = 1.5 }={}) => basicBuild.scale({ font, line }),
-		getHighZoomSmallFont: ({ font = 0.5, line = 1.6 }={}) => basicBuild.scale({ font, line }),
+		getCommon: ({ font = 0.8, line = 1.1 } = {}) => basicBuild.scale({ font, line }),
+		getMidHighZoom: ({ font = 0.75, line = 1.2 } = {}) => basicBuild.scale({ font, line }),
+		getHighZoom: ({ font = 0.9, line = 1.5 } = {}) => basicBuild.scale({ font, line }),
+		getHighZoomSmallFont: ({ font = 0.5, line = 1.6 } = {}) => basicBuild.scale({ font, line }),
+		getHighZoomLargeFont: ({ font = 1.5, line = 1.3 } = {}) => basicBuild.scale({ font, line }),
 
-		getSPAACommon: ({ font = 0.9, line = 1.5 }={}) => basicBuild.scale({ font, line }),
-		getSPAAHighZoom: ({ font = 0.9, line = 1.5 }={}) => basicBuild.scale({ font, line }),
-		getSPAAHighZoomLargeFont: ({ font = 1.5, line = 1.3 }={}) => basicBuild.scale({ font, line }),
-		getSPAAHighZoomSmallFont: ({ font = 0.5, line = 1.4 }={}) => basicBuild.scale({ font, line }),
+		getSPAACommon: ({ font = 0.9, line = 1.5 } = {}) => basicBuild.scale({ font, line }),
+		getSPAAHighZoom: ({ font = 0.9, line = 1.5 } = {}) => basicBuild.scale({ font, line }),
+		getSPAAHighZoomLargeFont: ({ font = 1.5, line = 1.3 } = {}) => basicBuild.scale({ font, line }),
+		getSPAAHighZoomSmallFont: ({ font = 0.5, line = 1.4 } = {}) => basicBuild.scale({ font, line }),
 	},
 
 	shellDistanceTicks: {
@@ -133,4 +135,36 @@ export const basic = {
 			new BlkVariable("drawSightMask", true),
 		]
 	}
-}
+};
+
+
+/** Shell distance tick combinations */
+export const shellDists = {
+	getFull: (shownPosRight = [0, 0]) => {
+		let result = [];
+		for (let d of Toolbox.rangeIE(200, 4000, 400)) {
+			result.push({ distance: d });  // sub ticks
+		}
+		for (let d of Toolbox.rangeIE(400, 4000, 800)) {
+			result.push({ distance: d, shown: d / 100 });  // main ticks left
+		}
+		for (let d of Toolbox.rangeIE(800, 4000, 800)) {
+			result.push({ distance: d, shown: d / 100, shownPos: shownPosRight });  // main ticks right
+		}
+		return result.sort((a, b) => (a.distance - b.distance));
+	},
+
+	getFullLoose: (shownPosRight = [0, 0]) => {
+		let result = [];
+		for (let d of Toolbox.rangeIE(400, 4000, 800)) {
+			result.push({ distance: d });  // sub ticks
+		}
+		for (let d of Toolbox.rangeIE(800, 4000, 1600)) {
+			result.push({ distance: d, shown: d / 100 });  // main ticks left
+		}
+		for (let d of Toolbox.rangeIE(1600, 4000, 1600)) {
+			result.push({ distance: d, shown: d / 100, shownPos: shownPosRight });  // main ticks right
+		}
+		return result.sort((a, b) => (a.distance - b.distance));
+	}
+};
