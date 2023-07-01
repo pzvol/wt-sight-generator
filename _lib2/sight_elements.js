@@ -60,7 +60,7 @@ export class Circle {
 		move = false,
 		thousandth = true
 	} = {}, extraDrawn = { mirrorSegmentX: false, mirrorSegmentY: false }) {
-		this.details = { segment, pos, diameter, size, move, thousandth };
+		this.details = Toolbox.copyValue({ segment, pos, diameter, size, move, thousandth });
 		/** On what axes will extra curves be generated */
 		this.extraDrawn = Toolbox.copyValue(extraDrawn);
 	}
@@ -198,19 +198,22 @@ export class Line {
 		thousandth = true,
 		moveRadial, radialCenter, radialMoveSpeed, radialAngle
 	} = {}, lineBreaks = [], extraDrawn = { mirrorX: false, mirrorY: false }) {
-		this.lineEnds = { from, to };
-		this.detailsMisc = {
+		this.lineEnds = Toolbox.copyValue({ from, to });
+		this.detailsMisc = Toolbox.copyValue({
 			move, thousandth,
 			moveRadial, radialCenter, radialMoveSpeed, radialAngle
-		};
-		this.lineBreaks = lineBreaks;
+		});
+		this.lineBreaks = Toolbox.copyValue(lineBreaks);
 
 		/** On what axes will extra lines be generated */
 		this.extraDrawn = Toolbox.copyValue(extraDrawn);
 
 		// Reserved info for various calculation
 		/** Difference of x/y values ("to" - "from") */
-		this.lineEndDiffs = { x: (to[0] - from[0]), y: (to[1] - from[1]) };
+		this.lineEndDiffs = {
+			x: (this.lineEnds.to[0] - this.lineEnds.from[0]),
+			y: (this.lineEnds.to[1] - this.lineEnds.from[1])
+		};
 		/** Distance between two ends */
 		this.lineEndDistance = Math.sqrt(
 			Math.pow(this.lineEndDiffs.x, 2) +
@@ -536,7 +539,7 @@ export class TextSnippet {
 		thousandth = true,
 		highlight = true
 	} = {}, extraDrawn = { mirrorX: false, mirrorY: false }) {
-		this.details = {
+		this.details = Toolbox.copyValue({
 			text,
 			align: (align === "center") ? 0 : (align === "left") ? 1 : (align === "right") ? 2 : align,
 			pos,
@@ -544,7 +547,7 @@ export class TextSnippet {
 			highlight,
 			move,
 			thousandth
-		};
+		});
 		/** On what axes will extra text(s) be generated */
 		this.extraDrawn = Toolbox.copyValue(extraDrawn);
 	}
