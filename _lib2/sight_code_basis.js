@@ -178,12 +178,22 @@ export class BlkBlock {
 
 export class BlkComment {
 	constructor(s = "") {
-		/** Comment content */
+		/** Comment content. Allows multiple lines. */
 		this.value = s;
 	}
 
 	getCode() {
-		return `// ${this.value}`;
+		let lines = BlkComment.p_splitMultiLineStr(this.value);
+		return lines.map(l => `// ${l}`).join(SETTINGS.LINE_ENDING);
+	}
+
+
+	/**
+	 * Split a string with multiple lines into an array
+	 * @param {string} s
+	 */
+	static p_splitMultiLineStr(s) {
+		return s.replace(/\r\n/gm, "\n").replace(/\r/gm, "\n").split("\n");
 	}
 }
 
@@ -192,12 +202,10 @@ export class BlkComment {
 export class BlkFile {
 	// TODO: Add line search methods
 
-	constructor(addAutoGenHeadingComment = true) {
+	constructor() {
 		/** file lines (un-compiled) */
 		this.contentLines = [];
-		this.settings = {
-			addAutoGenHeadingComment
-		};
+		this.settings = {};
 	}
 
 	/**
@@ -217,14 +225,6 @@ export class BlkFile {
 	/** Get code lines of a blk file */
 	getCode() {
 		let result = "";
-
-		if (this.settings.addAutoGenHeadingComment) {
-			result +=
-				new BlkComment(
-					"GENERATED FROM CODE WITH wt-sight-generator V2"
-				).getCode() + SETTINGS.LINE_ENDING +
-				"" + SETTINGS.LINE_ENDING;
-		}
 
 		for (let l of this.contentLines) {
 			if (typeof l === "string") {

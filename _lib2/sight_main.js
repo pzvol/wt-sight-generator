@@ -31,12 +31,14 @@ import { Quad, Circle, Line, TextSnippet } from "./sight_elements.js";
 
 /** An all-in-one entrance for creating a user sight */
 export default class Sight {
-	static libVersion = "20230702";
+	static libVersion = "20230703";
 
 	static commonVehicleTypes = block.MatchVehicleClassBlock.commonTypes;
 
 	constructor() {
 		this.components = {
+			/** @type {string[]} */
+			description: [],
 			sightSettings: new block.BasicSettings(),
 			matchVehicleClasses: new block.MatchVehicleClassBlock(),
 			horiThousandths: new block.HoriThousandthsBlock(),
@@ -45,7 +47,7 @@ export default class Sight {
 			circles: new block.CirclesBlock(),
 			lines: new block.LinesBlock(),
 			texts: new block.TextsBlock(),
-		}
+		};
 
 		// Shorthands
 		this.quads = this.components.quads;
@@ -57,10 +59,23 @@ export default class Sight {
 	getComponents() { return this.components; }
 
 	/**
+	 * Add text(s) into description
+	 * @param {string|string[]} content
+	 */
+	addDescription(content) {
+		let arr;
+		if (Array.isArray(content)) { arr = content; }
+		else { arr = [content]; }
+
+		for (let element of arr) { this.components.description.push(element); }
+		return this;
+	}
+
+	/**
 	 * @param {string|BlkVariable|BlkComment|(string|BlkVariable|BlkComment)[]} input
 	 */
 	addSettings(input) {
-		this.components.sightSettings.add(input)
+		this.components.sightSettings.add(input);
 		return this;
 	}
 
@@ -158,8 +173,23 @@ export default class Sight {
 
 
 	/** Get complete compiled code for the sight */
-	getCode() {
-		let blkFile = new BlkFile(true);
+	getCode(addAutoGenHeadingComment = true) {
+		let blkFile = new BlkFile();
+
+		if (addAutoGenHeadingComment) {
+			blkFile.push([
+				new BlkComment("GENERATED FROM CODE WITH wt-sight-generator V2"),
+				""
+			]);
+		}
+
+		if (this.components.description.length > 0) {
+			blkFile.push([
+				new BlkComment(this.components.description.join("\n")),
+				""
+			]);
+		}
+
 		blkFile.push([
 			this.components.sightSettings, "",
 			this.components.matchVehicleClasses, "",
@@ -169,7 +199,7 @@ export default class Sight {
 			this.components.circles, "",
 			this.components.lines, "",
 			this.components.texts,
-		])
+		]);
 		return blkFile.getCode();
 	}
 

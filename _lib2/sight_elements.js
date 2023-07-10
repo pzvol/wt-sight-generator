@@ -691,6 +691,7 @@ export class Quad {
 	 * @param {[number, number]=} info.rightCenter
 	 * @param {number=} info.xWidth - width on X direction
 	 * @param {number=} info.yWidth - width on Y direction
+	 * @param {boolean=} info.move - (default `false`) if move with gun zero changes
 	 * @param {boolean=} info.thousandth - (default `true`)
 	 */
 	constructor(
@@ -799,6 +800,9 @@ export class Quad {
 		/** @type {{topLeft: [number, number]|null, topRight: [number, number]|null, bottomLeft: [number, number]|null, bottomRight: [number, number]|null,}} */
 		this.corner = Toolbox.copyValue(corner);
 		this.detailsMisc = {
+			move:
+				info.hasOwnProperty("move") ?
+					info.move : false,
 			thousandth:
 				info.hasOwnProperty("thousandth") ?
 					info.thousandth : true,

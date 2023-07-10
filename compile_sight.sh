@@ -22,7 +22,7 @@
 
 ## Settings ##
 auto_overwrite=1
-tgt_dir_top_level="/cygdrive/x/SteamGames/steamapps/common/War Thunder/UserSights"
+tgt_dir_top_level="/cygdrive/x/SteamLibrary/steamapps/common/War Thunder/UserSights"
 
 
 
