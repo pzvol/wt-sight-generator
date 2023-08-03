@@ -50,7 +50,7 @@ sight.addShellDistance([
 
 //// SIGHT DESIGNS ////
 sight.lines.addComment("Sight center arrow and bold");
-for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.2, 0.04)) {
+for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
 	sight.add(new Line({
 		from: [0, CenterBoldPadY], to: [0.6, 1.5]
 	}).move([0, 0.02]).withMirrored("x"));
@@ -72,7 +72,8 @@ sight.add(new Line({ from: [-0.203, 0.0], to: [-0.193, 0.0], move: true, thousan
 let init = ({
 	shellSpeed,
 	assumedMoveSpeed,
-	horiCurve = [88, 92]
+	horiCurve = [88, 92],
+	horiCurveWeight = 2
 } = {}) => {
 	let getLdn = (aa) => Toolbox.calcLeadingMil(shellSpeed, assumedMoveSpeed, aa);
 
@@ -97,12 +98,22 @@ let init = ({
 	]) { sight.add(new Line({ from: p, to: [450, 0] }).withMirrored("xy")); }
 
 	sight.addComment("Horizontal general leading for APFSDS", ["texts", "circles"]);
-	sight.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.05], size: 0.4 }).withMirrored("x"));
-	horiLine.addBreakAtX(getLdn(1), 1.1);
-	// ^ 4/4 AA
-	sight.add(new Circle({ segment: horiCurve, diameter: getLdn(0.75) * 2, size: 2 }).withMirroredSeg("x"));
+	// 4/4
+	sight.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.05], size: 0.5 }).withMirrored("x"));
+	horiLine.addBreakAtX(getLdn(1), 1.4);
+	// 3/4 - 1/4
+	sight.add(new Circle({ segment: horiCurve, diameter: getLdn(0.75) * 2, size: horiCurveWeight }).withMirroredSeg("x"));
 	sight.add(new TextSnippet({ text: "2", pos: [getLdn(0.5), -0.05], size: 0.4 }).withMirrored("x"));
+	sight.add(new TextSnippet({ text: "2", pos: [getLdn(0.5), -0.05], size: 0.4 }).withMirrored("x"));  // bold
 	sight.add(new Circle({ segment: [87, 93], diameter: getLdn(0.25) * 2, size: 2 }).withMirroredSeg("x"));
+
+	// Sight tick info
+	sight.add(new TextSnippet({
+		text: `ASM SPD - ${assumedMoveSpeed} kph`,
+		align: "right",
+		pos: [82, 1],
+		size: 0.9
+	}))
 };
 
 
