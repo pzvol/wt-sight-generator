@@ -13,7 +13,7 @@ let sight = new Sight();
 /** Speed values are in km/h */
 function build({
 	showCenteralCircle = true,
-	milType = "ussr",
+	milType = "real",
 	shellSpeed,
 	assumeTgtSpeedMain,
 	assumeTgtSpeedSubRange,

@@ -32,7 +32,7 @@ sight.addShellDistance(pd.shellDists.getFull());
 //// SIGHT DESIGNS ////
 let shellSpd = 825 * 3.6;  // to kph
 let getLdMil = (tgtSpd, aa = 1) => Toolbox.calcLeadingMil(
-	shellSpd, tgtSpd, aa, "ussr"
+	shellSpd, tgtSpd, aa, "real"
 );
 
 

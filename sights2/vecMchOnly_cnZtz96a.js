@@ -1,4 +1,4 @@
-import base from "./sight_bases/base_g_clr_z6z11.js";
+import base from "./sight_bases/base_g_l_z6z11.js";
 
 base.sightObj.matchVehicle([
 	"cn_ztz_96a",

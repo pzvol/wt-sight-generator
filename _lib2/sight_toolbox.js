@@ -77,6 +77,20 @@ export default class Toolbox {
 		return result;
 	}
 
+	/**
+	 * Repetitively execute a function for specified time(s)
+	 * @param {number} repeatCount - number of repetition
+	 * @param {Function} execFunc - repeated function
+	 * @returns {any[]} an array of the results of `execFunc`
+	 */
+	static repeat(repeatCount, execFunc) {
+		let execResults = [];
+		for (let count = 0; count < repeatCount; count++) {
+			execResults.push(execFunc());
+		}
+		return execResults;
+	}
+
 
 	/** Get the round of a value with give digit number */
 	static round(value, digit) {
@@ -119,7 +133,7 @@ export default class Toolbox {
 	}
 
 	/**
-	 * Calcuate thousandth value of a specific distance
+	 * Calcuate thousandth width value of a specific distance
 	 * for an object with given size (in meter)
 	 *
 	 * Thousandth value is under "real" standard (1/6283) by default,

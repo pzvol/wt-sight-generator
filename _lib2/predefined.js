@@ -103,6 +103,7 @@ export const basic = {
 		getMidHighZoom: ({ font = 0.75, line = 1.2 } = {}) => basicBuild.scale({ font, line }),
 		getHighZoom: ({ font = 0.9, line = 1.5 } = {}) => basicBuild.scale({ font, line }),
 		getHighZoomSmallFont: ({ font = 0.5, line = 1.6 } = {}) => basicBuild.scale({ font, line }),
+		getHighZoomSmall2Font: ({ font = 0.35, line = 1.5 } = {}) => basicBuild.scale({ font, line }),
 		getHighZoomLargeFont: ({ font = 1.5, line = 1.3 } = {}) => basicBuild.scale({ font, line }),
 
 		getSPAACommon: ({ font = 0.9, line = 1.5 } = {}) => basicBuild.scale({ font, line }),

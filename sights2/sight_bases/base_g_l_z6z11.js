@@ -11,7 +11,7 @@ let sight = new Sight();
 
 // Introduction comments
 sight.addDescription(`
-An experimental design as the universal sight for 6X~11X ZTZ96/99 series
+Universal sight for 6X~11X ZTZ96/99 series
 with leading values for shooting APFSDS while moving
 
 Modified from "g_nrnc_hizoom_g_1AroCSmp2" but with less text information,
@@ -62,7 +62,10 @@ for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
 sight.lines.addComment("Gun center");
 sight.add(new Line({
 	from: [0.0035, 0], to: [0.0055, 0], move: true, thousandth: false
-}).withMirrored("x"));
+}).withMirrored("xy"));  // y mirroring for bold
+sight.add(new Line({
+	from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
+}));  // center dot
 
 
 sight.lines.addComment("0m correction line");

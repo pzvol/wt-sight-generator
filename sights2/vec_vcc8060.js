@@ -90,7 +90,7 @@ sight.addComment("Air leading circles for heli", ["circles", "texts"]);
 let airShellSpd = 1000 * 3.6;  // mps
 let airTgtSpdMain = 200;  // kph
 let getLdMil = (aspectAngle, tgtSpd = airTgtSpdMain) => Toolbox.calcLeadingMil(
-	airShellSpd, tgtSpd, aspectAngle, "ussr"
+	airShellSpd, tgtSpd, aspectAngle, "real"
 );
 let ld = {
 	main: [
