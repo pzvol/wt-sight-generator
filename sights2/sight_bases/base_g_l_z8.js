@@ -11,7 +11,7 @@ let sight = new Sight();
 
 // Introduction comments
 sight.addDescription(`
-Universal sight for fixed 8X with leading values for shooting APFSDS while moving
+Generic sight for fixed 8X with leading values for shooting APFSDS while moving
 
 Modified from "base_g_l_z8z16" and "g_nrnc_hizoom_hf_g_1Smp"
 `.trim());

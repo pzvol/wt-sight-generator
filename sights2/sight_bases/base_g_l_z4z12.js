@@ -11,7 +11,7 @@ let sight = new Sight();
 
 // Introduction comments
 sight.addDescription(`
-Universal sight for 4X~12X with leading values for shooting APFSDS while moving
+Generic sight for 4X~12X with leading values for shooting APFSDS while moving
 
 Modified from "g_nrnc_hizoom_sf_g_3AroA" but with less text information,
 making it easier to snapshoot.

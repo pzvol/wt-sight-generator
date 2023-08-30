@@ -26,7 +26,7 @@
 	},
 
 	"Sight file initialization": {
-		"description": "Create a sight code template",
+		"description": "New sight template",
 		"scope": "javascript,typescript",
 		"prefix": "init-sight",
 		"body": [
@@ -68,7 +68,7 @@
 	},
 
 	"Sight base file initialization": {
-		"description": "Create a sight base template",
+		"description": "New sight base template",
 		"scope": "javascript,typescript",
 		"prefix": "init-sightbase",
 		"body": [
@@ -115,6 +115,39 @@
 			"\tinit: init,",
 			"};",
 			"",
+		]
+	},
+
+	"Sight file (using a base) initialization": {
+		"description": "New sight template (using a sight base)",
+		"scope": "javascript,typescript",
+		"prefix": "init-sight-usebase",
+		"body": [
+			"import Sight from \"${1:..}/_lib2/sight_main.js\";",
+			"import Toolbox from \"${1:..}/_lib2/sight_toolbox.js\";",
+			"import { Quad, Circle, Line, TextSnippet } from \"${1:..}/_lib2/sight_elements.js\";",
+			"import * as pd from \"${1:..}/_lib2/predefined.js\";",
+			"",
+			"import base from \"./sight_bases/${0:SIGHT_BASE}.js\";",
+			"",
+			"",
+			"//// VEHICLE TYPES ////",
+			"// base.sightObj.matchVehicle(/*TODO*/)",
+			"",
+			"",
+			"//// COMPILATION ////",
+			"base.init({ paramVar: \"EXAMPLE\" });",
+			"",
+			"",
+			"//// ADDITIONAL ELEMENTS (IF ANY) ////",
+			"// base.sightObj.add(/*TODO*/);",
+			"",
+			"",
+			"",
+			"",
+			"//// OUTPUT ////",
+			"base.sightObj.printCode();",
+			""
 		]
 	},
 

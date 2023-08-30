@@ -14,14 +14,12 @@ The project is still under development, meaning:
 - `_lib2/sight_*.js` are the main modules, which holds the classes designed for writing a .blk user sight in JS;
 - `_lib2/predefined.js` stores some sight components I frequently use.
 
-- (`_lib/*` are scripts for the old version. They are deprecated and will be removed soon.)
-
 
 ## Usage
 
 (The project is developed with deno)
 
-Created sights are under `sights2` directory. Run a `.js` file to get the `.blk` code for the sight. (For examples of old v1 lib, see `sights` directory)
+Created sights are under `sights2` directory. Run a `.js` file to get the `.blk` code for the sight.
 
 `compile_sight.sh` is a sample script to compile and place a sight into the game's sight folder (`all_tanks` folder by default). Modify settings in the script before use.
 

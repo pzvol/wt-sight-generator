@@ -11,7 +11,7 @@ let sight = new Sight();
 
 // Introduction comments
 sight.addDescription(`
-An experimental design as the universal sight for 8X~16X
+An experimental design as the generic sight for 8X~16X
 with leading values for shooting APFSDS while moving
 
 Modified from "g_nrnc_hizoom_g_3Aro" but with less text information,

@@ -126,7 +126,7 @@ export const rangefinderBuild = {
 
 		let currStartY = 0;
 		for (let dist of distances) {
-			let diameter = T.calcThousandth(assumeWidth, dist);
+			let diameter = Toolbox.calcDistanceMil(assumeWidth, dist);
 			let c = new Circle({
 				segment: circleSegmentRight,
 				pos: [-(diameter / 2), currStartY],

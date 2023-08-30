@@ -11,7 +11,7 @@ let sight = new Sight();
 
 // Introduction comments
 sight.addDescription(`
-An experimental design as the universal sight for fixed 8X
+An experimental design as the generic sight for fixed 8X
 with leading values for shooting APFSDS while moving
 
 Modified from "g_nrnc_hizoom_hf_g_1Smp"
