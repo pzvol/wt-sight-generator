@@ -10,7 +10,7 @@ let sight = new Sight();
 
 // Introduction comment
 sight.addDescription(`
-Universal sight for 3X~12X with simplified target distance ticks
+Generic sight for 3X~12X with simplified target distance ticks
 `.trim());
 
 

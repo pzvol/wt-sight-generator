@@ -151,7 +151,7 @@ let init = ({
 	}
 
 	sight.add(new TextSnippet({
-		text: `ASM MOVE - ${assumedMoveSpeed.toFixed()} m/s`,
+		text: `ASM MOVE - ${assumedMoveSpeed.toFixed()} kph`,
 		align: "right",
 		pos: [134, -1.9],
 		size: 1.6
