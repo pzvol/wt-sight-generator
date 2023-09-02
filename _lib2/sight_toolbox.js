@@ -60,9 +60,42 @@ export default class Toolbox {
 	 * @param {number} end - ending number
 	 * @param {number} step - step interval between generated values
 	 */
-	static range(start, end, step = 1.0, includeEnd = false) {
+	static range(start, end, step = 1.0, {
+		includeStart = true,
+		includeEnd = false,
+		epsilon = 1e-9
+	} = {}) {
+		if (Math.abs(step) <= epsilon) {
+			throw new Error(`range function receives step=${step} while epsilon=${epsilon}`);
+		}
+
 		let result = [];
-		for (let i = start; i < end; i += step) { result.push(i); }
+
+		let i = start;
+		let iIsStartNumber = true;
+		while (true) {
+			// break conditions check
+			if (Math.abs(i - end) < epsilon) {  // i equals end
+				// decide if end num is included and break the loop
+				if (includeEnd) { result.push(i); }
+				break;
+			}
+			if (
+				(end >= start && i > end) ||  //ascending order out of range
+				(end < start && i < end)      //descending order out of range
+			) { break; }
+
+			// i is still in range
+			if (iIsStartNumber) {
+				if (includeStart) { result.push(i); }
+				i += step;
+				iIsStartNumber = false;
+			} else {
+				result.push(i);
+				i+= step;
+			}
+		}
+
 		return result;
 	}
 	/**
@@ -71,9 +104,30 @@ export default class Toolbox {
 	 * @param {number} end - ending number
 	 * @param {number} step - step interval between generated values
 	 */
-	static rangeIE(start, end, step = 1.0) {
+	static rangeIE(start, end, step = 1.0, { epsilon = 1e-9 } = {}) {
+		if (Math.abs(step) <= epsilon) {
+			throw new Error(`range function receives step=${step} while epsilon=${epsilon}`);
+		}
+
 		let result = [];
-		for (let i = start; i <= end; i += step) { result.push(i); }
+
+		let i = start;
+		while (true) {
+			// break conditions check
+			if (Math.abs(i - end) < epsilon) {  // i equals end
+				result.push(i);
+				break;
+			}
+			if (
+				(end >= start && i > end) ||  //ascending order out of range
+				(end < start && i < end)      //descending order out of range
+			) { break; }
+
+			// i is still in range
+			result.push(i);
+			i+= step;
+		}
+
 		return result;
 	}
 
@@ -102,6 +156,7 @@ export default class Toolbox {
 
 	/**
 	 * Check if a value is in a range
+	 * TODO: Apply epsilon for ends comparing
 	 * @param {number} v - checked value
 	 * @param {[number, number]} range - check value range
 	 * @param {[boolean, boolean]} includeEnds - if start/end is included
@@ -144,8 +199,8 @@ export default class Toolbox {
 		// Number below are `1 / tan(2pi / x)`, where x is the mil number in 360 deg
 		return (
 			(type === "ussr") ? ((955 * tgtWidth) / distance) :
-			(type === "nato") ? ((1019 * tgtWidth) / distance) :
-			((1000 * tgtWidth) / distance)  // "real"
+				(type === "nato") ? ((1019 * tgtWidth) / distance) :
+					((1000 * tgtWidth) / distance)  // "real"
 		);
 	}
 

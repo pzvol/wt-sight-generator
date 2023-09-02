@@ -73,8 +73,8 @@ sight.add(new Line({ from: [-0.203, 0.0], to: [-0.193, 0.0], move: true, thousan
 
 
 let init = ({
-	shellSpeed,
-	assumedMoveSpeed,
+	shellSpeed = 1730 * 3.6,
+	assumedMoveSpeed = 40,
 	horiCurve = [88, 92],
 	horiCurveWeight = 2
 } = {}) => {
@@ -112,11 +112,17 @@ let init = ({
 
 	// Sight tick info
 	sight.add(new TextSnippet({
-		text: `ASM SPD - ${assumedMoveSpeed} kph`,
+		text: `ASM MOVE - ${assumedMoveSpeed} kph`,
+		align: "right",
+		pos: [82, -1.4],
+		size: 0.9
+	}));
+	sight.add(new TextSnippet({
+		text: `ASM SHELL - ${(shellSpeed / 3.6).toFixed()} m/s`,
 		align: "right",
 		pos: [82, 1],
 		size: 0.9
-	}))
+	}));
 };
 
 

@@ -100,6 +100,7 @@ export const basic = {
 
 	scales: {
 		getCommon: ({ font = 0.8, line = 1.1 } = {}) => basicBuild.scale({ font, line }),
+		getCommonLargeFont: ({ font = 1.5, line = 1.3 } = {}) => basicBuild.scale({ font, line }),
 		getMidHighZoom: ({ font = 0.75, line = 1.2 } = {}) => basicBuild.scale({ font, line }),
 		getHighZoom: ({ font = 0.9, line = 1.5 } = {}) => basicBuild.scale({ font, line }),
 		getHighZoomSmallFont: ({ font = 0.5, line = 1.6 } = {}) => basicBuild.scale({ font, line }),

@@ -8,22 +8,22 @@ import base from "./sight_bases/base_g_d_z2z4.js";
 
 //// VEHICLE TYPES ////
 base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
-	"germ_sdkfz_234_2",
-	"germ_sdkfz_234_2_td",
-	"germ_pzkpfw_38t_Marder_III",
-	"germ_pzkpfw_38t_Marder_III_ausf_H",
-	"germ_pzkpfw_IV_ausf_F2",
-	"germ_pzkpfw_IV_ausf_G",
-	"germ_pzkpfw_IV_ausf_H",
-	"germ_pzkpfw_IV_ausf_J",
-	"germ_panzerbefelhswagen_IV_ausf_J",
+	"germ_pzkpfw_V_ausf_d_panther",
+	"germ_vk_3002m",
+
+	"germ_pzkpfw_VI_ausf_h1_tiger",
+	"germ_pzkpfw_VI_ausf_h1_tiger_animal_version",
+	"germ_pzkpfw_VI_tiger_P",
+	"germ_panzerbefelhswagen_VI_P",
+
+	"germ_pzkpfw_VI_ausf_b_tiger_IIp",
 ]);
 
 
 //// COMPILATION ////
 base.init({
 	useLooseShellDistTicks: true,
-	useTwoSideShellDistTicks: false,
+	useTwoSideShellDistTicks: true,
 	crossLineBold: 0.1,
 });
 

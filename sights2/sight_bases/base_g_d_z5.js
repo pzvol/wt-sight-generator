@@ -13,7 +13,7 @@ let sight = new Sight();
 
 // Introduction comment
 sight.addDescription(`
-Generic sight for tanks with 2X~4X. Should also be appliable for 2.5X~5X.
+Generic sight for tanks with 5X. Should also be appliable for 4X ones.
 `.trim());
 
 
@@ -29,14 +29,14 @@ let init = ({
 
 	//// BASIC SETTINGS ////
 	sight.addSettings(pd.concatAllBasics(
-		pd.basic.scales.getCommon(),
+		pd.basic.scales.getCommonLargeFont(),
 		pd.basic.colors.getGreenRed(),
-		pd.basicBuild.rgfdPos([90, -0.0145]),
-		pd.basicBuild.detectAllyPos([90, -0.04]),
-		pd.basicBuild.gunDistanceValuePos([-0.15, 0.03]),
+		pd.basicBuild.rgfdPos([90, -0.0195]),
+		pd.basicBuild.detectAllyPos([90, -0.045]),
+		pd.basicBuild.gunDistanceValuePos([-0.13, 0.032]),
 		pd.basicBuild.shellDistanceTickVars(
 			[0, 0],
-			[0.005, 0.0015],
+			[0.006, 0.002],
 			[0.005, 0]
 		),
 		pd.basic.miscVars.getCommon(),
@@ -61,27 +61,33 @@ let init = ({
 	//// SIGHT DESIGNS ////
 	let getMil = (dist) => Toolbox.calcDistanceMil(assumedTgtWidth, dist);
 
+
 	// Dot Center
-	// sight.addComment("Sight center", "circles");
-	// sight.add(new Circle({ diameter: 0.3, size: 4 }));
-	// sight.add(new Circle({ diameter: 0.6, size: 2 }));
-	// sight.addComment("Gun center", "circles");
-	// sight.add(new Line({ from: [-0.5, 0], to: [0.5, 0], move: true }));
-	// sight.add(new Line({ from: [0, -0.5], to: [0, 0.5], move: true }));
+	sight.addComment("Sight center", "circles");
+	sight.add(new Circle({ diameter: 0.4, size: 4 }));
+	sight.add(new Circle({ diameter: 0.8, size: 2 }));
+	sight.addComment("Gun center", "circles");
+	for (let padding of Toolbox.rangeIE(-0.05, 0.05, 0.05)) {
+		sight.add(new Line({ from: [-0.45, padding], to: [0.45, padding], move: true }));
+		sight.add(new Line({ from: [padding, -0.45], to: [padding, 0.45], move: true }));
+	}
 
 	// OR, Arrow Center
-	sight.addComment("Sight center arrow and bold", "lines");
-	for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.8, 0.1)) {
-		sight.add(new Line({
-			from: [0, CenterBoldPadY], to: [0.9, 2.25]
-		}).move([0, 0.05]).withMirrored("x"));
-		// ^ Moving down a little bit to let the arrow vertex stays the center
-		//   with being less effected by line widths
-	}
-	sight.addComment("Gun center", "lines");
-	sight.add(new Line({
-		from: [0.004, 0], to: [0.007, 0], move: true, thousandth: false
-	}).withMirrored("xy"));  // y mirroring for bold
+	// sight.addComment("Sight center arrow and bold", "lines");
+	// for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.8, 0.1)) {
+	// 	sight.add(new Line({
+	// 		from: [0, CenterBoldPadY], to: [0.6, 1.5]
+	// 	}).move([0, 0.05]).withMirrored("x"));
+	// 	// ^ Moving down a little bit to let the arrow vertex stays the center
+	// 	//   with being less effected by line widths
+	// }
+	// sight.addComment("Gun center", "lines");
+	// sight.add(new Line({
+	// 	from: [0.004, 0], to: [0.007, 0], move: true, thousandth: false
+	// }).withMirrored("xy"));  // y mirroring for bold
+	// sight.add(new Line({
+	// 	from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
+	// }));  // center dot
 
 
 	sight.addComment("Sight cross", "lines");
@@ -97,7 +103,7 @@ let init = ({
 		sight.addComment("Cross bold", "lines");
 		// horizontal
 		sight.add(new Line({
-			from: [450, crossLineBold], to: [25, crossLineBold]
+			from: [450, crossLineBold], to: [35, crossLineBold]
 		}).withMirrored("xy"));
 		// vertical lower
 		sight.add(new Line({
@@ -118,28 +124,36 @@ let init = ({
 	Toolbox.repeat(2, () => {
 		sight.add(new TextSnippet({
 			text: "2", align: "right",
-			pos: [ (getMil(200) / 2) + 0.75, 2],
+			pos: [ (getMil(200) / 2) + 0.75, 1.7],
 			size: rangefinderHoriTextSize
 		}));
 	});
 	sight.add(new Line({
 		from: [getMil(200) / 2, 0],
-		to: [getMil(200) / 2, 2]
+		to: [getMil(200) / 2, 1.75]
+	}).withMirrored("x"));
+	// 400m
+	sight.add(new Line({
+		from: [getMil(400) / 2, -0.75],
+		to: [getMil(400) / 2, 0]
 	}).withMirrored("x"));
 
 
 	sight.addComment("Rangefinder", ["lines", "texts"]);
-	sight.add(rgfd.default.getCommon([getMil(200)/2, -6.25], {
+	sight.add(rgfd.default.getCommon([getMil(200)/2, -7.5], {
 		mirrorY: true,
 		showMiddleLine: true,
 		textSize: rangefinderVertTextSize,
+		tickLength: 1.5,
+		tickInterval: 0.75,
+		tickDashWidth: 0.6
 	}));
 
 
 	sight.addComment("Binocular calibration reference", ["lines", "texts"]);
 	// Multiplier for converting binocular's USSR mil to sight's real mil
 	let milMul = Toolbox.MIL.ussr.value / Toolbox.MIL.real.value;
-	let binoCaliPos = [getMil(400), 20];
+	let binoCaliPos = [getMil(400), 15];
 	let binoCaliEles = [
 		// Middle line
 		new Line({ from: [0, -3], to: [0, 3] }),
@@ -156,10 +170,10 @@ let init = ({
 		// 1600m size
 		new Line({ from: [getMil(1600), 1.75], to: [getMil(1600), 1.25] }),
 
-		new TextSnippet({ text: "6", pos: [5 * milMul, -2.2], size: 0.55 }),  // Actually around 630m
-		new TextSnippet({ text: "8", pos: [getMil(800), 4.8], size: 0.55 }),
-		new TextSnippet({ text: "12", pos: [getMil(1200), -1.8], size: 0.4 }),
-		new TextSnippet({ text: "16", pos: [getMil(1200)/2, 4.6], size: 0.4 }),  // Not aligned to 1600 for visibility
+		new TextSnippet({ text: "6", pos: [5 * milMul, -1.6], size: 0.55 }),  // Actually around 630m
+		new TextSnippet({ text: "8", pos: [getMil(800), 4.4], size: 0.55 }),
+		new TextSnippet({ text: "12", pos: [getMil(1200), -1.4], size: 0.45 }),
+		new TextSnippet({ text: "16", pos: [getMil(1600) / 2, 4.2], size: 0.45 }),  // Not aligned to 1600 for visibility
 	];
 	// Move to position and append elements
 	for (let ele of binoCaliEles) { ele.move(binoCaliPos); }
