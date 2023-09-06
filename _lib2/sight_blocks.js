@@ -115,6 +115,15 @@ export class MatchVehicleClassBlock extends SightBlock {
 	}
 
 	/**
+	 * Clear all included/excluded classes
+	 */
+	clear() {
+		this.includedClasses.length = 0;
+		this.excludedClasses.length = 0;
+		return this;
+	}
+
+	/**
 	 * Sight matches specified vehicle type(s)
 	 * @param {string|string[]} c
 	 */

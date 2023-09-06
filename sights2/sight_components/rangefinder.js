@@ -192,10 +192,11 @@ export default {
 		tickInterval = 0.25,
 		tickDashWidth = 0.35,
 		textSize = 0.65,
-		textSpace = 0.235
+		textSpace = 0.235,
+		textPosYAdjust = -0.1
 	} = {}) => rangefinderBuild.linedVertical([posX, posY], {
 		showMiddleLine, mirrorY, assumeWidth, distances, distancesDashed, distancesLined,
-		tickLength, tickInterval, tickDashWidth, textSize, textSpace
+		tickLength, tickInterval, tickDashWidth, textSize, textSpace, textPosYAdjust
 	}),
 
 	getCircledMidHighZoom: ([posX, posY] = [0, 0], {
