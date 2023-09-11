@@ -22,6 +22,9 @@ base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 base.init({
 	useLooseShellDistTicks: true,
 	useTwoSideShellDistTicks: true,
+	showCompleteRangefinder: true,
+	showBinocularReference: true,
+	showTargetAngleLegend: true,
 	crossLineBold: 0.12,
 });
 

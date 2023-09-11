@@ -178,4 +178,8 @@ drawArrow();
 
 
 //// OUTPUT ////
-sight.printCode();
+export default { sightObj: sight };
+if (  // NodeJS/Deno main module check
+	(typeof require !== "undefined" && require.main === module) ||
+	(typeof import.meta.main !== "undefined" && import.meta.main === true)
+) { sight.printCode(); }

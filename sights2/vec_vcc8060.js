@@ -9,6 +9,12 @@ import * as pd from "../_lib2/predefined.js";
 let sight = new Sight();
 
 
+// Introduction comment
+sight.addDescription(`
+Sight for VCC-80/60 shooting air targets
+`.trim());
+
+
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
 	pd.basic.scales.getHighZoom(),
@@ -32,112 +38,128 @@ sight.addShellDistance([
 ]);
 
 
+
 //// SIGHT DESIGNS ////
+let gndTgtWidth = 3.3;  // m
+let gndShellSpd = 1620 * 3.6;  // m/s, APFSDS
+let gndMoveSpd = 40;  // kph
+
+let airShellSpd = 1000 * 3.6;  // m/s, HE-VT
+let airTgtSpdMain = 500;  // kph
+
+let getGndMil = (dist) => Toolbox.calcDistanceMil(gndTgtWidth, dist);
+let getGndMilHalf = (dist) => getGndMil(dist) / 2;
+let getGndLdnMil = (aa) => Toolbox.calcLeadingMil(gndShellSpd, gndMoveSpd, aa);
+let getAirLdnMil = (aa) => Toolbox.calcLeadingMil(airShellSpd, airTgtSpdMain, aa);
+
+
 sight.lines.addComment("Gun center");
+Toolbox.repeat(2, () => {
+	let crossRadius = 0.0015;
+	sight.add(new Line({
+		from: [-crossRadius, 0], to: [crossRadius, 0],
+		move: true, thousandth: false
+	}));
+	sight.add(new Line({
+		from: [0, -crossRadius], to: [0, crossRadius],
+		move: true, thousandth: false
+	}));
+});
 sight.add(new Line({
-	from: [-0.002, 0], to: [0.002, 0], move: true, thousandth: false
-}).withExtra(Line.extraHori));
-sight.add(new Line({ from: [0, 0], to: [0, 0.002], move: true, thousandth: false }));
+	from: [getGndMilHalf(1600), 0],
+	to: [getGndMilHalf(1600) + 0.15, 0],
+	move: true
+}).withMirrored("x"))
 
 
-sight.circles.addComment("Sight center dot");
+sight.addComment("Sight center dot", "circles");
 sight.add(new Circle({ diameter: 0.1, size: 4 }));
 sight.add(new Circle({ diameter: 0.2, size: 2 }));
 
-sight.addComment("Center circle", ["circles", "lines"]);
+
+sight.addComment("Sight center circle", ["circles", "lines"]);
 sight.add(new Circle({
-	segment: [45, 160], diameter: 2.0625, size: 2.4
-}).withExtra(Circle.extraSegHori));
-sight.add(new Line({ from: [1.03125, 0], to: [2.0625, 0] }).withExtra(Line.extraHori));
+	segment: [45, 160],
+	diameter: getGndMil(1600),
+	size: 2.4
+}).withMirroredSeg("x"));
+let innerHoriLine = new Line({
+	from: [getGndMilHalf(1600), 0], to: [getGndLdnMil(0.25), 0]
+}).withMirrored("xy");  // "y" for bold
+sight.add(innerHoriLine);
 
 
-let rgfdAssumeTgtWidth = 3.3;
-let rgfdHalfMils = {
-	d100: Toolbox.calcDistanceMil(rgfdAssumeTgtWidth, 100) / 2,
-	d200: Toolbox.calcDistanceMil(rgfdAssumeTgtWidth, 200) / 2,
-	d400: Toolbox.calcDistanceMil(rgfdAssumeTgtWidth, 400) / 2,
-};
+sight.addComment("Sight center cross", ["lines"]);
+let horiLine = new Line({ from: [getGndLdnMil(0.5), 0], to: [450, 0] }).withMirrored("x")
+let vertLine = new Line({ from: [0, -1.5], to: [0, -450] });
+sight.add(horiLine).add(vertLine);
+sight.add(horiLine).add(vertLine);  // Repeat for bold
 
-sight.addComment("Rangefinder on the horizon", ["texts", "circles"]);
-// 100m
+
+sight.addComment("Ground leading values while moving", ["texts", "circles"]);
+// 4/4
 sight.add(new TextSnippet({
-	text: "1", pos: [rgfdHalfMils.d100, -0.25], size: 1.2
-}).withExtra(TextSnippet.extraHori));
-// 200m
-sight.add(new TextSnippet({
-	text: "2", pos: [rgfdHalfMils.d200, -0.15], size: 1
-}).withExtra(TextSnippet.extraHori));
-// 400m
+	text: gndMoveSpd.toString(), pos: [getGndLdnMil(1), -0.08], size: 0.65
+}).withMirrored("x"));
+horiLine.addBreakAtX(getGndLdnMil(1), 1.2);
+// 3/4
 sight.add(new Circle({
-	segment: [80, 100], diameter: rgfdHalfMils.d400 * 2, size: 1.6
-}).withExtra(Circle.extraSegHori));
+	segment: [88, 92],
+	diameter: getGndLdnMil(0.75) * 2, size: 2.4
+}).withMirroredSeg("x"));
+horiLine.addBreakAtX(getGndLdnMil(0.75), 0.4);
+// 2/4
 sight.add(new TextSnippet({
-	text: "4", pos: [rgfdHalfMils.d400 + 0.475, -0.5], size: 0.6
-}).withExtra(TextSnippet.extraHori));
+	text: "2", pos: [getGndLdnMil(0.5), -0.06], size: 0.6
+}).withMirrored("x"));
+horiLine.addBreakAtX(getGndLdnMil(0.5), 0.6);
+// 1/4
+sight.add(new Circle({
+	segment: [87, 93],
+	diameter: getGndLdnMil(0.25) * 2, size: 2.4
+}).withMirroredSeg("x"));
 
 
-sight.lines.addComment("Sight cross").addComment("vertical");
-sight.add(new Line({ from: [0, -1.5], to: [0, -450] }));
-sight.lines.addComment("horizontal");
-sight.add(new Line({ from: [rgfdHalfMils.d400, 0], to: [450, 0] }).
-	withExtra(Line.extraHori).
-	addBreakAtX(rgfdHalfMils.d100, 1).
-	addBreakAtX(rgfdHalfMils.d200, 1)
-);
+sight.addComment("Air leading circles", ["texts", "circles"]);
+// 1/4
+sight.add(new Circle({
+	segment: [1, 89],
+	diameter: getAirLdnMil(0.25) * 2,
+	size: 2.4
+}).withMirroredSeg("xy"));
+sight.add(new TextSnippet({
+	text: `1/4 - ${airTgtSpdMain} kph`,
+	pos: [getAirLdnMil(0.25) + 0.5, 1.2],
+	align: "right", size: 1.2
+}));
+sight.add(new TextSnippet({
+	text: `2/4 - ${airTgtSpdMain/2} kph`,
+	pos: [getAirLdnMil(0.25) + 0.5, -1.5],
+	align: "right", size: 0.75
+}));
+// 2/4
+sight.add(new Circle({
+	segment: [1, 89.5],
+	diameter: getAirLdnMil(0.5) * 2,
+	size: 2.4
+}).withMirroredSeg("xy"));
+sight.add(new TextSnippet({
+	text: `2/4 - ${airTgtSpdMain} kph`,
+	pos: [getAirLdnMil(0.5) - 0.5, 1.2],
+	align: "left", size: 1.2
+}));
+sight.add(new TextSnippet({
+	text: `4/4 - ${airTgtSpdMain/2} kph`,
+	pos: [getAirLdnMil(0.5) - 0.5, -1.5],
+	align: "left", size: 0.75
+}));
 
 
-sight.addComment("Air leading circles for heli", ["circles", "texts"]);
-let airShellSpd = 1000 * 3.6;  // mps
-let airTgtSpdMain = 200;  // kph
-let getLdMil = (aspectAngle, tgtSpd = airTgtSpdMain) => Toolbox.calcLeadingMil(
-	airShellSpd, tgtSpd, aspectAngle, "real"
-);
-let ld = {
-	main: [
-		{ aa: 0.75, mil: getLdMil(0.75), shown: "3/4" },
-	],
-	sub: [
-		{ aa: 1.0, mil: getLdMil(1.0), shown: "4/4"},
-		{ aa: 0.5, mil: getLdMil(0.5), shown: "2/4" },
-	]
-};
-
-sight.circles.addComment("main");
-for (let info of ld.main) {
-	sight.add([
-		new Circle({
-			diameter: info.mil * 2, size: 2.4, segment: [-89, 89]
-		}),
-		new Circle({ diameter: info.mil * 2, size: 2.4, segment: [91, 179] }).withExtra(Circle.extraSegHori),
-	]);
-	if (info.shown) {
-		sight.add([
-			new TextSnippet({
-				text: `${info.shown}  ${airTgtSpdMain}kph`,
-				align: "right", pos: [info.mil + 0.5, 1], size: 1.0
-			})
-		]);
-	}
-}
-for (let info of ld.sub) {
-	sight.add([
-		new Circle({
-			diameter: info.mil * 2, size: 1.2, segment: [20, 70]
-		}).withExtra(Circle.extraSegFourQuad),
-		new Circle({
-			diameter: info.mil * 2, size: 2.4, segment: [89, 91]
-		}).withExtra(Circle.extraSegHori),
-	]);
-	if (info.shown) {
-		sight.add([
-			new TextSnippet({
-				text: `${info.shown}`,
-				align: "right", pos: [info.mil + 0.5, 1], size: 1.0
-			})
-		]);
-	}
-}
 
 
 //// OUTPUT ////
-sight.printCode();
+export default { sightObj: sight };
+if (  // NodeJS/Deno main module check
+	(typeof require !== "undefined" && require.main === module) ||
+	(typeof import.meta.main !== "undefined" && import.meta.main === true)
+) { sight.printCode(); }

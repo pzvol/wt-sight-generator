@@ -162,17 +162,17 @@
 
 	"Add a new circle": {
 		"prefix": "new-circle",
-		"body": "new Circle({ $0 })"
+		"body": "new Circle({$0})"
 	},
 
 	"Add a new line": {
 		"prefix": "new-line",
-		"body": "new Line({ from: [$1], to: [$2] })"
+		"body": "new Line({from: [$1], to: [$2]})"
 	},
 
 	"Add a new text": {
 		"prefix": "new-text",
-		"body": "new TextSnippet({ text: \"$1\", pos: [$2], size: $3 })"
+		"body": "new TextSnippet({text: \"$1\", pos: [$2], size: $3})"
 	}
 
 }

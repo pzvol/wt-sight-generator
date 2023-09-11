@@ -5,7 +5,8 @@ import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
 
-import * as rgfd from "../sight_components/rangefinder.js"
+import rgfd from "../sight_components/rangefinder.js"
+import tgtLegend from "../sight_components/target_legend.js"
 
 
 let sight = new Sight();
@@ -13,14 +14,20 @@ let sight = new Sight();
 
 // Introduction comment
 sight.addDescription(`
-Generic sight for tanks with 2X~4X. Should also be appliable for 2.5X~5X.
+Generic sight for tanks with 2X~4X.
 `.trim());
 
 
 let init = ({
 	useLooseShellDistTicks = false,
 	useTwoSideShellDistTicks = false,
+
+	showCompleteRangefinder = true,
+	showBinocularReference = true,
+	showTargetAngleLegend = true,
+
 	assumedTgtWidth = 3.3,
+	assumedTgtLength = 6.6,
 
 	crossLineBold = 0,  // Use 0 to disable the bold
 	rangefinderHoriTextSize = 0.6,
@@ -128,42 +135,57 @@ let init = ({
 	}).withMirrored("x"));
 
 
-	sight.addComment("Rangefinder", ["lines", "texts"]);
-	sight.add(rgfd.default.getCommon([getMil(200)/2, -6.25], {
-		mirrorY: true,
-		showMiddleLine: true,
-		textSize: rangefinderVertTextSize,
-	}));
+	if (showCompleteRangefinder) {
+		sight.addComment("Rangefinder", ["lines", "texts"]);
+		sight.add(rgfd.getCommon([getMil(200)/2, -6.25], {
+			mirrorY: true,
+			showMiddleLine: true,
+			textSize: rangefinderVertTextSize,
+		}));
+	}
 
 
-	sight.addComment("Binocular calibration reference", ["lines", "texts"]);
-	// Multiplier for converting binocular's USSR mil to sight's real mil
-	let milMul = Toolbox.MIL.ussr.value / Toolbox.MIL.real.value;
-	let binoCaliPos = [getMil(400), 20];
-	let binoCaliEles = [
-		// Middle line
-		new Line({ from: [0, -3], to: [0, 3] }),
+	if (showBinocularReference) {
+		sight.addComment("Binocular calibration reference", ["lines", "texts"]);
+		// Multiplier for converting binocular's USSR mil to sight's real mil
+		let milMul = Toolbox.MIL.ussr.value / Toolbox.MIL.real.value;
+		let binoCaliPos = [getMil(400), 20];
+		let binoCaliEles = [
+			// Middle line
+			new Line({ from: [0, -3], to: [0, 3] }),
 
-		// 1 tick (= 5 USSR mil) / around 600m
-		new Line({ from: [5 * milMul, 3], to: [5 * milMul, 0] }),
-		new Line({ from: [5 * milMul, 3], to: [0, 3] }),
-		new Line({ from: [5 * milMul, 0], to: [0, 0] }),
-		// 800m size
-		new Line({ from: [getMil(800), 2], to: [getMil(800), 1] }),
-		// 1200m size
-		new Line({ from: [getMil(1200), 3], to: [getMil(1200), 2] }),
-		new Line({ from: [getMil(1200), 1], to: [getMil(1200), 0] }),
-		// 1600m size
-		new Line({ from: [getMil(1600), 1.75], to: [getMil(1600), 1.25] }),
+			// 1 tick (= 5 USSR mil) / around 600m
+			new Line({ from: [5 * milMul, 3], to: [5 * milMul, 0] }),
+			new Line({ from: [5 * milMul, 3], to: [0, 3] }),
+			new Line({ from: [5 * milMul, 0], to: [0, 0] }),
+			// 800m size
+			new Line({ from: [getMil(800), 2], to: [getMil(800), 1] }),
+			// 1200m size
+			new Line({ from: [getMil(1200), 3], to: [getMil(1200), 2] }),
+			new Line({ from: [getMil(1200), 1], to: [getMil(1200), 0] }),
+			// 1600m size
+			new Line({ from: [getMil(1600), 1.75], to: [getMil(1600), 1.25] }),
 
-		new TextSnippet({ text: "6", pos: [5 * milMul, -2.2], size: 0.55 }),  // Actually around 630m
-		new TextSnippet({ text: "8", pos: [getMil(800), 4.8], size: 0.55 }),
-		new TextSnippet({ text: "12", pos: [getMil(1200), -1.8], size: 0.4 }),
-		new TextSnippet({ text: "16", pos: [getMil(1200)/2, 4.6], size: 0.4 }),  // Not aligned to 1600 for visibility
-	];
-	// Move to position and append elements
-	for (let ele of binoCaliEles) { ele.move(binoCaliPos); }
-	sight.add(binoCaliEles);
+			new TextSnippet({ text: "6", pos: [5 * milMul, -2.2], size: 0.55 }),  // Actually around 630m
+			new TextSnippet({ text: "8", pos: [getMil(800), 4.8], size: 0.55 }),
+			new TextSnippet({ text: "12", pos: [getMil(1200), -1.8], size: 0.4 }),
+			new TextSnippet({ text: "16", pos: [getMil(1200)/2, 4.6], size: 0.4 }),  // Not aligned to 1600 for visibility
+		];
+		// Move to position and append elements
+		for (let ele of binoCaliEles) { ele.move(binoCaliPos); }
+		sight.add(binoCaliEles);
+	}
+
+	if (showTargetAngleLegend) {
+		sight.addComment("Target angle legend", ["lines", "texts"]);
+		sight.add(tgtLegend.getAngleLegendGround({
+			pos: [getMil(400), 42],
+			assumedTargetWidth: assumedTgtWidth,
+			assumedTargetLength: assumedTgtLength,
+			assumedTargetHeight: 1,
+			textSize: 0.5
+		}));
+	}
 };
 
 
