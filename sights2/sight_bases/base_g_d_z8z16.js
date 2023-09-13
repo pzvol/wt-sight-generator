@@ -5,7 +5,8 @@ import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
 
-import * as rgfd from "../sight_components/rangefinder.js"
+import rgfd from "../sight_components/rangefinder.js"
+import binoCali from "../sight_components/binocular_calibration.js"
 
 
 let sight = new Sight();
@@ -137,40 +138,14 @@ let init = ({
 
 	// Rangefinder
 	Toolbox.repeat(2, () => {
-		sight.add(rgfd.default.getHighZoom([getMil(800), 2.25], {
+		sight.add(rgfd.getHighZoom([getMil(800), 2.25], {
 			textSize: 0.6,
 			textPosYAdjust: -0.08
 		}));
 	})
 
 
-	// Binocular calibration reference
-	// Multiplier for converting binocular's USSR mil to sight's real mil
-	let milMul = Toolbox.MIL.ussr.value / Toolbox.MIL.real.value;
-	let binoCaliPos = [getMil(800), 10];
-	let binoCaliEles = [
-		// Middle line
-		new Line({ from: [0, -1], to: [0, 1] }),
-
-		// 1 tick (= 5 USSR mil) / around 600m
-		new Line({ from: [5 * milMul, 1], to: [5 * milMul, 0] }),
-		new Line({ from: [5 * milMul, 1], to: [0, 1] }),
-		new Line({ from: [5 * milMul, 0], to: [0, 0] }),
-		// 800m size
-		new Line({ from: [getMil(800), 0.7], to: [getMil(800), 0.3] }),
-		// 1200m size / about 0.5 tick
-		new Line({ from: [getMil(1200), 1], to: [getMil(1200), 0.7] }),
-		new Line({ from: [getMil(1200), 0.3], to: [getMil(1200), 0] }),
-		// 1600m size
-		new Line({ from: [getMil(1600), 0.7], to: [getMil(1600), 0.3] }),
-
-		new TextSnippet({ text: "6", pos: [5 * milMul, -0.6], size: 0.6 }),  // Actually around 630m
-		new TextSnippet({ text: "8", pos: [getMil(800), 1.4], size: 0.5 }),
-		new TextSnippet({ text: "12", pos: [getMil(1200), -0.6], size: 0.6 }),
-		new TextSnippet({ text: "16", pos: [getMil(1600), 1.4], size: 0.5 }),  // Not aligned to 1600 for visibility
-	];
-	// Move to position and append elements
-	for (let ele of binoCaliEles) { ele.move(binoCaliPos); }
+	let binoCaliEles = binoCali.getHighZoom([getMil(800), 10]);
 	sight.add(binoCaliEles);
 	sight.add(binoCaliEles.filter((ele) => (ele instanceof Line)));
 };
