@@ -68,6 +68,14 @@ export class BasicSettings {
 	}
 
 	/**
+	 * Clear all setting lines
+	 */
+	clear() {
+		this.settingLines.length = 0;
+		return this;
+	}
+
+	/**
 	 * @param {string|BlkVariable|BlkComment|(string|BlkVariable|BlkComment)[]} input
 	 */
 	add(input) {
@@ -170,6 +178,14 @@ export class HoriThousandthsBlock extends SightBlock {
 	}
 
 	/**
+	 * Clear all ticks
+	 */
+	clear() {
+		this.thousandthLines.length = 0;
+		return this;
+	}
+
+	/**
 	 * Adds new thousandth tick(s)
 	 * @param {{thousandth: number, shown?: number}|{thousandth: number, shown?: number}[]} input - added tick(s).
 	 *        set `shown` to 0 or skip the key for not display a value
@@ -214,6 +230,14 @@ export class ShellDistancesBlock extends SightBlock {
 		this.distLines = [];
 
 		this.settings = { autoAddMax, maxDist };
+	}
+
+	/**
+	 * Clear all ticks
+	 */
+	clear() {
+		this.distLines.length = 0;
+		return this;
 	}
 
 	/**
@@ -269,6 +293,14 @@ export class CirclesBlock extends SightBlock {
 	}
 
 	/**
+	 * Clear all circle elements
+	 */
+	clear() {
+		this.blockLines.length = 0;
+		return this;
+	}
+
+	/**
 	 * Add one/multiple new circles
 	 * @param {string|Circle|(string|Circle)[]} c
 	 */
@@ -297,6 +329,14 @@ export class LinesBlock extends SightBlock {
 		super("drawLines");
 		/** @type {(string|Line|BlkComment)[]} */
 		this.blockLines = [];
+	}
+
+	/**
+	 * Clear all line elements
+	 */
+	clear() {
+		this.blockLines.length = 0;
+		return this;
 	}
 
 	/**
@@ -331,6 +371,14 @@ export class TextsBlock extends SightBlock {
 	}
 
 	/**
+	 * Clear all text elements
+	 */
+	clear() {
+		this.blockLines.length = 0;
+		return this;
+	}
+
+	/**
 	 * Add one/multiple new texts
 	 * @param {string|TextSnippet|(string|TextSnippet)[]} t
 	 */
@@ -359,6 +407,14 @@ export class QuadsBlock extends SightBlock {
 		super("drawQuads");
 		/** @type {(string|Quad|BlkComment)[]} */
 		this.blockLines = [];
+	}
+
+	/**
+	 * Clear all quad elements
+	 */
+	clear() {
+		this.blockLines.length = 0;
+		return this;
 	}
 
 	/**
