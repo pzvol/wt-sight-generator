@@ -147,10 +147,6 @@ for (let t of [
 	// Tick on the horizon
 	sight.add(new Circle({ segment:[90, 92], diameter: pos[0] * 2, size: 2.4 }).withMirroredSeg("x"));
 }
-// Rf line on the horizon
-sight.add(new Line({ from: [getHalfWidthMil(100), 0], to: [getHalfWidthMil(400), 0] }).
-	withMirrored("xy").addBreakAtX(getHalfWidthMil(200), 0.6)
-);
 
 
 sight.lines.addComment("Center position prompt vertical lower line");

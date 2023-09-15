@@ -19,8 +19,8 @@ let shellInfo = {
 	apfsds: { name: "APFSDS", spd: 1385 * 3.6 },
 }
 
-let airShellMain = shellInfo.he;
-let airShellSub = shellInfo.apfsds;
+let airShellMain = shellInfo.apfsds;
+let airShellSub = shellInfo.he;
 let airTgtSpdMain = 500;  // kph
 let getAirLdnMil = (aa) => Toolbox.calcLeadingMil(airShellMain.spd, airTgtSpdMain, aa);
 let getAirLdnMilSub = (aa) => Toolbox.calcLeadingMil(airShellSub.spd, airTgtSpdMain, aa);
@@ -30,7 +30,7 @@ let sin40 = Math.sin(Toolbox.degToRad(40));
 
 // Air leading circles
 // 4/4
-for (let segment of [ [20, 39], [41, 90-20], [90+20, 180-20],]) {
+for (let segment of [ [25, 39], [41, 90-25], [90+25, 180-25],]) {
 	base.sightObj.add(new Circle({
 		segment: segment, diameter: getAirLdnMil(1) * 2, size: 4.8
 	}).withMirroredSeg("x"));
@@ -47,7 +47,7 @@ base.sightObj.add(new TextSnippet({
 	pos: [getAirLdnMilSub(1) * sin40 + 3, getAirLdnMilSub(1) * cos40], size: 1.6
 }));
 // 2/4
-for (let segment of [ [20, 38], [42, 90-20], [90+20, 180-20], ]) {
+for (let segment of [ [25, 38], [42, 90-25], [90+25, 180-25], ]) {
 	base.sightObj.add(new Circle({
 		segment: segment,
 		diameter: getAirLdnMil(0.5) * 2,
@@ -60,7 +60,7 @@ base.sightObj.add(new TextSnippet({
 	size: 2
 }));
 base.sightObj.add(new Circle({
-	segment: [36, 44], diameter: getAirLdnMilSub(0.5) * 2, size: 4.8
+	segment: [36, 44], diameter: getAirLdnMilSub(0.5) * 2, size: 3
 }));
 
 

@@ -20,9 +20,9 @@ Generic sight for tanks with 4X~12X.
 sight.addSettings(pd.concatAllBasics(
 	pd.basic.scales.getHighZoomSmallFont({ line: 1.6 }),
 	pd.basic.colors.getGreenRed(),
-	pd.basicBuild.rgfdPos([135, -0.01725]),
-	pd.basicBuild.detectAllyPos([135, -0.045]),
-	pd.basicBuild.gunDistanceValuePos([-0.177, 0.035]),
+	pd.basicBuild.rgfdPos([125, -0.01725]),
+	pd.basicBuild.detectAllyPos([125, -0.045]),
+	pd.basicBuild.gunDistanceValuePos([-0.17, 0.035]),
 	pd.basicBuild.shellDistanceTickVars(
 		[0, 0],
 		[0.007, 0.003],

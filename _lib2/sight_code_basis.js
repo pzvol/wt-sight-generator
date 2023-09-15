@@ -88,7 +88,7 @@ export class BlkVariable {
 			for (let v of this.value) { valueRounded.push(Toolbox.round(v, SETTINGS.NUM_DIGIT)); }
 			valueOut = valueRounded.join(", ");
 		} else {
-			console.warn(`WARN: Unidentified sight variable type from '${this.name}'`);
+			throw new Error(`ERROR: Unidentified sight variable type from '${this.name}'`);
 		}
 
 		return `${this.name}:${typeOut} = ${valueOut}`;
