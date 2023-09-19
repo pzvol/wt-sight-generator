@@ -1,6 +1,6 @@
 // SCRIPT_COMPILE_TO=germ_flakpanzer_IV_Wirbelwind
 
-import base from "./sight_bases/base_aa_lc_cmn_r.js";
+import base from "./sight_bases/base_aa_lc_z2z4.js";
 
 // VEHICLE SPECIFIC PATH USED, SKIPPED TYPE MATCH DEF
 

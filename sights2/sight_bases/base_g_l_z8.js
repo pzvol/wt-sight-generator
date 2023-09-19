@@ -19,7 +19,9 @@ Modified from "base_g_l_z8z16" and "g_nrnc_hizoom_hf_g_1Smp"
 
 let init = ({
 	assumedMoveSpeed = 55,
-	shellSpeed = 1650 * 3.6
+	shellSpeed = 1650 * 3.6,
+
+	promptCurveAA = 0.5
 } = {}) => {
 
 	//// BASIC SETTINGS ////
@@ -64,7 +66,6 @@ let init = ({
 
 
 	let centerArrowDeg = 40;
-	let promptCurveAA = 0.5;
 
 	sight.lines.addComment("Center arrow line and bolds");
 	let arrowLineBasis = new Line({
