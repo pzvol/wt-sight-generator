@@ -205,6 +205,23 @@ export default class Toolbox {
 	}
 
 	/**
+	 * Calculate the distance of a target with given target width and mil.
+	 *
+	 * Basically a copy-paste of `calcDistanceMil` with their equation for calculation.
+	 *
+	 * Thousandth value is under "real" standard (1/6283) by default,
+	 * where 1 mil is for a 1m object on 1000m ( arctan(1/1000) )
+	 * @param {"ussr"|"nato"|"real"} type - (default `"real"`) Thousandth (mil) type
+	 */
+	static calcDistanceOfMil(tgtWidth, mil, type = "real") {
+		return (
+			(type === "ussr") ? ((955 * tgtWidth) / mil) :
+				(type === "nato") ? ((1019 * tgtWidth) / mil) :
+					((1000 * tgtWidth) / mil)  // "real"
+		)
+	}
+
+	/**
 	 * Calcuate degree value (in thousandth) for shooting of given target with a specific speed
 	 *
 	 * @param {number} shellSpeed - shell speed, should have the same unit as target speed

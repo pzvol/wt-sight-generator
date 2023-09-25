@@ -78,6 +78,95 @@ export default {
 		return elements;
 	},
 
+	/** for common zoom size, but larger and with more details */
+	getCommon2([posX, posY], {
+		mirrorX = false,
+		drawMiddleLine = true,
+		distValueDigit = 0,
+
+		milScale = 2,
+		quadHeight = 3,
+		tickMainHalfLen = 0.8,
+		tickSubLen = 1,
+
+		upperTextSize = 0.5,
+		upperTextPosY = -2,
+		lowerTextSize = 0.45,
+		lowerTextPosY = 1.6,
+
+	} = {}) {
+		let assumedTgtWidth = 3.3;
+		let getDistMil = (dist) => Toolbox.calcDistanceMil(assumedTgtWidth, dist);
+		let getDistOfMil = (mil) => Toolbox.calcDistanceOfMil(assumedTgtWidth, mil);
+
+		let elements = [];
+
+		if (drawMiddleLine) {
+			elements.push(new Line({ from: [0, -quadHeight], to: [0, quadHeight] }));
+		}
+
+		elements.push(
+			// 2 binocular ticks and the whole quad (= 10 USSR mil)
+			new Line({ from: [10 * MUL_U2R * milScale, quadHeight], to: [10 * MUL_U2R * milScale, 0] }),
+			new Line({ from: [10 * MUL_U2R * milScale, quadHeight], to: [0, quadHeight] }),
+			new Line({ from: [10 * MUL_U2R * milScale, 0], to: [0, 0] }),
+			new TextSnippet({
+				text: (getDistOfMil(10 * MUL_U2R) / 100).toFixed(distValueDigit),
+				pos: [10 * MUL_U2R * milScale, upperTextPosY],
+				size: upperTextSize
+			}),
+			// 1 binocular tick (= 5 USSR mil)
+			new Line({ from: [5 * MUL_U2R * milScale, quadHeight], to: [5 * MUL_U2R * milScale, 0] }),
+			new TextSnippet({
+				text: (getDistOfMil(5 * MUL_U2R) / 100).toFixed(distValueDigit),
+				pos: [5 * MUL_U2R * milScale, upperTextPosY],
+				size: upperTextSize
+			}),
+		)
+
+		// 0.5 bino tick (= 2.5 USSR mil)
+		// 1.5 bino tick (= 7.5 USSR mil)
+		for (let binoMil of [2.5, 7.5]) {
+			elements.push(
+				new Line({
+					from: [binoMil * MUL_U2R * milScale, quadHeight],
+					to: [binoMil * MUL_U2R * milScale, quadHeight - tickMainHalfLen]
+				}),
+				new Line({
+					from: [binoMil * MUL_U2R * milScale, tickMainHalfLen],
+					to: [binoMil * MUL_U2R * milScale, 0]
+				}),
+				new TextSnippet({
+					text: (getDistOfMil(binoMil * MUL_U2R) / 100).toFixed(distValueDigit),
+					pos: [binoMil * MUL_U2R * milScale, upperTextPosY],
+					size: upperTextSize
+				}),
+			)
+		}
+
+		// 400, 500, 800, 1600m
+		for (let dist of [400, 500, 800, 1600]) {
+			elements.push(
+				new Line({
+					from: [getDistMil(dist) * milScale, (quadHeight - tickSubLen) / 2],
+					to: [getDistMil(dist) * milScale, (quadHeight + tickSubLen) / 2]
+				}),
+				new TextSnippet({
+					text: (dist / 100).toFixed(),
+					pos: [getDistMil(dist) * milScale, quadHeight + lowerTextPosY],
+					size: lowerTextSize
+				}),
+			)
+		}
+
+		// Move to position
+		for (let ele of elements) {
+			ele.move([posX, posY]);
+			if (mirrorX) { ele.mirrorX() }
+		}
+		return elements;
+	},
+
 	getHighZoom: ([posX, posY], {
 		mirrorX = false,
 		drawMiddleLine = true,

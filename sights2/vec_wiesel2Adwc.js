@@ -48,9 +48,6 @@ sight.add([
 	new Line({ from: [33, 0], to: [16.5, 0] }).withMirrored("x"),
 	new Line({ from: [0, 33], to: [0, 16.5] }).withMirrored("y"),
 ])
-// Sight center circle
-sight.add(new Circle({ segment: [22.5, 67.5], diameter: 27.5 * 2, size: 1.6 }).withMirroredSeg("xy"));
-// Prompt vertical line from the top
 for (let padding of [-0.1, 0, 0.1]) {
 	sight.add(new Line({ from: [padding, -80], to: [padding, -450] }));
 }

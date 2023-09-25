@@ -83,20 +83,24 @@ export const buildRadarPrompt = ({
 	// Draw required weapon ranges
 	for (let w of weaponRanges) {
 		// on long range
-		circles.push(new Circle({
-			segment: [90, 90 + w.curveDegreeOnLong],
-			diameter: (curveRadius * 2) * (w.range / radarLongRange),
-			size: w.curveSize
-		}));
+		if (w.range <= radarLongRange) {
+			circles.push(new Circle({
+				segment: [90, 90 + w.curveDegreeOnLong],
+				diameter: (curveRadius * 2) * (w.range / radarLongRange),
+				size: w.curveSize
+			}));
+		}
 		// on short range
-		circles.push(new Circle({
-			segment: [
-				90 + curveDegree - w.curveDegreeOnShort,
-				90 + curveDegree
-			],
-			diameter: (curveRadius * 2) * (w.range / radarShortRange),
-			size: w.curveSize
-		}));
+		if (w.range <= radarShortRange) {
+			circles.push(new Circle({
+				segment: [
+					90 + curveDegree - w.curveDegreeOnShort,
+					90 + curveDegree
+				],
+				diameter: (curveRadius * 2) * (w.range / radarShortRange),
+				size: w.curveSize
+			}));
+		}
 	}
 
 

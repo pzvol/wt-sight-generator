@@ -31,7 +31,7 @@ import { Quad, Circle, Line, TextSnippet } from "./sight_elements.js";
 
 /** An all-in-one entrance for creating a user sight */
 export default class Sight {
-	static libVersion = "20230916";
+	static libVersion = "20230924";
 
 	static commonVehicleTypes = block.MatchVehicleClassBlock.commonTypes;
 
@@ -47,6 +47,14 @@ export default class Sight {
 			circles: new block.CirclesBlock(),
 			lines: new block.LinesBlock(),
 			texts: new block.TextsBlock(),
+			/**
+			 * All additional elements appended to the sight
+			 *
+			 * (designed as a temp solution before implementing
+			 * a proper `ballistics` block)
+			 * @type {(BlkBlock|BlkVariable|BlkComment)[]}
+			 */
+			extra: [],
 		};
 
 		// Shorthands
@@ -71,6 +79,12 @@ export default class Sight {
 		return this;
 	}
 
+	/** Clear all sight description lines */
+	clearDescription() {
+		this.components.description.length = 0;
+		return this;
+	}
+
 	/**
 	 * @param {string|BlkVariable|BlkComment|(string|BlkVariable|BlkComment)[]} input
 	 */
@@ -78,6 +92,8 @@ export default class Sight {
 		this.components.sightSettings.add(input);
 		return this;
 	}
+
+	// TODO: removeSettings / clearSettings
 
 	/**
 	 * Sight matches given vehicle(s)
@@ -171,6 +187,27 @@ export default class Sight {
 		return this;
 	}
 
+	/**
+	 * Add an extra element which is not covered as a standard component
+	 *
+	 * (designed as a temp solution before implementing a proper `ballistics` block)
+	 * @param {BlkBlock|BlkVariable|BlkComment|(BlkBlock|BlkVariable|BlkComment)[]} input
+	 */
+	addExtra(input) {
+		let arr;
+		if (Array.isArray(input)) { arr = input; }
+		else { arr = [input]; }
+
+		for (let element of arr) {
+			if (
+				element instanceof BlkBlock ||
+				element instanceof BlkVariable ||
+				element instanceof BlkComment
+			) { this.components.extra.push(element); }
+		}
+		return this;
+	}
+
 
 	/** Get complete compiled code for the sight */
 	getCode(addAutoGenHeadingComment = true) {
@@ -200,6 +237,10 @@ export default class Sight {
 			this.components.lines, "",
 			this.components.texts,
 		]);
+		// Append extra elements
+		for (let ex of this.components.extra) {
+			blkFile.push(["", ex]);
+		}
 		return blkFile.getCode();
 	}
 

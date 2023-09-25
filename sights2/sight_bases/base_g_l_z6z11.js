@@ -81,11 +81,13 @@ let init = ({
 	let getLdn = (aa) => Toolbox.calcLeadingMil(shellSpeed, assumedMoveSpeed, aa);
 
 	sight.lines.addComment("Vertical lines");
-	sight.add(new Line({ from: [0, -8.25], to: [0, -450] }));
+	//sight.add(new Line({ from: [0, -8.25], to: [0, -450] }));
+	sight.add(new Line({ from: [0, -30], to: [0, -450] }));
 	sight.add(new Line({ from: [0, 2], to: [0, 450] }));
 	sight.lines.addComment("bold");
 	for (let p of [
-		[0.04, -25], [0.08, -40], [0.12, -40]  // params: [lnShift, startingY]
+		//[0.04, -25], [0.08, -40], [0.12, -40]  // params: [lnShift, startingY]
+		[0.04, -30], [0.08, -40], [0.12, -40]  // params: [lnShift, startingY]
 	]) { sight.add(new Line({ from: p, to: [p[0], -450] }).withMirrored("x")); }
 	for (let p of [
 		[0.03, 4.8], [0.08, 40], [0.12, 40]  // params: [lnShift, startingY]
@@ -97,7 +99,8 @@ let init = ({
 	sight.add(horiLine);
 	sight.lines.addComment("bold");
 	for (let p of [
-		[getLdn(1)*2, 0.02], [40, 0.04], [60, 0.08], [80, 0.12]  // params: [startingX, lnShift]
+		//[getLdn(1)*2, 0.02], [40, 0.04], [60, 0.08], [80, 0.12]  // params: [startingX, lnShift]
+		[20, 0.02], [80, 0.04], [80, 0.08], [80, 0.12]  // params: [startingX, lnShift]
 	]) { sight.add(new Line({ from: p, to: [450, 0] }).withMirrored("xy")); }
 
 	sight.addComment("Horizontal general leading for APFSDS", ["texts", "circles"]);

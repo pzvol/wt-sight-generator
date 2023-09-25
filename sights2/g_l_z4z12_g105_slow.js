@@ -12,4 +12,9 @@ base.init({
 	shellSpeed: 1455 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 45,    // km/h
 });
-base.sightObj.printCode();
+
+export default { sightObj: base.sightObj };
+if (  // NodeJS/Deno main module check
+	(typeof require !== "undefined" && require.main === module) ||
+	(typeof import.meta.main !== "undefined" && import.meta.main === true)
+) { base.sightObj.printCode(); }

@@ -51,6 +51,10 @@ export class Circle {
 	 * @param {number=} obj.size - (default `1`) line width
 	 * @param {boolean=} obj.move - (default `false`) if move with gun zero changes
 	 * @param {boolean=} obj.thousandth - (default `true`) if use thousandth
+	 * @param {boolean=} obj.moveRadial - if radial move
+	 * @param {[number, number]=} obj.radialCenter - radial move center position `[x, y]`
+	 * @param {number=} obj.radialMoveSpeed
+	 * @param {number=} obj.radialAngle
 	 */
 	constructor({
 		segment = [0, 360],
@@ -58,9 +62,13 @@ export class Circle {
 		diameter,
 		size = 1,
 		move = false,
-		thousandth = true
+		thousandth = true,
+		moveRadial, radialCenter, radialMoveSpeed, radialAngle
 	} = {}, extraDrawn = { mirrorSegmentX: false, mirrorSegmentY: false }) {
-		this.details = Toolbox.copyValue({ segment, pos, diameter, size, move, thousandth });
+		this.details = Toolbox.copyValue({
+			segment, pos, diameter, size, move, thousandth,
+			moveRadial, radialCenter, radialMoveSpeed, radialAngle
+		});
 		/** On what axes will extra curves be generated */
 		this.extraDrawn = Toolbox.copyValue(extraDrawn);
 	}
@@ -79,6 +87,7 @@ export class Circle {
 	}
 
 	mirrorSegmentX() {
+		// TODO: deal with radial values
 		let newSeg = [
 			Circle.p_degLimited(-(this.details.segment[1])),
 			Circle.p_degLimited(-(this.details.segment[0])),
@@ -89,6 +98,7 @@ export class Circle {
 	}
 
 	mirrorSegmentY() {
+		// TODO: deal with radial values
 		let newSeg = [
 			Circle.p_degLimited(180 - this.details.segment[1]),
 			Circle.p_degLimited(180 - this.details.segment[0]),
@@ -99,11 +109,13 @@ export class Circle {
 	}
 
 	mirrorPosX() {
+		// TODO: deal with radial values
 		this.details.pos[0] = -(this.details.pos[0]);
 		return this;
 	}
 
 	mirrorPosY() {
+		// TODO: deal with radial values
 		this.details.pos[1] = -(this.details.pos[1]);
 		return this;
 	}
@@ -529,6 +541,10 @@ export class TextSnippet {
 	 * @param {boolean=} obj.move - (default `false`)
 	 * @param {boolean=} obj.thousandth - (default `true`)
 	 * @param {boolean=} obj.highlight - (default `true`)
+	 * @param {boolean=} obj.moveRadial - if radial move
+	 * @param {[number, number]=} obj.radialCenter - radial move center position `[x, y]`
+	 * @param {number=} obj.radialMoveSpeed
+	 * @param {number=} obj.radialAngle
 	 */
 	constructor({
 		text = "",
@@ -537,16 +553,18 @@ export class TextSnippet {
 		size = 1,
 		move = false,
 		thousandth = true,
-		highlight = true
+		highlight = true,
+		moveRadial, radialCenter, radialMoveSpeed, radialAngle
 	} = {}, extraDrawn = { mirrorX: false, mirrorY: false }) {
 		this.details = Toolbox.copyValue({
 			text,
 			align: (align === "center") ? 0 : (align === "left") ? 1 : (align === "right") ? 2 : align,
 			pos,
 			size,
-			highlight,
 			move,
-			thousandth
+			thousandth,
+			highlight,
+			moveRadial, radialCenter, radialMoveSpeed, radialAngle
 		});
 		/** On what axes will extra text(s) be generated */
 		this.extraDrawn = Toolbox.copyValue(extraDrawn);
@@ -563,6 +581,7 @@ export class TextSnippet {
 	}
 
 	mirrorX() {
+		// TODO: deal with radial values
 		this.details.pos[0] = -(this.details.pos[0]);
 		if (this.details.align === 1) {
 			this.details.align = 2;
@@ -573,6 +592,7 @@ export class TextSnippet {
 	}
 
 	mirrorY() {
+		// TODO: deal with radial values
 		this.details.pos[1] = -(this.details.pos[1]);
 		return this;
 	}

@@ -11,4 +11,9 @@ base.init({
 	assumedMoveSpeed: 40,    // km/h
 	useHollowCenterDot: true,
 });
-base.sightObj.printCode();
+
+export default { sightObj: base.sightObj };
+if (  // NodeJS/Deno main module check
+	(typeof require !== "undefined" && require.main === module) ||
+	(typeof import.meta.main !== "undefined" && import.meta.main === true)
+) { base.sightObj.printCode(); }
