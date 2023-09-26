@@ -379,6 +379,7 @@ export class Line {
 		this.lineEnds.from[0] = -(this.lineEnds.from[0]);
 		this.lineEnds.to[0] = -(this.lineEnds.to[0]);
 		this.lineEndDiffs.x = -(this.lineEndDiffs.x);
+		this.lineDirection.cos = -(this.lineDirection.cos);
 		// TODO: deal with radial values
 		for (let b of this.lineBreaks) {
 			b.from[0] = -(b.from[0]);
@@ -391,6 +392,7 @@ export class Line {
 		this.lineEnds.from[1] = -(this.lineEnds.from[1]);
 		this.lineEnds.to[1] = -(this.lineEnds.to[1]);
 		this.lineEndDiffs.y = -(this.lineEndDiffs.y);
+		this.lineDirection.sin = -(this.lineDirection.sin);
 		// TODO: deal with radial values
 		for (let b of this.lineBreaks) {
 			b.from[1] = -(b.from[1]);
