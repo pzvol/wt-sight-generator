@@ -8,6 +8,6 @@ base.sightObj.matchVehicle([
 base.init({
 	shellSpeed: 1770 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 50,    // km/h
-	horiCurve: [85, 95]
+	horiCurve: [86, 94],
 });
 base.sightObj.printCode();

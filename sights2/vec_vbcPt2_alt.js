@@ -29,7 +29,7 @@ sight.addSettings(pd.concatAllBasics(
 sight.addShellDistance([
 	{ distance: 400 },
 	{ distance: 800 },
-	{ distance: 2000, shown: 20, shownPos: [10, 0] },  // bold the line w/o seeing the value
+	{ distance: 2000, shown: 20, shownPos: [10, 0] },  // wider the line w/o seeing the value
 	{ distance: 4000, shown: 40 },
 ]);
 

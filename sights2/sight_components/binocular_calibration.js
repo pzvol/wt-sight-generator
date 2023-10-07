@@ -82,6 +82,7 @@ export default {
 	getCommon2([posX, posY], {
 		mirrorX = false,
 		drawMiddleLine = true,
+		assumedTgtWidth = 3.3,
 		distValueDigit = 0,
 
 		milScale = 2,
@@ -93,9 +94,7 @@ export default {
 		upperTextPosY = -2,
 		lowerTextSize = 0.45,
 		lowerTextPosY = 1.6,
-
 	} = {}) {
-		let assumedTgtWidth = 3.3;
 		let getDistMil = (dist) => Toolbox.calcDistanceMil(assumedTgtWidth, dist);
 		let getDistOfMil = (mil) => Toolbox.calcDistanceOfMil(assumedTgtWidth, mil);
 

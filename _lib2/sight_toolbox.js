@@ -222,6 +222,21 @@ export default class Toolbox {
 	}
 
 	/**
+	 * Calculate target width with given mil and distance.
+	 *
+	 * Thousandth value is under "real" standard (1/6283) by default,
+	 * where 1 mil is for a 1m object on 1000m ( arctan(1/1000) )
+	 * @param {"ussr"|"nato"|"real"} type - (default `"real"`) Thousandth (mil) type
+	 */
+	static calcSizeFromMil(mil, distance, type = "real") {
+		return (
+			(type === "ussr") ? (distance * mil / 955) :
+				(type === "nato") ? (distance * mil / 1019) :
+					(distance * mil / 1000)  // "real"
+		)
+	}
+
+	/**
 	 * Calcuate degree value (in thousandth) for shooting of given target with a specific speed
 	 *
 	 * @param {number} shellSpeed - shell speed, should have the same unit as target speed

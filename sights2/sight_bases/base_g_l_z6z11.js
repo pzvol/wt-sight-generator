@@ -23,9 +23,9 @@ making it easier to snapshoot.
 sight.addSettings(pd.concatAllBasics(
 	pd.basic.scales.getHighZoom({ line: 1.6 }),
 	pd.basic.colors.getGreenRed(),
-	pd.basicBuild.rgfdPos([110, -0.02425]),
-	pd.basicBuild.detectAllyPos([110, -0.045]),
-	pd.basicBuild.gunDistanceValuePos([-0.175, 0.035]),
+	pd.basicBuild.rgfdPos([110, -0.01725]),
+	pd.basicBuild.detectAllyPos([110, -0.038]),
+	pd.basicBuild.gunDistanceValuePos([-0.165, 0.030]),
 	pd.basicBuild.shellDistanceTickVars(
 		[-0.0100, -0.0100],
 		[0, 0],
@@ -49,6 +49,28 @@ sight.addShellDistance([
 
 
 //// SIGHT DESIGNS ////
+sight.lines.addComment("Gun center");
+sight.add(new Line({
+	from: [0.0035, 0], to: [0.0055, 0], move: true, thousandth: false
+}).withMirrored("xy"));  // y mirroring for bold
+sight.add(new Line({
+	from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
+}));  // center dot
+
+sight.lines.addComment("0m correction line");
+sight.add(new Line({ from: [-0.203, 0.0], to: [-0.193, 0.0], move: true, thousandth: false }));
+
+
+sight.lines.addComment("Gun correction value indicator");
+let corrValLine = [
+	new Line({ from: [0.006, 0.00045], to: [0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	new Line({ from: [-0.006, 0.00045], to: [-0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
+];
+// move arrow to apporiate place
+corrValLine.forEach((l) => { l.move([-0.198, 0]); });  //
+sight.add(corrValLine);
+
+
 sight.lines.addComment("Sight center arrow and bold");
 for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
 	sight.add(new Line({
@@ -59,17 +81,23 @@ for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
 }
 
 
-sight.lines.addComment("Gun center");
-sight.add(new Line({
-	from: [0.0035, 0], to: [0.0055, 0], move: true, thousandth: false
-}).withMirrored("xy"));  // y mirroring for bold
-sight.add(new Line({
-	from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
-}));  // center dot
+sight.lines.addComment("Vertical upper and bold");
+sight.add(new Line({ from: [0, -30], to: [0, -450] }));
+for (let p of [
+	[0.04, -30], [0.08, -40], [0.12, -40]  // params: [lnShift, startingY]
+]) { sight.add(new Line({ from: p, to: [p[0], -450] }).withMirrored("x")); }
+sight.lines.addComment("Vertical lower and bold");
+sight.add(new Line({ from: [0, 2], to: [0, 450] }));
+for (let p of [
+	[0.03, 4.8], [0.08, 40], [0.12, 40]  // params: [lnShift, startingY]
+]) { sight.add(new Line({ from: p, to: [p[0], 450] }).withMirrored("x")); }
 
 
-sight.lines.addComment("0m correction line");
-sight.add(new Line({ from: [-0.203, 0.0], to: [-0.193, 0.0], move: true, thousandth: false }));
+sight.lines.addComment("Horizontal lines near sight borders and bold");
+sight.add(new Line({ from: [50, 0], to: [450, 0] }).withMirrored("x"));
+for (let p of [
+	[50, 0.02], [80, 0.04], [80, 0.08], [80, 0.12]  // params: [startingX, lnShift]
+]) { sight.add(new Line({ from: p, to: [450, 0] }).withMirrored("xy")); }
 
 
 let init = ({
@@ -80,38 +108,22 @@ let init = ({
 } = {}) => {
 	let getLdn = (aa) => Toolbox.calcLeadingMil(shellSpeed, assumedMoveSpeed, aa);
 
-	sight.lines.addComment("Vertical lines");
-	//sight.add(new Line({ from: [0, -8.25], to: [0, -450] }));
-	sight.add(new Line({ from: [0, -30], to: [0, -450] }));
-	sight.add(new Line({ from: [0, 2], to: [0, 450] }));
-	sight.lines.addComment("bold");
-	for (let p of [
-		//[0.04, -25], [0.08, -40], [0.12, -40]  // params: [lnShift, startingY]
-		[0.04, -30], [0.08, -40], [0.12, -40]  // params: [lnShift, startingY]
-	]) { sight.add(new Line({ from: p, to: [p[0], -450] }).withMirrored("x")); }
-	for (let p of [
-		[0.03, 4.8], [0.08, 40], [0.12, 40]  // params: [lnShift, startingY]
-	]) { sight.add(new Line({ from: p, to: [p[0], 450] }).withMirrored("x")); }
-
-
-	sight.lines.addComment("Horizontal lines");
-	let horiLine = new Line({ from: [getLdn(0.75), 0], to: [450, 0] }).withMirrored("x");
-	sight.add(horiLine);
-	sight.lines.addComment("bold");
-	for (let p of [
-		//[getLdn(1)*2, 0.02], [40, 0.04], [60, 0.08], [80, 0.12]  // params: [startingX, lnShift]
-		[20, 0.02], [80, 0.04], [80, 0.08], [80, 0.12]  // params: [startingX, lnShift]
-	]) { sight.add(new Line({ from: p, to: [450, 0] }).withMirrored("xy")); }
-
-	sight.addComment("Horizontal general leading for APFSDS", ["texts", "circles"]);
+	sight.addComment("Horizontal leading for APFSDS", ["texts", "circles", "lines"]);
+	// line between 4/4 and 3/4
+	sight.add(new Line({
+		from: [getLdn(0.75), 0], to: [getLdn(1), 0]
+	}).withMirrored("x").addBreakAtX(getLdn(1), 1.4));
 	// 4/4
 	sight.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.05], size: 0.5 }).withMirrored("x"));
-	horiLine.addBreakAtX(getLdn(1), 1.4);
-	// 3/4 - 1/4
+	// 3/4
 	sight.add(new Circle({ segment: horiCurve, diameter: getLdn(0.75) * 2, size: horiCurveWeight }).withMirroredSeg("x"));
-	sight.add(new TextSnippet({ text: "2", pos: [getLdn(0.5), -0.05], size: 0.4 }).withMirrored("x"));
-	sight.add(new TextSnippet({ text: "2", pos: [getLdn(0.5), -0.05], size: 0.4 }).withMirrored("x"));  // bold
+	// 2/4
+	Toolbox.repeat(2, () => {
+		sight.add(new TextSnippet({ text: "2", pos: [getLdn(0.5), -0.03], size: 0.4 }).withMirrored("x"));
+	});
+	// 1/4
 	sight.add(new Circle({ segment: [87, 93], diameter: getLdn(0.25) * 2, size: 2 }).withMirroredSeg("x"));
+
 
 	// Sight tick info
 	sight.add(new TextSnippet({

@@ -53,37 +53,37 @@ for (let padding of [-0.1, 0, 0.1]) {
 }
 
 
-// Radar range prompt
-sight.add(rdr.buildRadarPrompt({
-	radarLongRange: 15,
-	radarShortRange: 8,
+// // Radar range prompt
+// sight.add(rdr.buildRadarPrompt({
+// 	radarLongRange: 15,
+// 	radarShortRange: 8,
 
-	pos: [-75.5, -12],
-	curveRadius: 17,
-	pieDivisionCurveSizeMain: 1.5,
-	pieDivisionCurveSizeSub: 1,
-	textSizeLongRange: 0.3,
-	textPosPaddingLongRange: [0, 1.2],
-	textSizeShortRange: 0.32,
-	textPosPaddingShortRange: [-0.7, -1.4],
-	textSizeLegend: 0.25,
-	textPosPaddingLegendLong: [0.7, -1.2],
-	textPosPaddingLegendShort: [1.2, 0.5],
-	weaponRanges: [
-		{
-			range: 5.87,
-			curveDegreeOnLong: 13,
-			curveDegreeOnShort: 10,
-			curveSize: 1.2
-		},
-		{
-			range: 3,
-			curveDegreeOnLong: 12,
-			curveDegreeOnShort: 8,
-			curveSize: 0.6
-		},
-	]
-}));
+// 	pos: [-75.5, -12],
+// 	curveRadius: 17,
+// 	pieDivisionCurveSizeMain: 1.5,
+// 	pieDivisionCurveSizeSub: 1,
+// 	textSizeLongRange: 0.3,
+// 	textPosPaddingLongRange: [0, 1.2],
+// 	textSizeShortRange: 0.32,
+// 	textPosPaddingShortRange: [-0.7, -1.4],
+// 	textSizeLegend: 0.25,
+// 	textPosPaddingLegendLong: [0.7, -1.2],
+// 	textPosPaddingLegendShort: [1.2, 0.5],
+// 	weaponRanges: [
+// 		{
+// 			range: 5.87,
+// 			curveDegreeOnLong: 13,
+// 			curveDegreeOnShort: 10,
+// 			curveSize: 1.2
+// 		},
+// 		{
+// 			range: 3,
+// 			curveDegreeOnLong: 12,
+// 			curveDegreeOnShort: 8,
+// 			curveSize: 0.6
+// 		},
+// 	]
+// }));
 
 
 

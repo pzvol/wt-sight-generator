@@ -10,7 +10,8 @@ let sight = new Sight();
 
 // Introduction comment
 sight.addDescription(`
-Generic sight for 3X~12X with simplified target distance ticks
+Sight for 2.7X~12X optics with simplified target distance ticks. Also can be
+usable on 2.5X~12X optics.
 `.trim());
 
 
@@ -34,10 +35,12 @@ sight.addSettings(pd.concatAllBasics(
 sight.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 	"it_vbc_pt2",
 	"sw_t_80u",
+	"ussr_bmp_2m",
 	"ussr_bmp_3",
 	"ussr_t_80u",
 	"ussr_t_80um2",
 	"ussr_t_80uk",
+	"ussr_t_90a",
 ]);
 
 

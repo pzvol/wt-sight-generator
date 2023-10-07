@@ -10,6 +10,7 @@ export default {
 		assumedTargetWidth = 3.3,
 		assumedTargetLength = 6.6,
 		assumedTargetHeight = 2.8,
+		showAssumedTargetSize = true,
 
 		widthOnSight = 5,
 		textSize = 0.6,
@@ -92,11 +93,13 @@ export default {
 		}
 
 		// claim assumed target size
-		texts.push(new TextSnippet({
-			text: `W ${assumedTargetWidth.toFixed(1)}m   L ${assumedTargetLength.toFixed(1)}m`,
-			pos: [0, startY + textPaddingY], align: "right",
-			size: textSize
-		}));
+		if (showAssumedTargetSize)  {
+			texts.push(new TextSnippet({
+				text: `W ${assumedTargetWidth.toFixed(1)}m   L ${assumedTargetLength.toFixed(1)}m`,
+				pos: [0, startY + textPaddingY], align: "right",
+				size: textSize
+			}));
+		}
 
 		// Move elements to desired pos
 		for (let eleArr of [lines, texts]) {
