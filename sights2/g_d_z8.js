@@ -86,15 +86,26 @@ for (let biasX of [0.1]) {
 
 
 // Rangefinder on the horizon
+// // Small texts for clearer view:
+// // 100
+// sight.add(new TextSnippet({
+// 	text: "1", pos: [getHalfMil(100), -0.2], size: 0.8
+// }).withMirrored("x"));
+// horiLine.addBreakAtX(getHalfMil(100), 1.0);
+// // 200
+// sight.add(new TextSnippet({
+// 	text: "2", pos: [getHalfMil(200), -0.12], size: 0.65
+// }).withMirrored("x"));
+// horiLine.addBreakAtX(getHalfMil(200), 1.1);
 // 100
-sight.add(new TextSnippet({
-	text: "1", pos: [getHalfMil(100), -0.2], size: 0.8
-}).withMirrored("x"));
-horiLine.addBreakAtX(getHalfMil(100), 1.0);
+Toolbox.repeat(2, () => { sight.add(new TextSnippet({
+	text: "1", pos: [getHalfMil(100), -0.2], size: 1.0
+}).withMirrored("x")); });
+horiLine.addBreakAtX(getHalfMil(100), 1.1);
 // 200
-sight.add(new TextSnippet({
-	text: "2", pos: [getHalfMil(200), -0.12], size: 0.65
-}).withMirrored("x"));
+Toolbox.repeat(2, () => { sight.add(new TextSnippet({
+	text: "2", pos: [getHalfMil(200), -0.12], size: 0.75
+}).withMirrored("x")); });
 horiLine.addBreakAtX(getHalfMil(200), 1.1);
 // 400
 sight.add(new Circle({

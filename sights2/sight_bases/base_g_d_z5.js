@@ -115,11 +115,13 @@ let init = ({
 
 	sight.addComment("Rangefinder ticks on the horizon", ["texts", "lines"])
 	// 100m
-	sight.add(new TextSnippet({
-		text: "1",
-		pos: [getMil(100) / 2, -0.3],
-		size: rangefinderHoriTextSize
-	}).withMirrored("x"));
+	Toolbox.repeat(2, () => {
+		sight.add(new TextSnippet({
+			text: "1",
+			pos: [getMil(100) / 2, -0.3],
+			size: rangefinderHoriTextSize + 0.1
+		}).withMirrored("x"));
+	});
 	horiLine.addBreakAtX(getMil(100)/2, 2);
 	// 200m
 	Toolbox.repeat(2, () => {

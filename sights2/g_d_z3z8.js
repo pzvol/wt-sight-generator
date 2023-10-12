@@ -93,11 +93,9 @@ let getMilHalf = (dist) => Toolbox.calcDistanceMil(assumedTargetWidth, dist) / 2
 // Rangefinder on the horizon
 let smallTickLen = (d) => (1.6 / getMilHalf(400) * getMilHalf(d))
 // 100 & 200
-Toolbox.repeat(2, () => {
-	sight.add(new TextSnippet({
-		text: "1", pos: [getMilHalf(100), -0.24], size: 0.7
-	}).withMirrored("x"));
-});
+sight.add(new TextSnippet({
+	text: "1", pos: [getMilHalf(100), -0.24], size: 0.7
+}).withMirrored("x")).repeatLastAdd();
 sight.add(new TextSnippet({
 	text: "2", pos: [getMilHalf(200), -0.17], size: 0.6
 }).withMirrored("x"));
@@ -111,7 +109,7 @@ sight.add(new Line({
 // Draw the text
 sight.add(new TextSnippet({
 	text: "4", pos: [getMilHalf(400), -0.1], size: 0.4
-}).withMirrored("x"));
+}).withMirrored("x")).repeatLastAdd();
 // Or, use a tick
 // sight.add(new Line({
 // 	from: [getMilHalf(400), 0],

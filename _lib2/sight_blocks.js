@@ -88,6 +88,43 @@ export class BasicSettings {
 	}
 
 	/**
+	 * Remove BlkVariable by variable name(s). All variables with
+	 * matching name(s) will be removed.
+	 *
+	 * @param {string|string[]} input removed variable name or a name array
+	 */
+	removeVariableByName(input) {
+		return this.p_removeElementByInputAndCondition(input, (ele, inputItem) => (
+			ele instanceof BlkVariable && ele.name === inputItem
+		));
+	}
+
+
+	/**
+	 * Remove BlkComment by their value(s). All BlkComment
+	 * with matching value(s) will be removed.
+	 *
+	 * @param {string|string[]} input removed value or a removed value array
+	 */
+	removeCommentByContent(input) {
+		return this.p_removeElementByInputAndCondition(input, (ele, inputItem) => (
+			ele instanceof BlkComment && ele.value === inputItem
+		));
+	}
+
+	/**
+	 * Remove raw string by their content(s). All string with matching value(s)
+	 * will be removed.
+	 *
+	 * @param {string|string[]} input removed string or a removed string array
+	 */
+	removeStringByContent(input) {
+		return this.p_removeElementByInputAndCondition(input, (ele, inputItem) => (
+			typeof ele === "string" && ele === inputItem
+		));
+	}
+
+	/**
 	 * A shortcut for adding comment
 	 * @param {string} s
 	 */
@@ -104,6 +141,41 @@ export class BasicSettings {
 			);
 		}
 		return resultCodeLines.join(SETTINGS.LINE_ENDING);
+	}
+
+	/**
+	 * @callback conditionCallback
+	 * @param {any} element entrance for checked element in `findIndex` method
+	 * @param {any} inputItem entrance for input item
+	 */
+	/**
+	 * Common interface for searching and removing with specified condition
+	 * @param {any|any[]} input input reserved for further calling
+	 * @param {conditionCallback} conditionMatcherFunc how input items will be
+	 * handled for finding matching element. Will be called by array's
+	 * `findIndex` method
+	 */
+	p_removeElementByInputAndCondition(input, conditionMatcherFunc) {
+		let inItems = [];
+		if (Array.isArray(input)) {
+			for (let ele of input) { inItems.push(ele); }
+		} else { inItems.push(input); }
+
+		// Find & remove all matched elements
+		for (let inItem of inItems) {
+			while (true) {
+				let foundIndex = this.settingLines.findIndex(
+					(ele) => conditionMatcherFunc(ele, inItem)
+				);
+				if (foundIndex > -1) {
+					this.settingLines.splice(foundIndex, 1);
+				} else {
+					break;
+				}
+			}
+		}
+
+		return this;
 	}
 }
 

@@ -5,8 +5,8 @@ import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
 
-import rgfd from "../sight_components/rangefinder.js"
-import binoCali from "../sight_components/binocular_calibration.js"
+import rgfd from "../sight_components/rangefinder.js";
+import binoCali from "../sight_components/binocular_calibration.js";
 
 
 let sight = new Sight();
@@ -53,7 +53,7 @@ let init = ({
 			sight.addShellDistance(pd.shellDists.getFull(tickPosRight));
 			sight.add(new TextSnippet({
 				text: "Dist 200m/ tk", align: "right", pos: [31, 0.5], size: 0.55
-			}))
+			}));
 		}
 	})();
 
@@ -84,53 +84,57 @@ let init = ({
 	//   extra bold on borders
 	//   - horizontal
 	for (let info of [
-		{toX: 30, padding: 0.05},
-		{toX: 63, padding: 0.1},
-	]) { sight.add(new Line({
-		from: [450, info.padding], to: [info.toX, info.padding]
-	}).withMirrored("xy")); }
+		{ toX: 30, padding: 0.05 },
+		{ toX: 63, padding: 0.1 },
+	]) {
+		sight.add(new Line({
+			from: [450, info.padding], to: [info.toX, info.padding]
+		}).withMirrored("xy"));
+	}
 	//   - vertical
 	for (let info of [
-		{toY: 16, padding: 0.05},
-		{toY: 32, padding: 0.1},
-	]) { sight.add(new Line({
-		from: [info.padding, 450], to: [info.padding, info.toY]
-	}).withMirrored("xy")); }
+		{ toY: 16, padding: 0.05 },
+		{ toY: 32, padding: 0.1 },
+	]) {
+		sight.add(new Line({
+			from: [info.padding, 450], to: [info.padding, info.toY]
+		}).withMirrored("xy"));
+	}
 
 
 	// Rangefinder ticks on the horizon
 	// 100m
 	sight.add(new TextSnippet({
 		text: "1",
-		pos: [getMil(100) / 2, -0.12],
-		size: 1
-	}).withMirrored("x"))
-	horiLine.addBreakAtX(getMil(100) / 2, 1)
+		pos: [getMil(100) / 2, -0.14],
+		size: 1.15
+	}).withMirrored("x"));
+	horiLine.addBreakAtX(getMil(100) / 2, 0.9);
 	// 200m
 	sight.add(new TextSnippet({
 		text: "2",
 		pos: [getMil(200) / 2, -0.1],
 		size: 0.8
-	}).withMirrored("x"))
-	horiLine.addBreakAtX(getMil(200) / 2, 0.8)
+	}).withMirrored("x"));
+	horiLine.addBreakAtX(getMil(200) / 2, 0.7);
 	// 400m
 	sight.add(new Circle({
 		segment: [83, 97], diameter: getMil(400), size: 1.8,
-	}).withMirroredSeg("x"))
+	}).withMirroredSeg("x"));
 	sight.add(new TextSnippet({
 		text: "4",
 		pos: [getMil(400) / 2 + 0.45, -0.08],
 		size: 0.6
-	}).withMirrored("x"))
-	horiLine.addBreakAtX(getMil(400) / 2 + 0.45, 0.85);
+	}).withMirrored("x"));
+	horiLine.addBreakAtX(getMil(400) / 2 + 0.45, 0.7);
 	// 800m
 	(() => {
 		let halfHeight = 0.08;
 		let halfWidth = 0.03;
 		for (let padding of Toolbox.rangeIE(-halfWidth, halfWidth, 0.01)) {
 			sight.add(new Line({
-				from: [getMil(800)/2 + padding, -halfHeight],
-				to: [getMil(800)/2 + padding, halfHeight]
+				from: [getMil(800) / 2 + padding, -halfHeight],
+				to: [getMil(800) / 2 + padding, halfHeight]
 			}).withMirrored("x"));
 		}
 	})();
@@ -142,7 +146,7 @@ let init = ({
 			textSize: 0.6,
 			textPosYAdjust: -0.08
 		}));
-	})
+	});
 
 
 	let binoCaliEles = binoCali.getHighZoom([getMil(800), 10]);

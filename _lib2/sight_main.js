@@ -31,7 +31,7 @@ import { Quad, Circle, Line, TextSnippet } from "./sight_elements.js";
 
 /** An all-in-one entrance for creating a user sight */
 export default class Sight {
-	static libVersion = "20230926";
+	static libVersion = "20231012";
 
 	static commonVehicleTypes = block.MatchVehicleClassBlock.commonTypes;
 
@@ -62,6 +62,9 @@ export default class Sight {
 		this.circles = this.components.circles;
 		this.lines = this.components.lines;
 		this.texts = this.components.texts;
+
+		/** The very recently added element by calling `add` method */
+		this.lastestElementByAdd = null;
 	}
 
 	getComponents() { return this.components; }
@@ -156,6 +159,11 @@ export default class Sight {
 			}
 		}
 
+		// Record the last added element
+		if (arr.length > 0) {
+			this.lastestElementByAdd = arr[arr.length - 1];
+		}
+
 		return this;
 	}
 
@@ -204,6 +212,23 @@ export default class Sight {
 				element instanceof BlkVariable ||
 				element instanceof BlkComment
 			) { this.components.extra.push(element); }
+		}
+		return this;
+	}
+
+	/**
+	 * Repetitively `add` the latest (one single) element for given times (so it will be
+	 * drawn for multiple times while compiling)
+	 *
+	 * BE NOTICE that only the very recently appended element involved by `add`
+	 * method will be considered
+	 *
+	 * @param {number} n number of repetition (`1` by default)
+	 */
+	repeatLastAdd(n = 1) {
+		if (this.lastestElementByAdd === null) { return this; }
+		for (let count = 0; count < n; count++) {
+			this.add(this.lastestElementByAdd);
 		}
 		return this;
 	}

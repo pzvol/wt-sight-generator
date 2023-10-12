@@ -99,10 +99,10 @@ sight.add(rfHoriLine);
 sight.add(rfHoriLine);  // repeat for bold
 sight.add(new TextSnippet({text: "1", pos: [getDistMilHalf(100), -0.15], size: 1}).withMirrored("x"));
 rfHoriLine.addBreakAtX(getDistMilHalf(100), 1);
-sight.add(new TextSnippet({text: "2", pos: [getDistMilHalf(200), -0.1], size: 0.8}).withMirrored("x"));
+sight.add(new TextSnippet({text: "2", pos: [getDistMilHalf(200), -0.1], size: 0.8}).withMirrored("x")).repeatLastAdd();
 rfHoriLine.addBreakAtX(getDistMilHalf(200), 1);
-sight.add(new TextSnippet({text: "4", pos: [getDistMilHalf(400), -0.06], size: 0.6}).withMirrored("x"));
-rfHoriLine.addBreakAtX(getDistMilHalf(400), 1);
+sight.add(new TextSnippet({text: "4", pos: [getDistMilHalf(400), -0.06], size: 0.6}).withMirrored("x")).repeatLastAdd();
+rfHoriLine.addBreakAtX(getDistMilHalf(400), 1.1);
 sight.add(new Circle({segment: [86, 94], diameter: getDistMil(800), size: 1.6}).withMirroredSeg("x"))
 
 

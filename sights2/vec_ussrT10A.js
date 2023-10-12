@@ -32,7 +32,7 @@ Toolbox.repeat(2, () => {
 	for (let t of mgDropMils) {
 		sight.add(new Line({ from: [mgDropPosX, t.mil], to: [mgDropPosX + 0.5, t.mil - 0.2], move: true }));
 		sight.add(new Line({ from: [mgDropPosX, t.mil], to: [mgDropPosX + 0.5, t.mil + 0.2], move: true }));
-		if (t.d % 400 == 0) {
+		if (t.d % 200 == 0) {
 			sight.add(new TextSnippet({
 				text: (t.d / 100).toFixed(), align: "right",
 				pos: [mgDropPosX + 0.65, t.mil - 0.13], move: true,
