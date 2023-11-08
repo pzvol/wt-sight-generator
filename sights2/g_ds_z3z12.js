@@ -54,7 +54,7 @@ sight.addShellDistance([
 
 
 //// SIGHT DESIGNS ////
-let assumedTgtWidth = 3.38;
+let assumedTgtWidth = 3.3;
 let centerArrowDeg = 40;
 
 

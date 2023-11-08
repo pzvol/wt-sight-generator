@@ -4,7 +4,7 @@ import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
 import * as pd from "../_lib2/predefined.js";
 
 import rgfd from "./sight_components/rangefinder.js"
-import binoCali from "./sight_components/binocular_calibration.js"
+import binoCali from "./sight_components/binocular_calibration_2.js"
 
 
 let sight = new Sight();
@@ -111,9 +111,10 @@ sight.add(rgfd.getHighZoom([getDistMil(800), getDistMilHalf(200)-1], { textSize:
 
 
 // Binocular calibration reference
-let binoCaliEles = binoCali.getHighZoom([getDistMil(800), 16], {
-	textPosYMain: -0.7,
-	textPosYSub: 1.6,
+let binoCaliEles = binoCali.getHighZoom({
+	pos: [getDistMil(800), 16],
+	upperTextY: -0.7,
+	lowerTextY: 0.6,
 });
 sight.add(binoCaliEles);
 sight.add(binoCaliEles.filter((ele) => (ele instanceof Line)));

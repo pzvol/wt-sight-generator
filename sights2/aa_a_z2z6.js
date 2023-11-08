@@ -67,8 +67,8 @@ let drawCurveX = (radius, [segFrom, segTo], size) => (new Circle({ segment: [seg
 //   center segments
 sight.add(drawCross(4.125, 16));
 //   middle segments
-sight.add(drawCross(32, 64)).add(drawX(32, 64));
-sight.add(drawCross(96, 128)).add(drawX(96, 128));
+sight.add(drawCross(32, 64));
+sight.add(drawCross(96, 128)).add(drawX(64, 128));
 sight.add(drawCurveCross(128, [87, 93], 4));
 //   outer segments
 sight.add(drawCurveCross(192, [89.3, 90.7], 4));

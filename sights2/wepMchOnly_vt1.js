@@ -74,6 +74,7 @@ let tthTable = [
 	// Table row separation
 	new Line({from: [-2, 4.125], to: [19, 4.125]})
 ];
+let tthSecPrec = 0;
 let tthInfo = {
 	colWidth: 4.25,
 	rowHeight: 2.2,
@@ -81,10 +82,10 @@ let tthInfo = {
 	texts: [
 		["KM", "4", "8", "10", "12"],
 		["Sec",
-			(4000 / mslInfo.spd).toFixed(1),
-			(8000 / mslInfo.spd).toFixed(1),
-			(10000 / mslInfo.spd).toFixed(1),
-			(12000 / mslInfo.spd).toFixed(1)
+			(4000 / mslInfo.spd).toFixed(tthSecPrec),
+			(8000 / mslInfo.spd).toFixed(tthSecPrec),
+			(10000 / mslInfo.spd).toFixed(tthSecPrec),
+			(12000 / mslInfo.spd).toFixed(tthSecPrec)
 		],
 	]
 }

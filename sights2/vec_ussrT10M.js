@@ -30,6 +30,9 @@ let mgDropMils = [
 	{ d: 2000, mil: 25.54 },
 ];
 let mgDropPosX = 5.5;
+// additional small tick on 0
+sight.add(new Line({ from: [mgDropPosX, 0], to: [mgDropPosX + 0.5, 0], move: true })).repeatLastAdd();
+// draw all ticks
 Toolbox.repeat(2, () => {
 	for (let t of mgDropMils) {
 		sight.add(new Line({ from: [mgDropPosX, t.mil], to: [mgDropPosX + 0.5, t.mil - 0.2], move: true }));

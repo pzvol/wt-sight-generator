@@ -24,7 +24,7 @@ sight.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 
 //// ADDITIONAL ELEMENTS (IF ANY) ////
 sight.components.shellDistances.clear();
-sight.addShellDistance(pd.shellDists.getFullLoose([0.0295, 0]));
+sight.addShellDistance(pd.shellDists.getFullLoose(0.0295));
 
 
 

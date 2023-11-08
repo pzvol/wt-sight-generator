@@ -6,7 +6,7 @@ import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
 
 import rgfd from "../sight_components/rangefinder.js"
-import binoCali from "../sight_components/binocular_calibration.js"
+import binoCali from "../sight_components/binocular_calibration_2.js"
 
 
 let sight = new Sight();
@@ -21,6 +21,7 @@ Generic sight for tanks with 5X. Should also be appliable for 4X ones.
 let init = ({
 	useLooseShellDistTicks = false,
 	useTwoSideShellDistTicks = false,
+	useTwoTickBinocularRef = false,
 	assumedTgtWidth = 3.3,
 
 	crossLineBold = 0,  // Use 0 to disable the bold
@@ -50,7 +51,7 @@ let init = ({
 
 	//// SHELL DISTANCES ////
 	(() => {
-		let tickPosRight = useTwoSideShellDistTicks ? [0.03, 0] : [0, 0];
+		let tickPosRight = useTwoSideShellDistTicks ? 0.0295 : 0;
 		if (useLooseShellDistTicks) {
 			sight.addShellDistance(pd.shellDists.getFullLoose(tickPosRight));
 		} else {
@@ -154,8 +155,32 @@ let init = ({
 
 
 	sight.addComment("Binocular calibration reference", ["lines", "texts"]);
-	let binoCaliEles = binoCali.getCommon([getMil(400), 15]);
-	sight.add(binoCaliEles);
+	if (!useTwoTickBinocularRef) {
+		let binoCaliEles = binoCali.getCommon({
+			pos: [getMil(400), 15],
+			milWidthScale: 1.5,
+			zeroLineExceeds: [-2.5, 0],
+			quadHeight: 2.5,
+			upperTextY: -1.7,
+			lowerTextY: 1.3,
+		});
+		sight.add(binoCaliEles);
+	} else {
+		let binoCaliEles = binoCali.getCommonTwoTicks({
+			pos: [getMil(400), 15],
+			milWidthScale: 1.5,
+			zeroLineExceeds: [-2.5, 0],
+			quadHeight: 2.5,
+			mainTickIntervalPer: 0.4,
+			subTickPer: 0.3,
+			upperTextY: -1.5,
+			lowerTextSize:  0.5,
+			lowerTextY: 1.1,
+		});
+		sight.add(binoCaliEles);
+		sight.add(binoCaliEles.filter((ele) => (ele instanceof Line)));
+	}
+
 };
 
 

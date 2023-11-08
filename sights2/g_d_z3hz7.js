@@ -45,7 +45,7 @@ sight.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 
 //// SHELL DISTANCES ////
 sight.addShellDistance(
-	pd.shellDists.getFullLoose([0.0295, 0])
+	pd.shellDists.getFullLoose(0.0295)
 );
 
 

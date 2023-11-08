@@ -18,7 +18,7 @@ Sight for Begleitpanzer 57 with air leading circles
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
 	pd.basic.scales.getHighZoomSmallFont(),
-	pd.basic.colors.getGreenRed(),
+	pd.basic.colors.getRedGreen(),
 	pd.basicBuild.rgfdPos([125, -0.01725]),
 	pd.basicBuild.detectAllyPos([125, -0.045]),
 	pd.basicBuild.gunDistanceValuePos([-0.17, 0.035]),

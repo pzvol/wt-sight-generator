@@ -5,7 +5,7 @@ import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
 import * as pd from "../_lib2/predefined.js";
 
-import bino from "./sight_components/binocular_calibration.js"
+import bino from "./sight_components/binocular_calibration_2.js"
 import tgtLgd from "./sight_components/target_legend.js"
 
 
@@ -57,6 +57,7 @@ sight.matchVehicle([
 //// SHELL DISTANCES ////
 // Target size assumption
 let assumedTgtWidth = 3.0;
+let binoCaliUpperTickUseRound = true;
 let assumedTargetLength = 6.0;
 let getMilHalf = (dist) => (Toolbox.calcDistanceMil(assumedTgtWidth, dist) / 2);
 // Shell info and falldown mils
@@ -591,7 +592,10 @@ sight.add([
 
 // Binocular Calibration
 Toolbox.repeat(2, () => {
-	sight.add(bino.getCommon2([54, 20], { assumedTgtWidth: assumedTgtWidth }));
+	sight.add(bino.getCommonTwoTicks({
+		pos: [54, 20], assumedTgtWidth: assumedTgtWidth,
+		upperTickShownAlwaysUseRound: binoCaliUpperTickUseRound
+	}));
 });
 
 

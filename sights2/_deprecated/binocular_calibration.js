@@ -8,7 +8,7 @@ const MUL_U2R = Toolbox.MIL.ussr.value / Toolbox.MIL.real.value;
 
 
 export default {
-	getCommon: ([posX, posY], {
+	getCommonNarrow: ([posX, posY], {
 		mirrorX = false,
 		drawMiddleLine = true,
 		showTargetWidth = false,
@@ -78,8 +78,8 @@ export default {
 		return elements;
 	},
 
-	/** for common zoom size, but larger and with more details */
-	getCommon2([posX, posY], {
+
+	getCommon: ([posX, posY], {
 		mirrorX = false,
 		drawMiddleLine = true,
 		assumedTgtWidth = 3.3,
@@ -94,7 +94,87 @@ export default {
 		upperTextPosY = -2,
 		lowerTextSize = 0.45,
 		lowerTextPosY = 1.6,
-	} = {}) {
+	} = {}) => {
+		let getDistMil = (dist) => Toolbox.calcDistanceMil(assumedTgtWidth, dist);
+		let getDistOfMil = (mil) => Toolbox.calcDistanceOfMil(assumedTgtWidth, mil);
+
+		let elements = [];
+
+		if (drawMiddleLine) {
+			elements.push(new Line({ from: [0, -quadHeight], to: [0, quadHeight] }));
+		}
+
+		elements.push(
+			// 1 binocular ticks and the whole quad (= 5 USSR mil)
+			new Line({ from: [5 * MUL_U2R * milScale, quadHeight], to: [0, quadHeight] }),
+			new Line({ from: [5 * MUL_U2R * milScale, 0], to: [0, 0] }),
+			new Line({ from: [5 * MUL_U2R * milScale, quadHeight], to: [5 * MUL_U2R * milScale, 0] }),
+			new TextSnippet({
+				text: (getDistOfMil(5 * MUL_U2R) / 100).toFixed(distValueDigit),
+				pos: [5 * MUL_U2R * milScale, upperTextPosY],
+				size: upperTextSize
+			}),
+		)
+
+		// 0.5 bino tick (= 2.5 USSR mil)
+		for (let binoMil of [2.5]) {
+			elements.push(
+				new Line({
+					from: [binoMil * MUL_U2R * milScale, quadHeight],
+					to: [binoMil * MUL_U2R * milScale, quadHeight - tickMainHalfLen]
+				}),
+				new Line({
+					from: [binoMil * MUL_U2R * milScale, tickMainHalfLen],
+					to: [binoMil * MUL_U2R * milScale, 0]
+				}),
+				new TextSnippet({
+					text: (getDistOfMil(binoMil * MUL_U2R) / 100).toFixed(distValueDigit),
+					pos: [binoMil * MUL_U2R * milScale, upperTextPosY],
+					size: upperTextSize
+				}),
+			)
+		}
+
+		// 800, 1600m
+		for (let dist of [800, 1600]) {
+			elements.push(
+				new Line({
+					from: [getDistMil(dist) * milScale, (quadHeight - tickSubLen) / 2],
+					to: [getDistMil(dist) * milScale, (quadHeight + tickSubLen) / 2]
+				}),
+				new TextSnippet({
+					text: (dist / 100).toFixed(),
+					pos: [getDistMil(dist) * milScale, quadHeight + lowerTextPosY],
+					size: lowerTextSize
+				}),
+			)
+		}
+
+		// Move to position
+		for (let ele of elements) {
+			ele.move([posX, posY]);
+			if (mirrorX) { ele.mirrorX() }
+		}
+		return elements;
+	},
+
+	/** for common zoom size, but larger and with more details */
+	getCommon2: ([posX, posY], {
+		mirrorX = false,
+		drawMiddleLine = true,
+		assumedTgtWidth = 3.3,
+		distValueDigit = 0,
+
+		milScale = 2,
+		quadHeight = 3,
+		tickMainHalfLen = 0.8,
+		tickSubLen = 1,
+
+		upperTextSize = 0.5,
+		upperTextPosY = -2,
+		lowerTextSize = 0.45,
+		lowerTextPosY = 1.6,
+	} = {}) => {
 		let getDistMil = (dist) => Toolbox.calcDistanceMil(assumedTgtWidth, dist);
 		let getDistOfMil = (mil) => Toolbox.calcDistanceOfMil(assumedTgtWidth, mil);
 
@@ -171,6 +251,8 @@ export default {
 		drawMiddleLine = true,
 		showTargetWidth = false,
 
+		middleExceeds = [-1, 0],
+
 		quadHeight = 1,
 		tickMainHalfLen = 0.3,
 		tickSubLen = 0.4,
@@ -179,7 +261,7 @@ export default {
 		textSizeSub = 0.5,
 
 		textPosYMain = -0.6,
-		textPosYSub = 1.4,
+		textPosYSub = 0.4,
 	} = {}) => {
 		let assumedTgtWidth = 3.3;
 		let getDistMil = (dist) => Toolbox.calcDistanceMil(assumedTgtWidth, dist);
@@ -187,7 +269,10 @@ export default {
 		let elements = [];
 
 		if (drawMiddleLine) {
-			elements.push(new Line({ from: [0, -1], to: [0, quadHeight] }));
+			elements.push(new Line({
+				from: [0, middleExceeds[0]],
+				to: [0, quadHeight + middleExceeds[1]]
+			}));
 		}
 
 		if (showTargetWidth) {
@@ -214,9 +299,9 @@ export default {
 			new Line({ from: [getDistMil(1600), tickSubFromY], to: [getDistMil(1600), tickSubToY] }),
 
 			new TextSnippet({ text: "6", pos: [5 * MUL_U2R, textPosYMain], size: textSizeMain }),  // Actually around 630m
-			new TextSnippet({ text: "8", pos: [getDistMil(800), textPosYSub], size: textSizeSub }),
+			new TextSnippet({ text: "8", pos: [getDistMil(800), quadHeight + textPosYSub], size: textSizeSub }),
 			new TextSnippet({ text: "12", pos: [getDistMil(1200), textPosYMain], size: textSizeMain }),
-			new TextSnippet({ text: "16", pos: [getDistMil(1600), textPosYSub], size: textSizeSub }),
+			new TextSnippet({ text: "16", pos: [getDistMil(1600), quadHeight + textPosYSub], size: textSizeSub }),
 		);
 		// Move to position
 		for (let ele of elements) {

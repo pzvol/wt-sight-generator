@@ -142,30 +142,49 @@ export const basic = {
 
 /** Shell distance tick combinations */
 export const shellDists = {
-	getFull: (shownPosRight = [0, 0]) => {
+	getFull: (shownRightX = 0, {
+		shownRightOneDigitPadding = -0.0065,
+		shownNumYAdjust = -0.0009
+	} = {}) => {
 		let result = [];
 		for (let d of Toolbox.rangeIE(200, 4000, 400)) {
 			result.push({ distance: d });  // sub ticks
 		}
 		for (let d of Toolbox.rangeIE(400, 4000, 800)) {
-			result.push({ distance: d, shown: d / 100 });  // main ticks left
+			result.push({
+				distance: d, shown: d / 100,
+				shownPos: [0, shownNumYAdjust]
+			});  // main ticks left
 		}
 		for (let d of Toolbox.rangeIE(800, 4000, 800)) {
-			result.push({ distance: d, shown: d / 100, shownPos: shownPosRight });  // main ticks right
+			result.push({
+				distance: d, shown: d / 100,
+				shownPos: (d/100 < 10 && shownRightX > 0) ?
+					[shownRightX + shownRightOneDigitPadding, shownNumYAdjust] :
+					[shownRightX, shownNumYAdjust],
+			});  // main ticks right
 		}
 		return result.sort((a, b) => (a.distance - b.distance));
 	},
 
-	getFullLoose: (shownPosRight = [0, 0]) => {
+	getFullLoose: (shownRightX = 0, {
+		shownNumYAdjust = -0.0009
+	} = {}) => {
 		let result = [];
 		for (let d of Toolbox.rangeIE(400, 4000, 800)) {
 			result.push({ distance: d });  // sub ticks
 		}
 		for (let d of Toolbox.rangeIE(800, 4000, 1600)) {
-			result.push({ distance: d, shown: d / 100 });  // main ticks left
+			result.push({
+				distance: d, shown: d / 100,
+				shownPos: [0, shownNumYAdjust]
+			});  // main ticks left
 		}
 		for (let d of Toolbox.rangeIE(1600, 4000, 1600)) {
-			result.push({ distance: d, shown: d / 100, shownPos: shownPosRight });  // main ticks right
+			result.push({
+				distance: d, shown: d / 100,
+				shownPos: [shownRightX, shownNumYAdjust]
+			});  // main ticks right
 		}
 		return result.sort((a, b) => (a.distance - b.distance));
 	}

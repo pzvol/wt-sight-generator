@@ -3,6 +3,7 @@ import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
 import * as pd from "../_lib2/predefined.js";
 import rgfd from "./sight_components/rangefinder.js";
+import bino from "./sight_components/binocular_calibration_2.js"
 
 
 let sight = new Sight();
@@ -16,7 +17,7 @@ Sight for tanks with 8X optics. Should also be usable on 6X ones.
 
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
-	pd.basic.scales.getHighZoomLargeFont({ font: 1.4 }),
+	pd.basic.scales.getHighZoomLargeFont({ font: 1.4, line: 1.4 }),
 	pd.basic.colors.getGreenRed(),
 	pd.basicBuild.rgfdPos([135, -0.01425]),
 	pd.basicBuild.detectAllyPos([135, -0.036]),
@@ -138,6 +139,25 @@ let rgfdElements = rgfd.getCommon([getMil(800), -8], {
 });
 sight.add(rgfdElements);
 sight.add(rgfdElements.filter((ele) => (ele instanceof Line)));
+
+
+// Binocular reference
+let binoRef = bino.getHighZoom({
+	pos: [getMil(800), 10],
+	mirrorX: false,
+	zeroLineExceeds: [-1.5, 0],
+
+	quadHeight: 1.5,
+	mainTickIntervalPer: 0.47,
+	subTickPer: 0.33,
+
+	upperTextSize: 0.55,
+	lowerTextSize: 0.55,
+	upperTextY: -1.0,
+	lowerTextY: 0.7,
+});
+sight.add(binoRef);
+sight.add(binoRef.filter((ele) => (ele instanceof Line)));
 
 
 

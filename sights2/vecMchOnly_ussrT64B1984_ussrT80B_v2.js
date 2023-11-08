@@ -46,7 +46,6 @@ sight.addShellDistance([
 
 
 //// SIGHT DESIGNS ////
-// Gun correction value display on the top
 // shell tick positional info
 let shellTicks = {
 	shellName: "3BM42",
@@ -72,93 +71,94 @@ let shellTicks = {
 		{d: 4000, ra: 48.7},
 	]
 }
-// Display ring
-let rouletteCenter = [0, -238];
-// higher boundary
-for (let dBias of [0, 0.25, -0.25, -0.5]) {
-	sight.add(new Circle({
-		pos: rouletteCenter,
-		diameter: (shellTicks.rRadius - 8) * 2 - dBias,
-		size: 3
-	}));
-}
-// lower boundary
-for (let dBias of [0, 0.25, -0.25]) {
-	sight.add(new Circle({
-		pos: rouletteCenter,
-		diameter: (shellTicks.rRadius + 7) * 2 - dBias,
-		size: 3
-	}));
-}
-// Current value indication
-sight.add(new Line({
-	from: [0, rouletteCenter[1] + shellTicks.rRadius - 8],
-	to: [0, rouletteCenter[1] + shellTicks.rRadius + 2.5]
-}));
-sight.add(new Line({
-	from: [0, rouletteCenter[1] + shellTicks.rRadius + 5.75],
-	to: [0, rouletteCenter[1] + shellTicks.rRadius + 7]
-}));
-// current value bold
-sight.add(new Quad({
-	topCenter: [0, rouletteCenter[1] + shellTicks.rRadius - 8],
-	xWidth: 0.6, yWidth: 3
-}));
-sight.add(new Quad({  // triangle
-	topLeft: [-0.3, rouletteCenter[1] + shellTicks.rRadius - 8 + 3],
-	topRight: [0.3, rouletteCenter[1] + shellTicks.rRadius - 8 + 3],
-	bottomLeft: [0, rouletteCenter[1] + shellTicks.rRadius - 8 + 4],
-	bottomRight: [0, rouletteCenter[1] + shellTicks.rRadius - 8 + 4],
-}));
-sight.add(new Quad({  // triangle
-	bottomLeft: [-0.5, rouletteCenter[1] + shellTicks.rRadius + 7],
-	bottomRight: [0.5, rouletteCenter[1] + shellTicks.rRadius + 7],
-	topLeft: [0, rouletteCenter[1] + shellTicks.rRadius + 7 - 1],
-	topRight: [0, rouletteCenter[1] + shellTicks.rRadius + 7 - 1],
-}));
-// Shell indication
-sight.add(new TextSnippet({
-	text: shellTicks.shellName, align: "left",
-	pos: [-1, rouletteCenter[1] + shellTicks.rRadius - 8 + 1.75],
-	size: 1.05
-}));
-sight.add(new TextSnippet({
-	text: "APFSDS", align: "right",
-	pos: [1, rouletteCenter[1] + shellTicks.rRadius - 8 + 1.75],
-	size: 1.05
-}));
+// // Gun correction value display on the top
+// // Display ring
+// let rouletteCenter = [0, -238];
+// // higher boundary
+// for (let dBias of [0, 0.25, -0.25, -0.5]) {
+// 	sight.add(new Circle({
+// 		pos: rouletteCenter,
+// 		diameter: (shellTicks.rRadius - 8) * 2 - dBias,
+// 		size: 3
+// 	}));
+// }
+// // lower boundary
+// for (let dBias of [0, 0.25, -0.25]) {
+// 	sight.add(new Circle({
+// 		pos: rouletteCenter,
+// 		diameter: (shellTicks.rRadius + 7) * 2 - dBias,
+// 		size: 3
+// 	}));
+// }
+// // Current value indication
+// sight.add(new Line({
+// 	from: [0, rouletteCenter[1] + shellTicks.rRadius - 8],
+// 	to: [0, rouletteCenter[1] + shellTicks.rRadius + 2.5]
+// }));
+// sight.add(new Line({
+// 	from: [0, rouletteCenter[1] + shellTicks.rRadius + 5.75],
+// 	to: [0, rouletteCenter[1] + shellTicks.rRadius + 7]
+// }));
+// // current value bold
+// sight.add(new Quad({
+// 	topCenter: [0, rouletteCenter[1] + shellTicks.rRadius - 8],
+// 	xWidth: 0.6, yWidth: 3
+// }));
+// sight.add(new Quad({  // triangle
+// 	topLeft: [-0.3, rouletteCenter[1] + shellTicks.rRadius - 8 + 3],
+// 	topRight: [0.3, rouletteCenter[1] + shellTicks.rRadius - 8 + 3],
+// 	bottomLeft: [0, rouletteCenter[1] + shellTicks.rRadius - 8 + 4],
+// 	bottomRight: [0, rouletteCenter[1] + shellTicks.rRadius - 8 + 4],
+// }));
+// sight.add(new Quad({  // triangle
+// 	bottomLeft: [-0.5, rouletteCenter[1] + shellTicks.rRadius + 7],
+// 	bottomRight: [0.5, rouletteCenter[1] + shellTicks.rRadius + 7],
+// 	topLeft: [0, rouletteCenter[1] + shellTicks.rRadius + 7 - 1],
+// 	topRight: [0, rouletteCenter[1] + shellTicks.rRadius + 7 - 1],
+// }));
+// // Shell indication
+// sight.add(new TextSnippet({
+// 	text: shellTicks.shellName, align: "left",
+// 	pos: [-1, rouletteCenter[1] + shellTicks.rRadius - 8 + 1.75],
+// 	size: 1.05
+// }));
+// sight.add(new TextSnippet({
+// 	text: "APFSDS", align: "right",
+// 	pos: [1, rouletteCenter[1] + shellTicks.rRadius - 8 + 1.75],
+// 	size: 1.05
+// }));
 
-// Ticks
-for (let rAngle of shellTicks.rAngles) {
-	let tickHalfWidth = (rAngle.d % 400 == 0) ? 2 : 1;
-	let tickCenterY = rouletteCenter[1] + shellTicks.rRadius;
-	for (let paddingX of [0, -0.1, 0.1]) {
-		sight.add(new Line({
-			from: [paddingX, tickCenterY - tickHalfWidth],
-			to: [paddingX, tickCenterY + tickHalfWidth],
-			moveRadial: true, radialCenter: rouletteCenter, radialMoveSpeed: shellTicks.rMoveSpd,
-			radialAngle: rAngle.ra
-		}));
-	}
-	if (rAngle.d % 400 == 0) {
-		let textPosY = rouletteCenter[1] + shellTicks.rRadius + 3.85;
-		let textRMoveSpd = shellTicks.rMoveSpd / shellTicks.rRadius * (shellTicks.rRadius + 3.85);
-		sight.add(new TextSnippet({
-			text: (rAngle.d / 100).toFixed(),
-			pos: [0, textPosY], size: 1.4,
-			moveRadial: true, radialCenter: rouletteCenter, radialMoveSpeed: textRMoveSpd,
-			radialAngle: rAngle.ra
-		}));
-	}
-}
+// // Ticks
+// for (let rAngle of shellTicks.rAngles) {
+// 	let tickHalfWidth = (rAngle.d % 400 == 0) ? 2 : 1;
+// 	let tickCenterY = rouletteCenter[1] + shellTicks.rRadius;
+// 	for (let paddingX of [0, -0.1, 0.1]) {
+// 		sight.add(new Line({
+// 			from: [paddingX, tickCenterY - tickHalfWidth],
+// 			to: [paddingX, tickCenterY + tickHalfWidth],
+// 			moveRadial: true, radialCenter: rouletteCenter, radialMoveSpeed: shellTicks.rMoveSpd,
+// 			radialAngle: rAngle.ra
+// 		}));
+// 	}
+// 	if (rAngle.d % 400 == 0) {
+// 		let textPosY = rouletteCenter[1] + shellTicks.rRadius + 3.85;
+// 		let textRMoveSpd = shellTicks.rMoveSpd / shellTicks.rRadius * (shellTicks.rRadius + 3.85);
+// 		sight.add(new TextSnippet({
+// 			text: (rAngle.d / 100).toFixed(),
+// 			pos: [0, textPosY], size: 1.4,
+// 			moveRadial: true, radialCenter: rouletteCenter, radialMoveSpeed: textRMoveSpd,
+// 			radialAngle: rAngle.ra
+// 		}));
+// 	}
+// }
 
-// Gun correction display position prompt arrows above sight view top
-for (let paddingY of [-110, -120, -140, -150]) {
-	sight.add(new Quad({
-		topLeft: [0, -2 + paddingY], topRight: [28.5, -20 + paddingY],
-		bottomLeft: [0, paddingY], bottomRight: [31.5, -20 + paddingY]
-	}).withMirrored("x"));
-}
+// // Gun correction display position prompt arrows above sight view top
+// for (let paddingY of [-110, -120, -140, -150]) {
+// 	sight.add(new Quad({
+// 		topLeft: [0, -2 + paddingY], topRight: [28.5, -20 + paddingY],
+// 		bottomLeft: [0, paddingY], bottomRight: [31.5, -20 + paddingY]
+// 	}).withMirrored("x"));
+// }
 
 
 

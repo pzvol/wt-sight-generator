@@ -6,7 +6,7 @@ import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
 
 import rgfd from "../sight_components/rangefinder.js";
-import binoCali from "../sight_components/binocular_calibration.js";
+import binoCali from "../sight_components/binocular_calibration_2.js";
 
 
 let sight = new Sight();
@@ -46,7 +46,7 @@ let init = ({
 
 	//// SHELL DISTANCES ////
 	(() => {
-		let tickPosRight = useTwoSideShellDistTicks ? [0.03, 0] : [0, 0];
+		let tickPosRight = useTwoSideShellDistTicks ? 0.03 : 0;
 		if (useLooseShellDistTicks) {
 			sight.addShellDistance(pd.shellDists.getFullLoose(tickPosRight));
 		} else {
@@ -149,7 +149,10 @@ let init = ({
 	});
 
 
-	let binoCaliEles = binoCali.getHighZoom([getMil(800), 10]);
+	let binoCaliEles = binoCali.getHighZoom({
+		pos: [getMil(800), 10],
+		upperTickShownDigit: 1,
+	});
 	sight.add(binoCaliEles);
 	sight.add(binoCaliEles.filter((ele) => (ele instanceof Line)));
 };

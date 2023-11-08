@@ -7,7 +7,7 @@ import * as pd from "../../_lib2/predefined.js";
 
 import rgfd from "../sight_components/rangefinder.js"
 import tgtLegend from "../sight_components/target_legend.js"
-import binoCali from "../sight_components/binocular_calibration.js"
+import binoCali from "../sight_components/binocular_calibration_2.js"
 
 
 let sight = new Sight();
@@ -57,7 +57,7 @@ let init = ({
 
 	//// SHELL DISTANCES ////
 	(() => {
-		let tickPosRight = useTwoSideShellDistTicks ? [0.03, 0] : [0, 0];
+		let tickPosRight = useTwoSideShellDistTicks ? 0.03 : 0;
 		if (useLooseShellDistTicks) {
 			sight.addShellDistance(pd.shellDists.getFullLoose(tickPosRight));
 		} else {
@@ -148,15 +148,11 @@ let init = ({
 
 	if (showBinocularReference) {
 		sight.addComment("Binocular calibration reference", ["lines", "texts"]);
-		let binoCaliEles = binoCali.getCommon([getMil(400), 20], {
-			textSizeMain: 0.55,
-			textSizeSub: 0.4,
-
-			text6PosY: -2.2,
-			text8PosY: 4.8,
-			text12PosY: -1.8,
-			text16PosY: 4.6,
-			text16UseTighterPosX: true,
+		let binoCaliEles = binoCali.getCommon({
+			pos: [getMil(400), 20],
+			milWidthScale: 1.5,
+			lowerTextSize: 0.43,
+			lowerTextY: 1.4
 		});
 		sight.add(binoCaliEles);
 	}
