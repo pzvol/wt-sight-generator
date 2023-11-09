@@ -28,6 +28,7 @@ class MilCalculator {
 
 
 export default {
+	/** Generic calibration scale bar */
 	getBinoCali({
 		pos = [0, 0],
 
@@ -282,4 +283,96 @@ export default {
 			upperTextY, lowerTextY, drawnSubTickDists
 		});
 	},
+
+
+	/** A narrow scale with 1:1 thousandth */
+	getCommonRealMil({
+		pos = [0, 0],
+
+		mirrorX = false,
+		mirrorY = false,
+		drawTwoTicks = false,
+
+		drawZeroLine = true,
+		zeroLineExceeds = [-3, 0],
+
+		quadHeight = 3,
+		mainTickIntervalPer = 0.47,
+		subTickPer = 0.33,
+
+		assumedTgtWidth = 3.3,
+
+		textSizeLarge = 0.55,
+		textSizeSmall = 0.4,
+
+		upperLargeTextY = -2,
+		upperSmallTextY = -1.8,
+		lowerLargeTextY = 1.6,
+		lowerSmallTextY = 1.4,
+	} = {}) {
+		let mc = new MilCalculator(assumedTgtWidth);
+
+		let elements = [];
+
+		// Draw line elements
+		elements = elements.concat(this.getBinoCali({
+			drawTwoTicks,
+			drawZeroLine,
+			zeroLineExceeds,
+			milWidthScale: 1,
+			quadHeight,
+			mainTickIntervalPer,
+			subTickPer,
+			assumedTgtWidth,
+			drawnSubTickDists: [500, 800, 1600]
+		}).filter((ele) => (ele instanceof Line)));
+
+		// Draw texts
+		let toShown = (n) => Math.floor(n).toString();
+		// Upper
+		if (drawTwoTicks) {
+			elements.push(new TextSnippet({
+				text: toShown(mc.getDistOfMil(10 * MUL_U2R) / 100),
+				pos: [10 * MUL_U2R, upperLargeTextY], size: textSizeLarge
+			}));
+			elements.push(new TextSnippet({
+				text: toShown(mc.getDistOfMil(7.5 * MUL_U2R) / 100),
+				pos: [7.5 * MUL_U2R, upperSmallTextY], size: textSizeSmall
+			}));
+
+		}
+		elements.push(new TextSnippet({
+			text: toShown(mc.getDistOfMil(5 * MUL_U2R) / 100),
+			pos: [5 * MUL_U2R, upperLargeTextY], size: textSizeLarge
+		}));
+		elements.push(new TextSnippet({
+			text: toShown(mc.getDistOfMil(2.5 * MUL_U2R) / 100),
+			pos: [2.5 * MUL_U2R, upperSmallTextY], size: textSizeSmall
+		}));
+		// Lower
+		if (drawTwoTicks) {
+			elements.push(new TextSnippet({
+				text: toShown(500 / 100),
+				pos: [mc.getDistMil(500), quadHeight + lowerSmallTextY], size: textSizeSmall
+			}));
+		}
+		elements.push(new TextSnippet({
+			text: toShown(800 / 100),
+			pos: [mc.getDistMil(800), quadHeight + lowerLargeTextY], size: textSizeLarge
+		}));
+		elements.push(new TextSnippet({
+			text: toShown(1600 / 100),
+			pos: [mc.getDistMil(1600) / 2, quadHeight + lowerSmallTextY], size: textSizeSmall
+			// ^ Moved left for visibility
+		}));
+
+		// Move to position
+		for (let ele of elements) {
+			if (mirrorX) { ele.mirrorX(); }
+			if (mirrorY) { ele.mirrorY(); }
+			ele.move(pos);
+		}
+		return elements;
+	},
+
 }

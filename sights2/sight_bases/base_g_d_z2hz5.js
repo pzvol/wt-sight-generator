@@ -166,15 +166,16 @@ let init = ({
 
 	if (showBinocularReference) {
 		sight.addComment("Binocular calibration reference", ["lines", "texts"]);
-		let binoCaliEles = binoCali.getCommon({
+		let binoCaliEles = binoCali.getCommonRealMil({
 			pos: [getMil(400), 20],
-			milWidthScale: 1.5,
 			zeroLineExceeds: [-2, 0],
 			quadHeight: 2,
-			upperTextSize: 0.5,
-			lowerTextSize: 0.5,
-			upperTextY: -1.5,
-			lowerTextY: 1.2
+			textSizeLarge: 0.55,
+			textSizeSmall: 0.45,
+			upperLargeTextY: -1.4,
+			upperSmallTextY: -1.3,
+			lowerLargeTextY: 1.1,
+			lowerSmallTextY: 1.0,
 		});
 		sight.add(binoCaliEles);
 	}

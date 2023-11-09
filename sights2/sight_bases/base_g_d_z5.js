@@ -156,26 +156,30 @@ let init = ({
 
 	sight.addComment("Binocular calibration reference", ["lines", "texts"]);
 	if (!useTwoTickBinocularRef) {
-		let binoCaliEles = binoCali.getCommon({
+		let binoCaliEles = binoCali.getCommonRealMil({
 			pos: [getMil(400), 15],
-			milWidthScale: 1.5,
 			zeroLineExceeds: [-2.5, 0],
 			quadHeight: 2.5,
-			upperTextY: -1.7,
-			lowerTextY: 1.3,
+			textSizeLarge: 0.55,
+			textSizeSmall: 0.45,
+			upperLargeTextY: -1.7,
+			upperSmallTextY: -1.5,
+			lowerLargeTextY: 1.3,
+			lowerSmallTextY: 1.1,
 		});
 		sight.add(binoCaliEles);
 	} else {
-		let binoCaliEles = binoCali.getCommonTwoTicks({
+		let binoCaliEles = binoCali.getCommonRealMil({
 			pos: [getMil(400), 15],
-			milWidthScale: 1.5,
+			drawTwoTicks: true,
 			zeroLineExceeds: [-2.5, 0],
 			quadHeight: 2.5,
-			mainTickIntervalPer: 0.4,
-			subTickPer: 0.3,
-			upperTextY: -1.5,
-			lowerTextSize:  0.5,
-			lowerTextY: 1.1,
+			textSizeLarge: 0.55,
+			textSizeSmall: 0.45,
+			upperLargeTextY: -1.7,
+			upperSmallTextY: -1.5,
+			lowerLargeTextY: 1.3,
+			lowerSmallTextY: 1.1,
 		});
 		sight.add(binoCaliEles);
 		sight.add(binoCaliEles.filter((ele) => (ele instanceof Line)));
