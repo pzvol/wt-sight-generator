@@ -40,6 +40,7 @@ export default {
 		zeroLineExceeds = [-3, 0],
 
 		milWidthScale = 2,
+		showNon1MilWidthScale = true,
 		quadHeight = 3,
 		mainTickIntervalPer = 0.47,
 		subTickPer = 0.33,
@@ -150,10 +151,17 @@ export default {
 		}
 
 		// Width prompt
+		let promptTexts = [];
 		if (showAssumedTgtWidth) {
+			promptTexts.push(`Width: ${assumedTgtWidth.toString()}m`);
+		}
+		if (showNon1MilWidthScale && milWidthScale != 1) {
+			promptTexts.push(`Scale ${Toolbox.round(milWidthScale, 2)}:1`);
+		}
+		if (promptTexts.length > 0) {
 			let posMil = drawTwoTicks ? 10 : 5;
 			elements.push(new TextSnippet({
-				text: `Width: ${assumedTgtWidth.toString()}m`, align: "right",
+				text: promptTexts.join(",  "), align: "right",
 				pos: [posMil * MUL_U2R * milWidthScale + 0.8, quadHeight/2], size: lowerTextSize
 			}));
 		}
@@ -179,6 +187,7 @@ export default {
 		zeroLineExceeds = [-3, 0],
 
 		milWidthScale = 2,
+		showNon1MilWidthScale = true,
 		quadHeight = 3,
 		mainTickIntervalPer = 0.47,
 		subTickPer = 0.33,
@@ -199,7 +208,7 @@ export default {
 	} = {}) {
 		return this.getBinoCali({
 			pos, mirrorX, mirrorY, drawTwoTicks, drawZeroLine, zeroLineExceeds,
-			milWidthScale, quadHeight, mainTickIntervalPer, subTickPer,
+			milWidthScale, showNon1MilWidthScale, quadHeight, mainTickIntervalPer, subTickPer,
 			showAssumedTgtWidth, assumedTgtWidth, upperTickShownDigit,
 			upperTickShownAlwaysUseRound, upperTextSize, lowerTextSize,
 			upperTextY, lowerTextY, drawnSubTickDists
@@ -218,6 +227,7 @@ export default {
 		zeroLineExceeds = [-3, 0],
 
 		milWidthScale = 2,
+		showNon1MilWidthScale = true,
 		quadHeight = 3,
 		mainTickIntervalPer = 0.47,
 		subTickPer = 0.33,
@@ -238,7 +248,7 @@ export default {
 	} = {}) {
 		return this.getBinoCali({
 			pos, mirrorX, mirrorY, drawTwoTicks, drawZeroLine, zeroLineExceeds,
-			milWidthScale, quadHeight, mainTickIntervalPer, subTickPer,
+			milWidthScale, showNon1MilWidthScale, quadHeight, mainTickIntervalPer, subTickPer,
 			showAssumedTgtWidth, assumedTgtWidth, upperTickShownDigit,
 			upperTickShownAlwaysUseRound, upperTextSize, lowerTextSize,
 			upperTextY, lowerTextY, drawnSubTickDists
@@ -257,6 +267,7 @@ export default {
 		zeroLineExceeds = [-1, 0],
 
 		milWidthScale = 1,
+		showNon1MilWidthScale = true,
 		quadHeight = 1,
 		mainTickIntervalPer = 0.4,
 		subTickPer = 0.4,
@@ -277,7 +288,7 @@ export default {
 	} = {}) {
 		return this.getBinoCali({
 			pos, mirrorX, mirrorY, drawTwoTicks, drawZeroLine, zeroLineExceeds,
-			milWidthScale, quadHeight, mainTickIntervalPer, subTickPer,
+			milWidthScale, showNon1MilWidthScale, quadHeight, mainTickIntervalPer, subTickPer,
 			showAssumedTgtWidth, assumedTgtWidth, upperTickShownDigit,
 			upperTickShownAlwaysUseRound, upperTextSize, lowerTextSize,
 			upperTextY, lowerTextY, drawnSubTickDists
