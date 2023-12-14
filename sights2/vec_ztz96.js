@@ -1,13 +1,12 @@
-import base from "./sight_bases/base_g_l_z4z12.js";
+// SCRIPT_COMPILE_TO=cn_ztz_96
+
+import base from "./sight_bases/base_g_l_z8_line.js";
 import Sight from "../_lib2/sight_main.js";
 
-base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
-	"germ_leopard_2a4",
-])
 
 base.init({
-	shellSpeed: 1650 * 3.6,  // m/s * 3.6
-	assumedMoveSpeed: 55,    // km/h
+	shellSpeed: 1730 * 3.6,  // m/s * 3.6
+	assumedMoveSpeed: 40,    // km/h
 });
 
 export default { sightObj: base.sightObj };

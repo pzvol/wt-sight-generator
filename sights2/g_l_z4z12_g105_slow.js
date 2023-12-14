@@ -5,6 +5,7 @@ base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 	"germ_leopard_1a5",
 	"germ_leopard_a1a1_120",
 	"germ_mkpz_super_m48",
+	"germ_thyssen_henschel_tam_2c",
 	"it_leopard_1a5",
 ]);
 

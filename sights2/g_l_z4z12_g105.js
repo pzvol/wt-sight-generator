@@ -3,7 +3,6 @@ import Sight from "../_lib2/sight_main.js";
 
 base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 	"germ_leopard_2av",
-	"germ_thyssen_henschel_tam_2c",
 ]);
 
 base.init({

@@ -3,7 +3,7 @@ import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
 import * as pd from "../_lib2/predefined.js";
 
-import base from "./g_l_z4z12_g120.js";
+import base from "./g_l_z4z12_g120_slow.js";
 let sight = base.sightObj;
 
 
