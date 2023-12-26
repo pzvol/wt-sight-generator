@@ -21,7 +21,7 @@ sight.matchVehicle([
 // Weapon info
 let mslInfo = {
 	name: "VT1",
-	spd: 1250,  // m/s
+	spd: 1250/1.5,  // m/s. division applied for recitifying since the missile won't keep the max speed all the time
 	rangeMax: 12,  // km
 	rangeRecom: 11,  // km
 };

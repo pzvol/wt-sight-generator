@@ -146,12 +146,19 @@ export default class Toolbox {
 	}
 
 
-	/** Get the round of a value with give digit number */
+	/**
+	 * Get the round of a value with give digit number
+	 *
+	 * @param {number} value
+	 * @param {number} digit - number of digits after the decimal point. `digit < 0`
+	 * makes value to be rounded before the decimal point. E.g, -1 makes 41 become 40
+	 * @returns {number}
+	 */
 	static round(value, digit) {
-		return (Number.isInteger(value) ?
-			value :
-			(Math.round(value * (10 ** digit)) / (10 ** digit))
-		);
+		if (Number.isInteger(value) && digit >= 0) {
+			return value;
+		}
+		return (Math.round(value * (10 ** digit)) / (10 ** digit));
 	}
 
 	/**

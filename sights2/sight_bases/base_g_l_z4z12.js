@@ -20,7 +20,9 @@ making it easier to snapshoot.
 
 let init = ({
 	assumedMoveSpeed = 55,
-	shellSpeed = 1650 * 3.6
+	shellSpeed = 1650 * 3.6,
+	// leading divisions use apporiximate speed instead of denominators
+	leadingDivisionsDrawSpeed = false,
 } = {}) => {
 
 	//// BASIC SETTINGS ////
@@ -32,7 +34,7 @@ let init = ({
 		pd.basicBuild.gunDistanceValuePos([-0.177, 0.035]),
 		pd.basicBuild.shellDistanceTickVars(
 			[-0.008, -0.008],
-			[0, 0],
+			[0, 0.0005],
 			[0.22, 0]
 		),
 		pd.basic.miscVars.getCommon(),
@@ -132,14 +134,20 @@ let init = ({
 	sight.add(
 		new Line({ from: [getLdn(assumedMoveSpeed, 1), 0], to: [getLdn(assumedMoveSpeed, 0.5), 0] }).
 			addBreakAtX(getLdn(assumedMoveSpeed, 1), 1.2).
-			addBreakAtX(getLdn(assumedMoveSpeed, 0.75), 0.7).
-			addBreakAtX(getLdn(assumedMoveSpeed, 0.5), 0.7).
+			addBreakAtX(getLdn(assumedMoveSpeed, 0.75), leadingDivisionsDrawSpeed ? 1 : 0.7).
+			addBreakAtX(getLdn(assumedMoveSpeed, 0.5), leadingDivisionsDrawSpeed ? 1 : 0.7).
 			withMirrored("xy")  // y for bold
 	);
 	Toolbox.repeat(2, () => {
 		sight.texts.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(assumedMoveSpeed, 1), -0.03], size: 0.6 }).withMirrored("x"));
-		sight.texts.add(new TextSnippet({ text: "3", pos: [getLdn(assumedMoveSpeed, 0.75), -0.03], size: 0.45 }).withMirrored("x"));
-		sight.texts.add(new TextSnippet({ text: "2", pos: [getLdn(assumedMoveSpeed, 0.5), -0.03], size: 0.45 }).withMirrored("x"));
+		sight.texts.add(new TextSnippet({
+			text: leadingDivisionsDrawSpeed ? Toolbox.round(0.75*assumedMoveSpeed, -1).toString() : "3",
+			pos: [getLdn(assumedMoveSpeed, 0.75), -0.03], size: 0.45
+		}).withMirrored("x"));
+		sight.texts.add(new TextSnippet({
+			text: leadingDivisionsDrawSpeed ? Toolbox.round(0.5*assumedMoveSpeed, -1).toString() : "2",
+			pos: [getLdn(assumedMoveSpeed, 0.5), -0.03], size: 0.45
+		}).withMirrored("x"));
 	});
 	sight.lines.addComment(`Horizontal leading for APFSDS - 1/4 AA`);
 	for (let biasY of Toolbox.rangeIE(-0.075, 0.075, 0.075)) {

@@ -122,11 +122,18 @@ sight.add(new Circle({
 
 sight.addComment("Air leading circles", ["texts", "circles"]);
 // 1/4
-sight.add(new Circle({
-	segment: [1, 89],
-	diameter: getAirLdnMil(0.25) * 2,
-	size: 2.4
-}).withMirroredSeg("xy"));
+// sight.add(new Circle({
+// 	segment: [1, 89],
+// 	diameter: getAirLdnMil(0.25) * 2,
+// 	size: 2.4
+// }).withMirroredSeg("xy"));
+for (let seg of [ [1, 10], [80, 89] ]) {
+	sight.add(new Circle({
+		segment: seg,
+		diameter: getAirLdnMil(0.25) * 2,
+		size: 2.4
+	}).withMirroredSeg("xy"));
+}
 sight.add(new TextSnippet({
 	text: `1/4 - ${airTgtSpdMain} kph`,
 	pos: [getAirLdnMil(0.25) + 0.5, 1.2],
@@ -138,11 +145,18 @@ sight.add(new TextSnippet({
 	align: "right", size: 0.75
 }));
 // 2/4
-sight.add(new Circle({
-	segment: [1, 89.5],
-	diameter: getAirLdnMil(0.5) * 2,
-	size: 2.4
-}).withMirroredSeg("xy"));
+// sight.add(new Circle({
+// 	segment: [1, 89.5],
+// 	diameter: getAirLdnMil(0.5) * 2,
+// 	size: 2.4
+// }).withMirroredSeg("xy"));
+for (let seg of [ [0.5, 10], [80, 89.5] ]) {
+	sight.add(new Circle({
+		segment: seg,
+		diameter: getAirLdnMil(0.5) * 2,
+		size: 2.4
+	}).withMirroredSeg("xy"));
+}
 sight.add(new TextSnippet({
 	text: `2/4 - ${airTgtSpdMain} kph`,
 	pos: [getAirLdnMil(0.5) - 0.5, 1.2],

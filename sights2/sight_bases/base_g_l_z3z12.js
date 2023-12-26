@@ -17,7 +17,9 @@ Sight for 2.7X~12X with leading values for shooting APFSDS while moving
 
 let init = ({
 	assumedMoveSpeed = 55,
-	shellSpeed = 1700 * 3.6
+	shellSpeed = 1700 * 3.6,
+	// leading divisions use apporiximate speed instead of denominators
+	leadingDivisionsDrawSpeed = false,
 } = {}) => {
 
 	//// BASIC SETTINGS ////
@@ -29,7 +31,7 @@ let init = ({
 		pd.basicBuild.gunDistanceValuePos([-0.167, 0.035]),
 		pd.basicBuild.shellDistanceTickVars(
 			[-0.01, -0.01],
-			[0, 0],
+			[0, 0.0005],
 			[0.2, 0]
 		),
 		pd.basic.miscVars.getCommon(),
@@ -110,7 +112,7 @@ let init = ({
 	]) {
 		sight.add(new Line({
 			from: [l.biasX, -450], to: [l.biasX, l.toY]
-		}).withMirrored(l.biasY == 0 ? null : "x"));
+		}).withMirrored(l.biasX == 0 ? null : "x"));
 	}
 
 
@@ -130,14 +132,20 @@ let init = ({
 	sight.add(
 		new Line({ from: [getLdn(assumedMoveSpeed, 1), 0], to: [getLdn(assumedMoveSpeed, 0.5), 0] }).
 			addBreakAtX(getLdn(assumedMoveSpeed, 1), 1.2).
-			addBreakAtX(getLdn(assumedMoveSpeed, 0.75), 0.7).
-			addBreakAtX(getLdn(assumedMoveSpeed, 0.5), 0.7).
+			addBreakAtX(getLdn(assumedMoveSpeed, 0.75), leadingDivisionsDrawSpeed ? 1 : 0.7).
+			addBreakAtX(getLdn(assumedMoveSpeed, 0.5), leadingDivisionsDrawSpeed ? 1 : 0.7).
 			withMirrored("xy")  // y for bold
 	);
 	Toolbox.repeat(2, () => {
 		sight.texts.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(assumedMoveSpeed, 1), -0.05], size: 0.55 }).withMirrored("x"));
-		sight.texts.add(new TextSnippet({ text: "3", pos: [getLdn(assumedMoveSpeed, 0.75), -0.03], size: 0.45 }).withMirrored("x"));
-		sight.texts.add(new TextSnippet({ text: "2", pos: [getLdn(assumedMoveSpeed, 0.5), -0.03], size: 0.45 }).withMirrored("x"));
+		sight.texts.add(new TextSnippet({
+			text: leadingDivisionsDrawSpeed ? Toolbox.round(0.75*assumedMoveSpeed, -1).toString() : "3",
+			pos: [getLdn(assumedMoveSpeed, 0.75), -0.03], size: 0.45
+		}).withMirrored("x"));
+		sight.texts.add(new TextSnippet({
+			text: leadingDivisionsDrawSpeed ? Toolbox.round(0.5*assumedMoveSpeed, -1).toString() : "2",
+			pos: [getLdn(assumedMoveSpeed, 0.5), -0.03], size: 0.45
+		}).withMirrored("x"));
 	});
 	sight.lines.addComment(`Horizontal leading for APFSDS - 1/4 AA`);
 	for (let biasY of Toolbox.rangeIE(-0.075, 0.075, 0.075)) {
