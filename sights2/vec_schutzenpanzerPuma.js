@@ -44,6 +44,9 @@ let getLeadingMil = (aa) => Toolbox.calcLeadingMil(
 	shellSpd, assumedMoveSpd, aa
 );
 
+// leading divisions use apporiximate speed instead of denominators
+let leadingDivisionsDrawSpeed = true;
+
 
 // Gun center
 sight.add(new Line({
@@ -103,11 +106,11 @@ Toolbox.repeat(2, () => {
 		pos: [getLeadingMil(1), -0.03], size: 0.55
 	}).withMirrored("x"));
 	sight.texts.add(new TextSnippet({
-		text: "3",
+		text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.75*assumedMoveSpd, -1).toString() : "3",
 		pos: [getLeadingMil(0.75), -0.03], size: 0.4
 	}).withMirrored("x"));
 	sight.texts.add(new TextSnippet({
-		text: "2",
+		text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.5*assumedMoveSpd, -1).toString() : "2",
 		pos: [getLeadingMil(0.5), -0.03], size: 0.4
 	}).withMirrored("x"));
 });
@@ -117,8 +120,8 @@ sight.add(
 		to: [getLeadingMil(0.5), 0]
 	}).
 		addBreakAtX(getLeadingMil(1), 1.1).
-		addBreakAtX(getLeadingMil(0.75), 0.55).
-		addBreakAtX(getLeadingMil(0.5), 0.6).
+		addBreakAtX(getLeadingMil(0.75), leadingDivisionsDrawSpeed ? 0.85 : 0.55).
+		addBreakAtX(getLeadingMil(0.5), leadingDivisionsDrawSpeed ? 0.9 : 0.6).
 		withMirrored("xy")  // y for bold
 );
 // 1/4 AA

@@ -12,8 +12,10 @@ let sight = base.sightObj;
 //// VEHICLE TYPES ////
 sight.components.matchVehicleClasses.clear();
 sight.matchVehicle([
+	"fr_amx_30_roland",
 	"germ_flarakpz_1",
 	"germ_flarakrad",
+	"us_xm_975_roland",
 ]);
 
 
@@ -22,7 +24,7 @@ sight.matchVehicle([
 // Weapon info
 let mslInfo = {
 	name: "Rld 3",
-	spd: 570,  // m/s
+	spd: 570/1.3,  // m/s. division applied for recitifying since the missile won't keep the max speed all the time
 	rangeMax: 8,  // km
 	rangeRecom: 6,  // km
 };
@@ -69,7 +71,7 @@ let tthTable = [
 		pos: [-1.5, 0], size: 0.7
 	}),
 	new TextSnippet({
-		text: `${(mslInfo.spd).toFixed()} m/s`, align: "left",
+		text: `Avg ${(mslInfo.spd).toFixed()} m/s`, align: "left",
 		pos: [19, 0], size: 0.7
 	}),
 	// Table row separation
@@ -82,10 +84,10 @@ let tthInfo = {
 	texts: [
 		["KM", "2", "4", "6", "8"],
 		["Sec",
-			(2000 / mslInfo.spd).toFixed(1),
-			(4000 / mslInfo.spd).toFixed(1),
-			(6000 / mslInfo.spd).toFixed(1),
-			(8000 / mslInfo.spd).toFixed(1)
+			Toolbox.roundToHalf(2000 / mslInfo.spd).toString(),
+			Toolbox.roundToHalf(4000 / mslInfo.spd).toString(),
+			Toolbox.roundToHalf(6000 / mslInfo.spd).toString(),
+			Toolbox.roundToHalf(8000 / mslInfo.spd).toString()
 		],
 	]
 }

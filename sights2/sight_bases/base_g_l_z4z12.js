@@ -141,11 +141,11 @@ let init = ({
 	Toolbox.repeat(2, () => {
 		sight.texts.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(assumedMoveSpeed, 1), -0.03], size: 0.6 }).withMirrored("x"));
 		sight.texts.add(new TextSnippet({
-			text: leadingDivisionsDrawSpeed ? Toolbox.round(0.75*assumedMoveSpeed, -1).toString() : "3",
+			text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString() : "3",
 			pos: [getLdn(assumedMoveSpeed, 0.75), -0.03], size: 0.45
 		}).withMirrored("x"));
 		sight.texts.add(new TextSnippet({
-			text: leadingDivisionsDrawSpeed ? Toolbox.round(0.5*assumedMoveSpeed, -1).toString() : "2",
+			text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString() : "2",
 			pos: [getLdn(assumedMoveSpeed, 0.5), -0.03], size: 0.45
 		}).withMirrored("x"));
 	});

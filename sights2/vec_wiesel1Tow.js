@@ -26,7 +26,7 @@ let tthTable = [
 		pos: [-2, -2.5], size: 0.85
 	}),
 	new TextSnippet({
-		text: `EqvSpd - ${(mslInfo.spd).toFixed()} m/s`, align: "left",
+		text: `Avg ${(mslInfo.spd).toFixed()} m/s`, align: "left",
 		pos: [19, -2.5], size: 0.85
 	}),
 	// Table row separation

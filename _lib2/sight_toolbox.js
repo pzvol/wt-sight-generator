@@ -154,12 +154,43 @@ export default class Toolbox {
 	 * makes value to be rounded before the decimal point. E.g, -1 makes 41 become 40
 	 * @returns {number}
 	 */
-	static round(value, digit) {
+	static round(value, digit = 0) {
 		if (Number.isInteger(value) && digit >= 0) {
 			return value;
 		}
 		return (Math.round(value * (10 ** digit)) / (10 ** digit));
 	}
+
+	/**
+	 * Round but considers "half digit". E.g., `3.6` can be rounded to `3.5` when
+	 * `digit == 0` is specified.
+	 *
+	 * Designed to be used to output more human-readable values in sights.
+	 *
+	 * **BE AWARE:** since ".5" values can be returned, this method may
+	 * **NOT** be apporpriate for mathematical calculation.
+	 *
+	 * Following rules are applied during calculating
+	 * - `<= 0.3` floored to 0
+	 * - `>= 0.7` ceiled to 1
+	 * - values between "rounded" to 0.5
+	 *
+	 * @param {number} value
+	 * @param {number} digit - number of digits after the decimal point. `digit < 0`
+	 * makes value to be rounded before the decimal point. E.g, -1 makes 41 become 40
+	 * @returns {number}
+	 */
+	static roundToHalf(value, digit = 0) {
+		if (Number.isInteger(value) && digit >= 0) {
+			return value;
+		}
+		let scaledNum = value * (10 ** digit);
+		// Apply ".5" rule
+		scaledNum = ((scaledNum % 1) <= 0.3 || (scaledNum % 1) >= 0.7) ?
+			Math.round(scaledNum) : (parseInt(scaledNum) + 0.5);
+		return (scaledNum / (10 ** digit));
+	}
+
 
 	/**
 	 * Check if a value is in a range

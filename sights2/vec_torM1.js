@@ -20,7 +20,9 @@ sight.components.matchVehicleClasses.clear();
 // Weapon info
 let mslInfo = {
 	name: "9M331",
-	spd: 850,  // m/s
+	spd: 850/1.35,  // m/s
+		// ^ Division for rectifying since the missile won't keep the max speed all the time
+		//   Divider selected based on a 10km and a 9km hit record
 	rangeMax: 12,  // km
 	rangeRecom: 10,  // km
 };
@@ -67,7 +69,7 @@ let tthTable = [
 		pos: [-1.5, 0], size: 0.7
 	}),
 	new TextSnippet({
-		text: `${(mslInfo.spd).toFixed()} m/s`, align: "left",
+		text: `Avg ${(mslInfo.spd).toFixed()} m/s`, align: "left",
 		pos: [16, 0], size: 0.7
 	}),
 	// Table row separation
@@ -80,10 +82,10 @@ let tthInfo = {
 	texts: [
 		["KM", "4", "8", "10", "12"],
 		["Sec",
-			(4000 / mslInfo.spd).toFixed(1),
-			(8000 / mslInfo.spd).toFixed(1),
-			(10000 / mslInfo.spd).toFixed(1),
-			(12000 / mslInfo.spd).toFixed(1)
+			Toolbox.roundToHalf(4000 / mslInfo.spd).toString(),
+			Toolbox.roundToHalf(8000 / mslInfo.spd).toString(),
+			Toolbox.roundToHalf(10000 / mslInfo.spd).toString(),
+			Toolbox.roundToHalf(12000 / mslInfo.spd).toString()
 		],
 	]
 }

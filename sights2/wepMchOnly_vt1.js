@@ -12,7 +12,9 @@ let sight = base.sightObj;
 //// VEHICLE TYPES ////
 sight.components.matchVehicleClasses.clear();
 sight.matchVehicle([
+	"fr_crotale_ng",  // France ItO 90M
 	"germ_flarakrad",
+	"sw_crotale_ng",  // Sweden ItO 90M
 ]);
 
 
@@ -68,7 +70,7 @@ let tthTable = [
 		pos: [-1.5, 0], size: 0.7
 	}),
 	new TextSnippet({
-		text: `${(mslInfo.spd).toFixed()} m/s`, align: "left",
+		text: `Avg ${(mslInfo.spd).toFixed()} m/s`, align: "left",
 		pos: [19, 0], size: 0.7
 	}),
 	// Table row separation
