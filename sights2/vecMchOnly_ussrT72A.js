@@ -1,7 +1,7 @@
 import base from "./sight_bases/base_g_l_z8.js";
 import Sight from "../_lib2/sight_main.js";
 
-base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
+base.sightObj.matchVehicle([
 	"germ_kpz_t72m1",
 	"sw_t_72m1",
 	"ussr_t_72a",

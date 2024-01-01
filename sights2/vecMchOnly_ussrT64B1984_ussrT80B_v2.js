@@ -22,7 +22,7 @@ sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.gunDistanceValuePos([-0.13, 0.06]),
 	pd.basicBuild.shellDistanceTickVars(
 		[-0.01, -0.01],
-		[0, 0],
+		[0, 0.0002],
 		[0.15, 0]
 	),
 	pd.basic.miscVars.getCommon(),

@@ -18,7 +18,8 @@ Sight for Begleitpanzer 57 with air leading circles
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
 	pd.basic.scales.getHighZoomSmallFont(),
-	pd.basic.colors.getRedGreen(),
+	// pd.basic.colors.getRedGreen(),
+	pd.basic.colors.getLightGreenRed(),
 	pd.basicBuild.rgfdPos([125, -0.01725]),
 	pd.basicBuild.detectAllyPos([125, -0.045]),
 	pd.basicBuild.gunDistanceValuePos([-0.17, 0.035]),
@@ -50,14 +51,23 @@ let getAirLdn = (aa) => Toolbox.calcLeadingMil(shellInfo.spd, assumedAirTgtSpd, 
 
 // Gun center
 Toolbox.repeat(2, () => {
-	sight.add(new Line({ from: [0.15, 0], to: [-0.15, 0], move: true }));
-	sight.add(new Line({ from: [0, 0.15], to: [0, -0.15], move: true }));
+	// sight.add(new Line({ from: [0.15, 0], to: [-0.15, 0], move: true }));
+	// sight.add(new Line({ from: [0, 0.15], to: [0, -0.15], move: true }));
+	// OR use a no-corner square
+	let lineHalfLen = 0.06;
+	let lineRadius = 0.18;
+	sight.add(new Line({
+		from: [lineRadius, -lineHalfLen], to: [lineRadius, lineHalfLen], move: true
+	}).withMirrored("x"));
+	sight.add(new Line({
+		from: [-lineHalfLen, -lineRadius], to: [lineHalfLen, -lineRadius], move: true
+	}));
 });
 
 // Sight center and bold
 for (let bias of Toolbox.rangeIE(-0.075, 0.075, 0.025)) {
 	sight.add(new Line({ from: [0.6, bias], to: [2, bias] }).withMirrored("x"));
-	sight.add(new Line({ from: [bias, 0.6], to: [bias, 2] }));
+	//sight.add(new Line({ from: [bias, 0.6], to: [bias, 2] }));
 }
 
 // Lower vertical line
@@ -123,15 +133,27 @@ sight.add(new TextSnippet({
 sight.add(new Circle({
 	segment: [2, 358], diameter: getAirLdn(0.25) * 2, size: 3
 }));
+//   faster
 sight.add(new TextSnippet({
 	text: `1/4`,
 	pos: [getAirLdn(0.25) - 1, 0.2],
 	align: "left", size: 1.5
 }));
 sight.add(new TextSnippet({
-	text: `2/4  ${assumedAirTgtSpd/2} kph`,
+	text: `${assumedAirTgtSpd} kph`,
+	pos: [getAirLdn(0.25) + 0.8, 0.2],
+	align: "right", size: 1.5
+}));
+//   slower
+sight.add(new TextSnippet({
+	text: `2/4`,
 	pos: [getAirLdn(0.25) - 1, -1.9],
-	align: "left", size: 1.0
+	align: "left", size: 0.95
+}));
+sight.add(new TextSnippet({
+	text: `${assumedAirTgtSpd/2} kph`,
+	pos: [getAirLdn(0.25) + 0.8, -1.9],
+	align: "right", size: 0.95
 }));
 // // 1/4
 // Toolbox.repeat(2, () => {

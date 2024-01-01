@@ -7,6 +7,7 @@ import * as pd from "../_lib2/predefined.js";
 
 import bino from "./sight_components/binocular_calibration_2.js"
 import tgtLgd from "./sight_components/target_legend.js"
+import fcsRadialCfgs from "./sight_components/mousewheel_move_tick_cfg.js";
 
 
 let sight = new Sight();
@@ -15,6 +16,11 @@ let sight = new Sight();
 // Introduction comment
 sight.addDescription(`
 Sight for SturmPz.IV and other 150mm-gun-armed tanks
+
+Virtual FCS system added, being inspired by Luch FCS
+	(https://live.warthunder.com/post/1069134/en/)
+
+Requires mouse wheel sensitivity to be set to 75%
 `.trim());
 
 
@@ -22,8 +28,8 @@ Sight for SturmPz.IV and other 150mm-gun-armed tanks
 sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.scale({ font: 0.9, line: 1.2 }),
 	pd.basic.colors.getGreenRed(),
-	pd.basicBuild.rgfdPos([160, -5]),  // [170, -10]
-	pd.basicBuild.detectAllyPos([160, 0.015]),  // [170, -0.055]
+	pd.basicBuild.rgfdPos([160, -10]),  // [170, -10]
+	pd.basicBuild.detectAllyPos([160, -0.055]),  // [170, -0.055]
 	pd.basicBuild.gunDistanceValuePos([-0.22, 0.02]),
 	pd.basicBuild.shellDistanceTickVars(
 		[0, 0],
@@ -54,16 +60,19 @@ sight.matchVehicle([
 ]);
 
 
-//// SHELL DISTANCES ////
-// Target size assumption
-let assumedTgtWidth = 3.0;
-let binoCaliUpperTickUseRound = true;
-let assumedTargetLength = 6.0;
-let getMilHalf = (dist) => (Toolbox.calcDistanceMil(assumedTgtWidth, dist) / 2);
 
+//// Settings
+// Target size assumption
+let assumedTgtWidth = 3.3;
+let assumedTargetLength = 6.6;
+let assumedTgtHeight = 2.4;  // Height of T-34
+
+let binoCaliUpperTickUseRound = true;
 /** Drop-down annoation type
  * @type {"degree"|"100mDropValue"|"travelDistPerXmDrop"} */
 let dropDownAnnoationType = "degree";
+
+let getWidthMilHalf = (dist) => (Toolbox.calcDistanceMil(assumedTgtWidth, dist) / 2);
 
 // Shell info and falldown mils
 let shell = {
@@ -117,11 +126,17 @@ let getHeatDrop = (dist) => shell.heat.dropMils.find((tick) => (tick.d == dist))
 // Line width correction, added for avoiding the interference of line while
 // measuing with some elements by moving one line side to the proper position
 let lWCorr = 0.15;
-// sight.add(new Line({from: [0, 10], to: [0, -10]}))
-// sight.add(new Line({from: [lWCorr, -10], to: [lWCorr, -20]}).withMirrored())
+
+// Virtual FCS settings
+let mouseWheelMult = 75;
+let mouseWheelTickLinearMil = fcsRadialCfgs.getLinearTickMil(mouseWheelMult);
+let fcsConfig = fcsRadialCfgs.getConfigByUniqueName("mult 75, r 10000, spd 1000");
+let fcsDrawnShell = shell.he;
+let fcsRadialCenter = [fcsConfig.radius, 0];
 
 
 
+//// SHELL DISTANCES ////
 // Draw HE and HEAT details at the same time.
 // Additional block printed manually in the end
 // TODO: Add "ballistics" block support to sight object
@@ -277,323 +292,186 @@ sight.add(arrowRight).add(arrowLeft);
 sight.add(arrowRight).add(arrowLeft);  // repeat for bold
 
 // Horizontal line
-sight.add(new Line({ from: [-37, 0], to: [37, 0] }).addBreakAtX(0, getMilHalf(400)*2));
+sight.add(new Line({ from: [-37, 0], to: [37, 0] }).addBreakAtX(0, getWidthMilHalf(50)*2));
 sight.add(new Line({ from: [450, 0], to: [51, 0] }).withMirrored("xy"));  // y for bold
 // Vertical line
 // skips HE 200-2000m for clearer view
 sight.add([
-	new Line({ from: [0, 0], to: [0, getHeDrop(200)], move: true }),
+	new Line({ from: [0, 0], to: [0, getHeDrop(200)], move: true })
+		.addBreakAtY(getHeDrop(50), 2.5),  // break for 50m
 	new Line({ from: [0, getHeDrop(2000)], to: [0, 450], move: true }),
 ]);
 
 
-// HE shell targeting curve
-// 50
-sight.add([
-	// on the horizon
-	new Line({
-		from: [getMilHalf(50) - 0.2, 0], to: [getMilHalf(50) + 0.2, 0], move: true
-	}).withMirrored("x"),
-	// vertical
-	new Line({
-		from: [getMilHalf(50), 0], to: [getMilHalf(50), getHeDrop(50)], move: true
-	}).withMirrored("x"),
-	// text
-	new TextSnippet({
-		text: "50",
-		pos: [-getMilHalf(50), getHeDrop(50) + 2],
-		size: 0.5, move: true
-	})
-]);
-// 50-100m curve
-(() => {
-	let basis = new Line({
-		from: [getMilHalf(50), getHeDrop(50)],
-		to: [getMilHalf(100) + lWCorr, getHeDrop(100)], move: true
-	});
-	// right
-	sight.add(basis.copy());
-	// left
-	sight.add(basis.copy().mirrorX().addBreakAtX(-getMilHalf(100) - 2 - 0.4, 2.5));  // breaking for HE 100m text
-})();
-// 100~1200m curve
-(() => {
-	let anchorInfo = shell.he.dropMils.filter(
-		(ele) => (ele.d % 100 == 0 && ele.d != 0 && ele.d <= 1200)
+// Virtual FCS for HE shell
+let fcsDrawUntilShellMil = fcsDrawnShell.dropMils[fcsDrawnShell.dropMils.length - 1].mil;
+let getFcsQuadCornerPos = (dist) => [
+	Toolbox.calcDistanceMil(assumedTgtWidth, dist) / 2,
+	Toolbox.calcDistanceMil(assumedTgtHeight, dist) / 2,
+];
+let getAdjustedRadialSpeed = (lineFrom, lineTo) => {
+	let lineCenter = [
+		(lineFrom[0] + lineTo[0]) / 2,
+		(lineFrom[1] + lineTo[1]) / 2,
+	];
+	let realRadius = Math.sqrt(
+		(fcsRadialCenter[0] + lineCenter[0])**2 +
+		(fcsRadialCenter[1] + lineCenter[1])**2
 	);
-	for (let i = 0; i < anchorInfo.length - 1; i++) {
-		let currAnchor = [getMilHalf(anchorInfo[i].d) + lWCorr, anchorInfo[i].mil];
-		let nextAnchor = [getMilHalf(anchorInfo[i + 1].d) + lWCorr, anchorInfo[i + 1].mil];
+	return (fcsConfig.radialSpeed / (realRadius / fcsConfig.radius));
+}
+// Draw FCS quads
+for (let count = 0; true; count++) {
+	if (count === 0) { continue; }  // Skip gun center
+	let currDropMil = count*mouseWheelTickLinearMil;
+	if (currDropMil > fcsDrawUntilShellMil) { break; }  // termination condition
+
+	// We check dropMils table and find the distance for currDropMil based on the curve
+	// Due to this method, values between 0-50m and max+ will not be drawn
+	//
+	// Find first anchor index larger than currDropMil
+	let largerAnchorIndex = fcsDrawnShell.dropMils.findIndex((a) => a.mil >= currDropMil);
+	if (largerAnchorIndex <= 1) { continue; }
+	let largerAnchor = fcsDrawnShell.dropMils[largerAnchorIndex];
+	let smallerAnchor = fcsDrawnShell.dropMils[largerAnchorIndex - 1];
+	// Find distance for currDropMil
+	let currDist = (() => {
+		let passSmallerPercentage =
+			(currDropMil - smallerAnchor.mil) / (largerAnchor.mil - smallerAnchor.mil);
+		return (
+			smallerAnchor.d +
+			(largerAnchor.d - smallerAnchor.d) * passSmallerPercentage
+		);
+	})();
+	// Draw quad
+	//sight.lines.addComment("Dist " + currDist);
+	let currQuadCornerPos = getFcsQuadCornerPos(currDist);
+	currQuadCornerPos[0] += lWCorr;
+	currQuadCornerPos[1] += lWCorr;
+	Toolbox.repeat(2, () => {
+		// Upper height line
+		let upperHoriFrom = [
+			currQuadCornerPos[0]*0.5, -currQuadCornerPos[1]
+		];
+		let upperHoriTo = [
+			-currQuadCornerPos[0]*0.5, -currQuadCornerPos[1]
+		];
 		sight.add(new Line({
-			from: currAnchor, to: nextAnchor, move: true
-		}).withMirrored("x"));
-	}
-})();
-// 100m tick
-sight.add(new Line({
-	from: [getMilHalf(100) + lWCorr, getHeDrop(100) - 0.2],
-	to: [getMilHalf(100) + lWCorr, getHeDrop(100) + 0.4],
-	move: true
-}).withMirrored("x"));
-sight.add(new TextSnippet({
-	text: "1",
-	pos: [-getMilHalf(100) - lWCorr - 2, getHeDrop(100) - 0.4],
-	size: 0.7, move: true
-}));
-// 200m tick
-sight.add(new Line({
-	from: [getMilHalf(200) + lWCorr, getHeDrop(200)],
-	to: [getMilHalf(200) + lWCorr + 3, getHeDrop(200)],
-	move: true
-}).withMirrored("x"));
-sight.add(new TextSnippet({
-	text: "2",
-	pos: [-getMilHalf(200) - lWCorr - 4.5, getHeDrop(200) - 0.4],
-	size: 0.7, move: true
-}));
-// 300m tick
-sight.add(new Line({
-	from: [getMilHalf(300) + lWCorr, getHeDrop(300)],
-	to: [getMilHalf(300) + lWCorr + 2, getHeDrop(300)],
-	move: true
-}).withMirrored("x"));
-// 400m tick
-sight.add(new Line({
-	from: [getMilHalf(400) + lWCorr, getHeDrop(400)],
-	to: [getMilHalf(400) + lWCorr + 1, getHeDrop(400)],
-	move: true
-}).withMirrored("x"));
-Toolbox.repeat(2, () => {
-	sight.add(new TextSnippet({
-		text: "4",
-		pos: [-getMilHalf(400) - lWCorr - 2.75, getHeDrop(400) - 0.4],
-		size: 0.6, move: true
-	}));
-});
-// 500~1100m ticks
-for (let d of Toolbox.rangeIE(500, 1100, 200)) {
-	Toolbox.repeat(2, () => {
-		sight.add(new TextSnippet({
-			text: ">",
-			pos: [-getMilHalf(d) - lWCorr - 1.5, getHeDrop(d) - 0.3],
-			size: 0.5, move: true
+			from: upperHoriFrom, to: upperHoriTo,
+			moveRadial: true,
+			radialCenter: fcsRadialCenter,
+			radialAngle: fcsConfig.tickAngle * count,
+			radialMoveSpeed: getAdjustedRadialSpeed(upperHoriFrom, upperHoriTo)
 		}));
+		// Lower height line
+		for (let mirroring of [ {x: 1, y: 1}, {x: -1, y: 1}]) {
+			let mirroredFrom = [
+				currQuadCornerPos[0] * mirroring.x,
+				currQuadCornerPos[1] * mirroring.y
+			];
+			let mirroredTo = [
+				currQuadCornerPos[0] * mirroring.x * 0.5,
+				currQuadCornerPos[1] * mirroring.y
+			];
+			sight.add(new Line({
+				from: mirroredFrom, to: mirroredTo,
+				moveRadial: true,
+				radialCenter: fcsRadialCenter,
+				radialAngle: fcsConfig.tickAngle * count,
+				radialMoveSpeed: getAdjustedRadialSpeed(mirroredFrom, mirroredTo)
+			}));
+		}
+		// Vertical lines
+		for (let mirroring of [ {x: 1, y: 1}, {x: -1, y: 1}]) {
+			let mirroredFrom = [
+				currQuadCornerPos[0] * mirroring.x,
+				currQuadCornerPos[1] * mirroring.y + 5
+			];
+			let mirroredTo = [
+				currQuadCornerPos[0] * mirroring.x,
+				currQuadCornerPos[1] * mirroring.y * 0
+			];
+			sight.add(new Line({
+				from: mirroredFrom, to: mirroredTo,
+				moveRadial: true,
+				radialCenter: fcsRadialCenter,
+				radialAngle: fcsConfig.tickAngle * count,
+				radialMoveSpeed: getAdjustedRadialSpeed(mirroredFrom, mirroredTo)
+			}));
+		}
 	});
-}
-for (let d of Toolbox.rangeIE(600, 1000, 200)) {
-	Toolbox.repeat(2, () => {
-		sight.add(new TextSnippet({
-			text: (d / 100).toFixed(), align: "left",
-			pos: [-getMilHalf(d) - lWCorr - 1, getHeDrop(d) - 0.4],
-			size: 0.6, move: true
-		}));
-	});
-}
-// 1200m tick
-Toolbox.repeat(2, () => {
-	sight.add(new TextSnippet({
-		text: "12", align: "left",
-		pos: [-getMilHalf(1200) - 1, getHeDrop(1200) - 0.3],
-		size: 0.5, move: true
-	}));
-});
-// 1300~2000m ticks
-for (let d of Toolbox.rangeIE(1300, 2000, 100)) {
-	let tickLen = (d % 200 == 0) ? 1.8 : 1;
-	sight.add(new Line({
-		from: [0, getHeDrop(d)],
-		to: [-tickLen, getHeDrop(d)], move: true
-	}));
-	Toolbox.repeat(2, () => {
-		sight.add(new TextSnippet({
-			text: (d / 100).toFixed(), align: "left",
-			pos: [-2.2, getHeDrop(d) - 0.25],
-			size: 0.5, move: true
-		}));
-	});
-}
-
-// Additional width calib for 12, 16 and 20km
-sight.add(new Line({
-	from: [3, getHeDrop(1200)],
-	to: [(3 + 2*getMilHalf(1200)), getHeDrop(1200)], move: true
-}));
-let addiLineYpadding = 4 + getHeDrop(1200);
-for (let d of [1600, 2000]) {
-	sight.add(new Line({
-		from: [3, addiLineYpadding], to: [(3 + 2*getMilHalf(d)), addiLineYpadding],
-		move: true
-	}));
-	sight.add(new Line({
-		from: [3, addiLineYpadding], to: [3, addiLineYpadding - 1.5],
-		move: true
-	}));
-	sight.add(new Line({
-		from: [(3 + 2*getMilHalf(d)), addiLineYpadding],
-		to: [(3 + 2*getMilHalf(d)), addiLineYpadding - 1.5],
-		move: true
-	}));
-	sight.add(new TextSnippet({
-		text: (d/100).toFixed(), align: "right",
-		pos: [(3 + 2*getMilHalf(d) + 1.5), addiLineYpadding - 1], size: 0.5,
-		move: true
-	}))
-
-	addiLineYpadding += 4;
-}
-// HE Shell hit angle estimation
-//   The actual angle can be slightly different since we are calculating based
-//   on limited known drops
-(() => {
-	let anchorAngles = [];
-	// Calc between curr and next
-	// for (let i = 0; i < (shell.he.dropMils.length - 1); i++) {
-	// 	let currAnchor = shell.he.dropMils[i];
-	// 	let nextAnchor = shell.he.dropMils[i + 1];
-	// 	let distDiff = nextAnchor.d - currAnchor.d;
-	// 	let heightDiff = Toolbox.calcSizeFromMil(nextAnchor.mil, nextAnchor.d) - Toolbox.calcSizeFromMil(currAnchor.mil, currAnchor.d);
-	// 	let angleTan = heightDiff / distDiff;
-	// 	let angle = Toolbox.radToDeg(Math.atan(angleTan));
-	// 	anchorAngles.push({
-	// 		d: currAnchor.d, mil: currAnchor.mil,
-	// 		angle: angle, tan: angleTan
-	// 	});
+	// OR, A full quad
+	// for (let mirroring of [ {x: 1, y: 1}, {x: -1, y: -1}, {x: -1, y: 1}, {x: 1, y: -1}]) {
+	// 	for (let toPos of [
+	// 		[currQuadCornerPos[0], currQuadCornerPos[1] * 0.67],
+	// 		[currQuadCornerPos[0] * 0.67, currQuadCornerPos[1]]
+	// 	]) {
+	// 		let mirroredFrom = [
+	// 			currQuadCornerPos[0] * mirroring.x,
+	// 			currQuadCornerPos[1] * mirroring.y,
+	// 		];
+	// 		let mirroredTo = [toPos[0] * mirroring.x, toPos[1] * mirroring.y];
+	// 		sight.add(new Line({
+	// 			from: mirroredFrom, to: mirroredTo,
+	// 			moveRadial: true,
+	// 			radialCenter: fcsRadialCenter,
+	// 			radialAngle: fcsConfig.tickAngle * count,
+	// 			radialMoveSpeed: getAdjustedRadialSpeed(mirroredFrom, mirroredTo)
+	// 		}));
+	// 	}
 	// }
-	// OR, Use average of prev and next
-	for (let i = 1; i < (shell.he.dropMils.length - 1); i++) {
-		let prevAnchor = shell.he.dropMils[i - 1];
-		let currAnchor = shell.he.dropMils[i];
-		let nextAnchor = shell.he.dropMils[i + 1];
-		let distDiff = nextAnchor.d - prevAnchor.d;
-		let heightDiff = Toolbox.calcSizeFromMil(nextAnchor.mil, nextAnchor.d) - Toolbox.calcSizeFromMil(prevAnchor.mil, prevAnchor.d);
-		let angleTan = heightDiff / distDiff;
-		let angle = Toolbox.radToDeg(Math.atan(angleTan));
-		anchorAngles.push({
-			d: currAnchor.d, mil: currAnchor.mil,
-			angle: angle, tan: angleTan
-		});
-	}
-	// Draw wanted ticks
-	let drawn = anchorAngles.filter(
-		(ele) => (ele.d % 200 == 0 && ele.d != 0 && ele.d < 2000)
-	);
-	if (dropDownAnnoationType === "degree") {
-		for (let a of drawn) {
-			sight.add(new TextSnippet({
-				text: `${a.angle.toFixed()}°`, align: "center",
-				pos: [-46.25, a.mil +1.6],
-				size: 0.36, move: true
-			}));
-		}
-	} else if (dropDownAnnoationType === "100mDropValue") {
-		for (let a of drawn) {
-			sight.add(new TextSnippet({
-				text: `${(a.tan * 100).toFixed()}`, align: "center",
-				pos: [-46.25, a.mil +1.6],
-				size: 0.36, move: true
-			}));
-		}
-		sight.add(new TextSnippet({
-			text: `(drop per 100m)`, align: "left",
-			pos: [-53, 2],
-			size: 0.4, move: false
-		}));
-	} else if (dropDownAnnoationType === "travelDistPerXmDrop") {
-		let perXm = 3;
-		for (let a of drawn) {
-			sight.add(new TextSnippet({
-				text: `${(perXm/a.tan).toPrecision(2)}`, align: "center",
-				pos: [-46.25, a.mil +1.6],
-				size: 0.36, move: true
-			}));
-		}
-		sight.add(new TextSnippet({
-			text: `(travel dist per ${perXm}m drop)`, align: "left",
-			pos: [-53, 2],
-			size: 0.4, move: false
-		}));
-	}
-})();
+}
 
 
-
-
-// HEAT shell targeting
+// HE shell tick lines
 // 50m
-// TODO: add pos mirroring for Circle
-sight.add(new Circle({
-	pos: [getMilHalf(50), getHeatDrop(50)], diameter: 1.2, size: 1, move: true
-}));
-sight.add(new Circle({
-	pos: [-getMilHalf(50), getHeatDrop(50)], diameter: 1.2, size: 1, move: true
-}));
-sight.add(new TextSnippet({
-	text: "50", pos: [getMilHalf(50) + 3, getHeatDrop(50)], size: 0.5, move: true
-}));
-// 100m
-sight.add(new Circle({
-	pos: [getMilHalf(100), getHeatDrop(100)], diameter: 1, size: 1, move: true
-}));
-sight.add(new Circle({
-	pos: [-getMilHalf(100), getHeatDrop(100)], diameter: 1, size: 1, move: true
-}));
-// 200~400m
-for (let d of [200, 300, 400]) {
-	sight.add(new Circle({
-		pos: [getMilHalf(d), getHeatDrop(d)], diameter: 1, size: 1, move: true
-	}));
-	sight.add(new Circle({
-		pos: [-getMilHalf(d), getHeatDrop(d)], diameter: 0.5, size: 1, move: true
-	}));
-}
-// 500~700m
-for (let d of [500, 600, 700]) {
-	sight.add(new Circle({
-		pos: [getMilHalf(d), getHeatDrop(d)], diameter: 0.5, size: 1, move: true
-	}));
-	if (d % 200 == 0) {
-		sight.add(new Circle({
-			pos: [-getMilHalf(d), getHeatDrop(d)], diameter: 0.5, size: 1, move: true
-		}));
-	}
-}
-// 800~1000m
-for (let d of [800, 900, 1000]) {
-	sight.add(new Circle({
-		pos: [getMilHalf(d), getHeatDrop(d)], diameter: 0.3, size: 1, move: true
-	}));
-	if (d % 200 == 0) {
-		sight.add(new Circle({
-			pos: [-getMilHalf(d), getHeatDrop(d)], diameter: 0.3, size: 1, move: true
-		}));
-	}
-}
-// HEAT prompt texts
-for (let d of [100, 200]) {
+Toolbox.repeat(2, () => {
 	sight.add(new TextSnippet({
-		text: (d/100).toFixed(),
-		pos: [getMilHalf(d) + 15, getHeatDrop(d) - 0.3], size: 0.55, move: true
+		text: "50", align: "center",
+		pos: [0, getHeDrop(50) - 0.15],
+		size: 0.4, move: true
 	}));
-	sight.add(new Line({
-		from: [getMilHalf(d) + 0.6, getHeatDrop(d)],
-		to: [getMilHalf(d) + 15 - 1, getHeatDrop(d)],
-		move: true
-	}))
+});
+// 100~2000m ticks
+for (let d of Toolbox.rangeIE(100, 2000, 100)) {
+	if (d == 100) {
+		sight.add(new Line({
+			from: [0, getHeDrop(d)], to: [-1, getHeDrop(d)], move: true
+		}));
+	} else if (d == 200) {
+		sight.add(new Line({
+			from: [0, getHeDrop(d)], to: [-1.8, getHeDrop(d)], move: true
+		}));
+	} else {
+		if (d % 200 == 0) {
+			sight.add(new Line({
+				from: [0.2, getHeDrop(d)], to: [-0.2, getHeDrop(d)], move: true
+			}));
+		}
+	}
+	Toolbox.repeat(2, () => {
+		let textPosX = -2.2;
+		if (d >= 400) {
+			let adjustedPosX = -getWidthMilHalf(d) - 1;  // note it's a minus-zero value
+			if (adjustedPosX < textPosX) { textPosX = adjustedPosX; }
+		}
+		sight.add(new TextSnippet({
+			text: (d % 200 == 0) ? (d / 100).toFixed() : ">", align: "left",
+			pos: [textPosX, getHeDrop(d) - ((d % 200 == 0) ? 0.3 : 0.25)],
+			size: 0.5, move: true
+		}));
+	});
 }
-for (let d of [400, 600, 800, 1000]) {
-	sight.add(new TextSnippet({
-		text: (d/100).toFixed(),
-		pos: [getMilHalf(d) + 8, getHeatDrop(d) - 0.3], size: 0.55, move: true
-	}));
-}
+
 
 
 // Assumed width prompt
-// sight.add(new TextSnippet({
-// 	text: `Width  ${assumedTgtWidth}m`,
-// 	pos: [0.18, 0.0075], thousandth: false,
-// 	size: 0.6
-// }));
+sight.add(new TextSnippet({
+	text: `W ${assumedTgtWidth}m,  L ${assumedTargetLength}m,  H ${assumedTgtHeight}m`,
+	align: "right",
+	pos: [0.148, 0.0075], thousandth: false,
+	size: 0.6
+}));
 // Shell type prompt for ticks
 let shellPromptTextY = 55;
 sight.add([

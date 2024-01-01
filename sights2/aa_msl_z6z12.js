@@ -16,7 +16,7 @@ Generic sight for missile SPAAs with 6X~12X optics
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.scale({ font: 1.5, line: 1.5 }),
-	pd.basic.colors.getRedGreen(),
+	pd.basic.colors.getRedLightGreen(),
 	pd.basicBuild.rgfdPos([140, 0]),
 	pd.basicBuild.detectAllyPos([140, -0.025]),
 	pd.basicBuild.gunDistanceValuePos([-0.2, 0.015]),

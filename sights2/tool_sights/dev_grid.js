@@ -1,7 +1,7 @@
-import Sight from "../_lib2/sight_main.js";
-import Toolbox from "../_lib2/sight_toolbox.js";
-import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
-import * as pd from "../_lib2/predefined.js";
+import Sight from "../../_lib2/sight_main.js";
+import Toolbox from "../../_lib2/sight_toolbox.js";
+import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
+import * as pd from "../../_lib2/predefined.js";
 
 
 let sight = new Sight();

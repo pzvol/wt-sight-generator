@@ -23,8 +23,8 @@ Sight for Sturmtiger
 sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.scale({ font: 0.9, line: 1.2 }),
 	pd.basic.colors.getGreenRed(),
-	pd.basicBuild.rgfdPos([170, -10]),
-	pd.basicBuild.detectAllyPos([170, 0.015]),  // [170, -0.055]
+	pd.basicBuild.rgfdPos([160, -5]),  // [170, -10]
+	pd.basicBuild.detectAllyPos([160, 0.015]),  // [170, -0.055]
 	pd.basicBuild.gunDistanceValuePos([-0.22, 0.02]),
 	pd.basicBuild.shellDistanceTickVars(
 		[0, 0],
@@ -400,18 +400,19 @@ for (let d of [1600, 2000]) {
 }
 
 // Assumed width prompt
-sight.add(new TextSnippet({
-	text: `Width  ${assumedTgtWidth}m`,
-	pos: [0.18, 0.0075], thousandth: false,
-	size: 0.6
-}));
+// sight.add(new TextSnippet({
+// 	text: `Width  ${assumedTgtWidth}m`,
+// 	pos: [0.18, 0.0075], thousandth: false,
+// 	size: 0.6
+// }));
 
 
 // Binocular Calibration
 Toolbox.repeat(2, () => {
 	sight.add(bino.getCommonTwoTicks({
 		pos: [54, 20], assumedTgtWidth: assumedTgtWidth,
-		upperTickShownAlwaysUseRound: binoCaliUpperTickUseRound
+		showAssumedTgtWidth: true,
+		upperTickShownAlwaysUseRound: binoCaliUpperTickUseRound,
 	}));
 });
 
