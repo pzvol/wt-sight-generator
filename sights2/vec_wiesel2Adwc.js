@@ -19,7 +19,7 @@ Sight for Ozelot (germ_wiesel_2_adwc) SPAA (carrying FIM-92K)
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.scale({ font: 0.9, line: 1.5 }),
-	pd.basic.colors.getRedGreen(),
+	pd.basic.colors.getRedLightGreen(),
 	pd.basicBuild.rgfdPos([105, -0.02]),
 	pd.basicBuild.detectAllyPos([105, -0.045]),
 	pd.basicBuild.gunDistanceValuePos([-0.18, 0.03]),

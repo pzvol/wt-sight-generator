@@ -7,6 +7,7 @@ base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 	"germ_mkpz_super_m48",
 	"germ_thyssen_henschel_tam_2c",
 	"it_leopard_1a5",
+	"germ_leopard_2av",
 ]);
 
 base.init({

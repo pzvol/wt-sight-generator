@@ -22,13 +22,13 @@ making it easier to snapshoot.
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
 	pd.basic.scales.getHighZoom({ line: 1.6 }),
-	pd.basic.colors.getLightGreenRed(),
+	pd.basic.colors.getGreenRed(),
 	pd.basicBuild.rgfdPos([110, -0.01725]),
 	pd.basicBuild.detectAllyPos([110, -0.038]),
 	pd.basicBuild.gunDistanceValuePos([-0.165, 0.030]),
 	pd.basicBuild.shellDistanceTickVars(
 		[-0.0100, -0.0100],
-		[0, 0.00015],
+		[0, 0.0003],
 		[0.193, 0]
 	),
 	pd.basic.miscVars.getCommon(),
@@ -82,64 +82,45 @@ for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
 
 
 sight.lines.addComment("Vertical upper and bold");
-for (let posDef of [
-	{startingY: -40, lnShifts: Toolbox.rangeIE(0, 0.04, 0.04)},
-	{startingY: -45, lnShifts: Toolbox.rangeIE(0.08, 0.12, 0.04)},
-]) {
-	for (let lnShift of posDef.lnShifts) {
-		sight.add(new Line({
-			from: [lnShift, posDef.startingY], to: [lnShift, -450]
-		}).withMirrored(lnShift == 0 ? null : "x"));
-	}
-}
+sight.add(new Line({ from: [0, -30], to: [0, -450] }));
+for (let p of [
+	[0.04, -30], [0.08, -40], [0.12, -40]  // params: [lnShift, startingY]
+]) { sight.add(new Line({ from: p, to: [p[0], -450] }).withMirrored("x")); }
 sight.lines.addComment("Vertical lower and bold");
-for (let posDef of [
-	{startingY: 2, lnShifts: [0]},
-	{startingY: 23, lnShifts: [0.03]},
-	{startingY: 42, lnShifts: Toolbox.rangeIE(0.08, 0.12, 0.04)},
-]) {
-	for (let lnShift of posDef.lnShifts) {
-		sight.add(new Line({
-			from: [lnShift, posDef.startingY], to: [lnShift, 450]
-		}).withMirrored(lnShift == 0 ? null : "x"));
-	}
-}
+sight.add(new Line({ from: [0, 2], to: [0, 450] }));
+for (let p of [
+	[0.03, 4.8], [0.08, 40], [0.12, 40]  // params: [lnShift, startingY]
+]) { sight.add(new Line({ from: p, to: [p[0], 450] }).withMirrored("x")); }
+
 
 sight.lines.addComment("Horizontal lines near sight borders and bold");
-for (let posDef of [
-	{startingX: 75, lnShifts: Toolbox.rangeIE(0, 0.02, 0.02)},
-	{startingX: 88, lnShifts: Toolbox.rangeIE(0.04, 0.12, 0.04)},
-]) {
-	for (let lnShift of posDef.lnShifts) {
-		sight.add(new Line({
-			from: [posDef.startingX, lnShift], to: [450, lnShift]
-		}).withMirrored(lnShift == 0 ? "x" : "xy"));
-	}
-}
+sight.add(new Line({ from: [50, 0], to: [450, 0] }).withMirrored("x"));
+for (let p of [
+	[50, 0.02], [80, 0.04], [80, 0.08], [80, 0.12]  // params: [startingX, lnShift]
+]) { sight.add(new Line({ from: p, to: [450, 0] }).withMirrored("xy")); }
 
 
 let init = ({
 	shellSpeed = 1730 * 3.6,
 	assumedMoveSpeed = 40,
-	useLongerLeadLine = false,
-	useWiderLeadLineBreak = false
+	horiCurve = [88, 92],
+	horiCurveWeight = 2
 } = {}) => {
 	let getLdn = (aa) => Toolbox.calcLeadingMil(shellSpeed, assumedMoveSpeed, aa);
 
 	sight.addComment("Horizontal leading for APFSDS", ["texts", "circles", "lines"]);
 	// line between 4/4 and 3/4
 	sight.add(new Line({
-		from: [getLdn(useLongerLeadLine ? 0.5 : 0.75), 0], to: [getLdn(1), 0]
-	}).withMirrored("x")
-		.addBreakAtX(getLdn(1), useWiderLeadLineBreak ? 1.4 : 1.2)
-		.addBreakAtX(getLdn(0.75), useWiderLeadLineBreak ? 0.7 : 0.6)
-		.addBreakAtX(getLdn(0.5), useWiderLeadLineBreak ? 0.7 : 0.6));
+		from: [getLdn(0.75), 0], to: [getLdn(1), 0]
+	}).withMirrored("x").addBreakAtX(getLdn(1), 1.4));
 	// 4/4
 	sight.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.05], size: 0.5 }).withMirrored("x"));
 	// 3/4
-	sight.add(new TextSnippet({ text: "3", pos: [getLdn(0.75), -0.05], size: 0.42 }).withMirrored("x"));
+	sight.add(new Circle({ segment: horiCurve, diameter: getLdn(0.75) * 2, size: horiCurveWeight }).withMirroredSeg("x"));
 	// 2/4
-	sight.add(new TextSnippet({ text: "2", pos: [getLdn(0.5), -0.05], size: 0.42 }).withMirrored("x"));
+	Toolbox.repeat(2, () => {
+		sight.add(new TextSnippet({ text: "2", pos: [getLdn(0.5), -0.03], size: 0.4 }).withMirrored("x"));
+	});
 	// 1/4
 	sight.add(new Circle({ segment: [87, 93], diameter: getLdn(0.25) * 2, size: 2 }).withMirroredSeg("x"));
 
@@ -148,13 +129,13 @@ let init = ({
 	sight.add(new TextSnippet({
 		text: `ASM MOVE - ${assumedMoveSpeed} kph`,
 		align: "right",
-		pos: [90, -1.4],
+		pos: [82, -1.4],
 		size: 0.9
 	}));
 	sight.add(new TextSnippet({
 		text: `ASM SHELL - ${(shellSpeed / 3.6).toFixed()} m/s`,
 		align: "right",
-		pos: [90, 1],
+		pos: [82, 1],
 		size: 0.9
 	}));
 };

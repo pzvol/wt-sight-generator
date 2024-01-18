@@ -1,26 +1,19 @@
-import Sight from "../_lib2/sight_main.js";
-import Toolbox from "../_lib2/sight_toolbox.js";
-import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
-import * as pd from "../_lib2/predefined.js";
-
-import base from "./sight_bases/base_g_l_z3z12.js";
+import base from "./sight_bases/base_g_l_z4z9.js";
 let sight = base.sightObj;
 
 
 //// VEHICLE TYPES ////
 sight.matchVehicle([
-	"sw_t_80u",
-	"ussr_t_80u",
-	"ussr_t_80um2",
-	"ussr_t_80uk",
-])
+	"ussr_t_64_b_1984",
+]);
 
 
 //// COMPILATION ////
 base.init({
-	assumedMoveSpeed: 50,
+	assumedMoveSpeed: 35,
 	shellSpeed: 1700 * 3.6,
-	leadingDivisionsDrawSpeed: true,
+	drawPromptCross: false,
+	centerPromptCurveAA: 1,
 });
 
 

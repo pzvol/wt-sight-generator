@@ -72,7 +72,7 @@ let getGndWidthMilHalf = (dist) => Toolbox.calcDistanceMil(3.3, dist) / 2;
 // }
 for (let bias of Toolbox.rangeIE(-0.1, 0.1, 0.05)) {
 	sight.add(new Line({ from: [1, bias], to: [3, bias] }).withMirrored("x"));
-	sight.add(new Line({ from: [bias, 1], to: [bias, 3] }));
+	//sight.add(new Line({ from: [bias, 1], to: [bias, 3] }));
 }
 
 
@@ -132,17 +132,17 @@ sight.add(new TextSnippet({
 	align: "right", size: 2
 }));
 //   sub shell prompt
-sight.add(new Circle({
-	segment: [40, 50], diameter: getAirLdnSubShell(1) * 2, size: 4.8
-}));
-sight.add(new TextSnippet({
-	text: airTgting.shell.sub.name,
-	pos: [
-		getAirLdnSubShell(1) * textPosDeg.sin + 3,
-		getAirLdnSubShell(1) * textPosDeg.cos
-	],
-	align: "right", size: 1.7
-}));
+// sight.add(new Circle({
+// 	segment: [40, 50], diameter: getAirLdnSubShell(1) * 2, size: 4.8
+// }));
+// sight.add(new TextSnippet({
+// 	text: airTgting.shell.sub.name,
+// 	pos: [
+// 		getAirLdnSubShell(1) * textPosDeg.sin + 3,
+// 		getAirLdnSubShell(1) * textPosDeg.cos
+// 	],
+// 	align: "right", size: 1.7
+// }));
 // 2/4
 sight.add(new Circle({
 	segment: curveSeg, diameter: getAirLdn(0.5) * 2, size: 3
@@ -156,9 +156,9 @@ sight.add(new TextSnippet({
 	align: "right", size: 2
 }));
 //   sub shell prompt
-sight.add(new Circle({
-	segment: [42, 48], diameter: getAirLdnSubShell(0.5) * 2, size: 3
-}));
+// sight.add(new Circle({
+// 	segment: [42, 48], diameter: getAirLdnSubShell(0.5) * 2, size: 3
+// }));
 
 
 

@@ -8,7 +8,7 @@ base.sightObj.matchVehicle([
 base.init({
 	shellSpeed: 1730 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 40,    // km/h
-	horiCurve: [83, 97],
-	horiCurveWeight: 1.7
+	useLongerLeadLine: true,
+	useWiderLeadLineBreak: false,
 });
 base.sightObj.printCode();
