@@ -21,7 +21,10 @@ let init = ({
 	assumedMoveSpeed = 55,
 	shellSpeed = 1650 * 3.6,
 
-	promptCurveAA = 0.5
+	promptCurveAA = 0.5,
+	// cross at display borders for quickly finding the center of sight.
+	drawPromptCross = true,
+	useNarrowGunCenter = false,
 } = {}) => {
 
 	//// BASIC SETTINGS ////
@@ -58,7 +61,9 @@ let init = ({
 
 	sight.lines.addComment("Gun center");
 	sight.add(new Line({
-		from: [0.0055, 0], to: [0.0085, 0], move: true, thousandth: false
+		from: [(useNarrowGunCenter ? 0.002 : 0.0055), 0],
+		to: [(useNarrowGunCenter ? 0.004 : 0.0085), 0],
+		move: true, thousandth: false
 	}).withMirrored("xy"));  // y for bold
 	// sight.add(new Line({
 	// 	from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
@@ -80,21 +85,23 @@ let init = ({
 
 
 	sight.lines.addComment("Center prompt crossline starting from screen sides");
-	sight.lines.addComment("horizontal");
-	sight.add(new Line({ from: [450, 0], to: [66, 0] }).withMirrored("x"));
-	sight.lines.addComment("horizontal bold");
-	for (let posYBias of [0.1]) {
-		sight.add(new Line({
-			from: [450, posYBias], to: [66, posYBias]
-		}).withMirrored("xy"));
-	}
-	sight.lines.addComment("vertical upper");
-	sight.add(new Line({ from: [0, -450], to: [0, -24.75] }));
-	sight.lines.addComment("vertical upper bold");
-	for (let posXBias of [0.1]) {
-		sight.add(new Line({
-			from: [posXBias, -450], to: [posXBias, -40]
-		}).withMirrored("x"));
+	if (drawPromptCross) {
+		sight.lines.addComment("horizontal");
+		sight.add(new Line({ from: [450, 0], to: [66, 0] }).withMirrored("x"));
+		sight.lines.addComment("horizontal bold");
+		for (let posYBias of [0.1]) {
+			sight.add(new Line({
+				from: [450, posYBias], to: [66, posYBias]
+			}).withMirrored("xy"));
+		}
+		sight.lines.addComment("vertical upper");
+		sight.add(new Line({ from: [0, -450], to: [0, -24.75] }));
+		sight.lines.addComment("vertical upper bold");
+		for (let posXBias of [0.1]) {
+			sight.add(new Line({
+				from: [posXBias, -450], to: [posXBias, -40]
+			}).withMirrored("x"));
+		}
 	}
 	sight.lines.addComment("vertical lower");
 	sight.add(new Line({ from: [0, 450], to: [0, getLdn(assumedMoveSpeed, promptCurveAA)] }));
@@ -127,18 +134,42 @@ let init = ({
 	sight.add(new Circle({ segment: [87, 93], diameter: getLdn(assumedMoveSpeed, 0.5) * 2, size: 1.8 }).withMirroredSeg("x"));
 	sight.add(new Circle({ segment: [88, 92], diameter: getLdn(assumedMoveSpeed, 0.75) * 2, size: 2.4 }).withMirroredSeg("x"));
 
-	sight.add(new TextSnippet({
-		text: `ASM MOVE - ${assumedMoveSpeed.toFixed()} kph`,
-		align: "right",
-		pos: [67, -1.2],
-		size: 0.55
-	}));
-	sight.add(new TextSnippet({
-		text: `ASM SHELL - ${(shellSpeed / 3.6).toFixed()} m/s`,
-		align: "right",
-		pos: [67, 1],
-		size: 0.55
-	}));
+	if (drawPromptCross) {
+		sight.add(new TextSnippet({
+			text: `ASM MOVE`,
+			align: "right", pos: [67, -1.1], size: 0.5
+		}));
+		sight.add(new TextSnippet({
+			text: `- ${assumedMoveSpeed.toFixed()} kph`,
+			align: "right", pos: [73.45, -1.1], size: 0.5
+		}));
+		sight.add(new TextSnippet({
+			text: `ASM SHELL`,
+			align: "right", pos: [67, 0.9], size: 0.5
+		}));
+		sight.add(new TextSnippet({
+			text: `- ${(shellSpeed / 3.6).toFixed()} m/s`,
+			align: "right", pos: [73.45, 0.9], size: 0.5
+		}));
+	} else {
+		sight.add(new TextSnippet({
+			text: `ASM MOVE`,
+			align: "right", pos: [66, -0.9], size: 0.5
+		}));
+		sight.add(new TextSnippet({
+			text: `${assumedMoveSpeed.toFixed()} kph`,
+			align: "left", pos: [79, -0.9], size: 0.5
+		}));
+		sight.add(new TextSnippet({
+			text: `ASM SHELL`,
+			align: "right", pos: [66, 0.7], size: 0.5
+		}));
+		sight.add(new TextSnippet({
+			text: `${(shellSpeed / 3.6).toFixed()} m/s`,
+			align: "left", pos: [79, 0.7], size: 0.5
+		}));
+	}
+
 };
 
 

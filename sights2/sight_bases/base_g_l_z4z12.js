@@ -21,6 +21,9 @@ making it easier to snapshoot.
 let init = ({
 	assumedMoveSpeed = 55,
 	shellSpeed = 1650 * 3.6,
+
+	// cross at display borders for quickly finding the center of sight.
+	drawPromptCross = true,
 	// leading divisions use apporiximate speed instead of denominators
 	leadingDivisionsDrawSpeed = false,
 } = {}) => {
@@ -99,21 +102,23 @@ let init = ({
 
 
 	sight.lines.addComment("Center prompt crossline starting from screen sides");
-	sight.lines.addComment("horizontal");
-	sight.add(new Line({ from: [450, 0], to: [100, 0] }).withMirrored("x"));
-	sight.lines.addComment("horizontal bold");
-	for (let posYBias of [0.1, 0.2]) {
-		sight.add(new Line({
-			from: [450, posYBias], to: [132, posYBias]
-		}).withMirrored("xy"));
-	}
-	sight.lines.addComment("vertical upper");
-	sight.add(new Line({ from: [0, -450], to: [0, -45] }));
-	sight.lines.addComment("vertical upper bold");
-	for (let posXBias of [0.1, 0.2]) {
-		sight.add(new Line({
-			from: [posXBias, -450], to: [posXBias, -77.5]
-		}).withMirrored("x"));
+	if (drawPromptCross) {
+		sight.lines.addComment("horizontal");
+		sight.add(new Line({ from: [450, 0], to: [100, 0] }).withMirrored("x"));
+		sight.lines.addComment("horizontal bold");
+		for (let posYBias of [0.1, 0.2]) {
+			sight.add(new Line({
+				from: [450, posYBias], to: [132, posYBias]
+			}).withMirrored("xy"));
+		}
+		sight.lines.addComment("vertical upper");
+		sight.add(new Line({ from: [0, -450], to: [0, -45] }));
+		sight.lines.addComment("vertical upper bold");
+		for (let posXBias of [0.1, 0.2]) {
+			sight.add(new Line({
+				from: [posXBias, -450], to: [posXBias, -77.5]
+			}).withMirrored("x"));
+		}
 	}
 	sight.lines.addComment("vertical lower");
 	sight.add(new Line({ from: [0, 450], to: [0, getLdn(assumedMoveSpeed, 0.5)] }));
@@ -158,18 +163,42 @@ let init = ({
 		}).withMirrored("x"))
 	}
 
-	sight.add(new TextSnippet({
-		text: `ASM MOVE - ${assumedMoveSpeed.toFixed()} kph`,
-		align: "right",
-		pos: [134, -1.9],
-		size: 1.6
-	}));
-	sight.add(new TextSnippet({
-		text: `ASM SHELL - ${(shellSpeed / 3.6).toFixed()} m/s`,
-		align: "right",
-		pos: [134, 1.5],
-		size: 1.6
-	}));
+	if (drawPromptCross) {
+		sight.add(new TextSnippet({
+			text: `ASM MOVE`,
+			align: "right", pos: [134, -1.9], size: 1.6
+		}));
+		sight.add(new TextSnippet({
+			text: `- ${assumedMoveSpeed.toFixed()} kph`,
+			align: "right", pos: [146.4, -1.9], size: 1.6
+		}));
+		sight.add(new TextSnippet({
+			text: `ASM SHELL`,
+			align: "right", pos: [134, 1.5], size: 1.6
+		}));
+		sight.add(new TextSnippet({
+			text: `- ${(shellSpeed / 3.6).toFixed()} m/s`,
+			align: "right", pos: [146.4, 1.5], size: 1.6
+		}));
+	} else {
+		sight.add(new TextSnippet({
+			text: `ASM MOVE`,
+			align: "right", pos: [135, -1.9], size: 1.6
+		}));
+		sight.add(new TextSnippet({
+			text: `${assumedMoveSpeed.toFixed()} kph`,
+			align: "left", pos: [159, -1.9], size: 1.6
+		}));
+		sight.add(new TextSnippet({
+			text: `ASM SHELL`,
+			align: "right", pos: [135, 1.5], size: 1.6
+		}));
+		sight.add(new TextSnippet({
+			text: `${(shellSpeed / 3.6).toFixed()} m/s`,
+			align: "left", pos: [159, 1.5], size: 1.6
+		}));
+	}
+
 };
 
 

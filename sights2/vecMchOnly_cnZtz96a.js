@@ -7,8 +7,10 @@ base.sightObj.matchVehicle([
 
 base.init({
 	shellSpeed: 1730 * 3.6,  // m/s * 3.6
-	assumedMoveSpeed: 40,    // km/h
+	assumedMoveSpeed: 35,    // km/h
+	drawPromptCross: false,
 	useLongerLeadLine: true,
 	useWiderLeadLineBreak: false,
+	leadingDivisionsDrawSpeed: false,
 });
 base.sightObj.printCode();

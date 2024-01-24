@@ -20,8 +20,8 @@ let init = ({
 	shellSpeed = 1700 * 3.6,
 
 	centerPromptCurveAA = 1,
-	/// Cross at display borders for quickly finding the center of sight.
-	/// Can be disabled for cleaner view on this low-magnification optics.
+	// cross at display borders for quickly finding the center of sight;
+	// can be disabled for cleaner view on this low-magnification optics.
 	drawPromptCross = true,
 } = {}) => {
 
@@ -156,33 +156,37 @@ let init = ({
 
 	if (drawPromptCross) {
 		sight.add(new TextSnippet({
-			text: `ASM MOVE - ${assumedMoveSpeed.toFixed()} kph`,
-			align: "right",
-			pos: [139, -2.2],
-			size: 1
+			text: `ASM MOVE`,
+			align: "right", pos: [139, -2.2], size: 1
 		}));
 		sight.add(new TextSnippet({
-			text: `ASM SHELL - ${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "right",
-			pos: [139, 1.8],
-			size: 1
+			text: `- ${assumedMoveSpeed.toFixed()} kph`,
+			align: "right", pos: [151.8, -2.2], size: 1
+		}));
+		sight.add(new TextSnippet({
+			text: `ASM SHELL`,
+			align: "right", pos: [139, 1.8], size: 1
+		}));
+		sight.add(new TextSnippet({
+			text: `- ${(shellSpeed / 3.6).toFixed()} m/s`,
+			align: "right", pos: [151.8, 1.8], size: 1
 		}));
 	} else {
 		sight.add(new TextSnippet({
 			text: `ASM MOVE`,
-			align: "right", pos: [139, -1.5], size: 1
+			align: "right", pos: [139, -1.6], size: 1
 		}));
 		sight.add(new TextSnippet({
 			text: `${assumedMoveSpeed.toFixed()} kph`,
-			align: "left", pos: [164, -1.5], size: 1
+			align: "left", pos: [164, -1.6], size: 1
 		}));
 		sight.add(new TextSnippet({
 			text: `ASM SHELL`,
-			align: "right", pos: [139, 1.1], size: 1
+			align: "right", pos: [139, 1.2], size: 1
 		}));
 		sight.add(new TextSnippet({
 			text: `${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "left", pos: [164, 1.1], size: 1
+			align: "left", pos: [164, 1.2], size: 1
 		}));
 	}
 };

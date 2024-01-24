@@ -81,82 +81,128 @@ for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
 }
 
 
-sight.lines.addComment("Vertical upper and bold");
-for (let posDef of [
-	{startingY: -40, lnShifts: Toolbox.rangeIE(0, 0.04, 0.04)},
-	{startingY: -45, lnShifts: Toolbox.rangeIE(0.08, 0.12, 0.04)},
-]) {
-	for (let lnShift of posDef.lnShifts) {
-		sight.add(new Line({
-			from: [lnShift, posDef.startingY], to: [lnShift, -450]
-		}).withMirrored(lnShift == 0 ? null : "x"));
-	}
-}
-sight.lines.addComment("Vertical lower and bold");
-for (let posDef of [
-	{startingY: 2, lnShifts: [0]},
-	{startingY: 23, lnShifts: [0.03]},
-	{startingY: 42, lnShifts: Toolbox.rangeIE(0.08, 0.12, 0.04)},
-]) {
-	for (let lnShift of posDef.lnShifts) {
-		sight.add(new Line({
-			from: [lnShift, posDef.startingY], to: [lnShift, 450]
-		}).withMirrored(lnShift == 0 ? null : "x"));
-	}
-}
-
-sight.lines.addComment("Horizontal lines near sight borders and bold");
-for (let posDef of [
-	{startingX: 75, lnShifts: Toolbox.rangeIE(0, 0.02, 0.02)},
-	{startingX: 88, lnShifts: Toolbox.rangeIE(0.04, 0.12, 0.04)},
-]) {
-	for (let lnShift of posDef.lnShifts) {
-		sight.add(new Line({
-			from: [posDef.startingX, lnShift], to: [450, lnShift]
-		}).withMirrored(lnShift == 0 ? "x" : "xy"));
-	}
-}
-
-
 let init = ({
 	shellSpeed = 1730 * 3.6,
 	assumedMoveSpeed = 40,
+	drawPromptCross = true,
 	useLongerLeadLine = false,
-	useWiderLeadLineBreak = false
+	useWiderLeadLineBreak = false,
+	// leading divisions use apporiximate speed instead of denominators
+	leadingDivisionsDrawSpeed = false,
 } = {}) => {
 	let getLdn = (aa) => Toolbox.calcLeadingMil(shellSpeed, assumedMoveSpeed, aa);
 
+	if (drawPromptCross) {
+		sight.lines.addComment("Horizontal lines near sight borders and bold");
+		for (let posDef of [
+			{startingX: 75, lnShifts: Toolbox.rangeIE(0, 0.02, 0.02)},
+			{startingX: 88, lnShifts: Toolbox.rangeIE(0.04, 0.12, 0.04)},
+		]) {
+			for (let lnShift of posDef.lnShifts) {
+				sight.add(new Line({
+					from: [posDef.startingX, lnShift], to: [450, lnShift]
+				}).withMirrored(lnShift == 0 ? "x" : "xy"));
+			}
+		}
+		sight.lines.addComment("Vertical upper and bold");
+		for (let posDef of [
+			{startingY: -40, lnShifts: Toolbox.rangeIE(0, 0.04, 0.04)},
+			{startingY: -45, lnShifts: Toolbox.rangeIE(0.08, 0.12, 0.04)},
+		]) {
+			for (let lnShift of posDef.lnShifts) {
+				sight.add(new Line({
+					from: [lnShift, posDef.startingY], to: [lnShift, -450]
+				}).withMirrored(lnShift == 0 ? null : "x"));
+			}
+		}
+	}
+	sight.lines.addComment("Vertical lower and bold");
+	for (let posDef of [
+		{startingY: 2, lnShifts: [0]},
+		{startingY: 23, lnShifts: [0.03]},
+		{startingY: 42, lnShifts: Toolbox.rangeIE(0.08, 0.12, 0.04)},
+	]) {
+		for (let lnShift of posDef.lnShifts) {
+			sight.add(new Line({
+				from: [lnShift, posDef.startingY], to: [lnShift, 450]
+			}).withMirrored(lnShift == 0 ? null : "x"));
+		}
+	}
+
+
 	sight.addComment("Horizontal leading for APFSDS", ["texts", "circles", "lines"]);
 	// line between 4/4 and 3/4
+	let horiLineTickBreakMain = useWiderLeadLineBreak ? 1.4 : 1.2;
+	let horiLineTickBreakSub = useWiderLeadLineBreak ? 0.7 : 0.6;
+	if(leadingDivisionsDrawSpeed) {
+		horiLineTickBreakSub += 0.45;
+	}
 	sight.add(new Line({
 		from: [getLdn(useLongerLeadLine ? 0.5 : 0.75), 0], to: [getLdn(1), 0]
 	}).withMirrored("x")
-		.addBreakAtX(getLdn(1), useWiderLeadLineBreak ? 1.4 : 1.2)
-		.addBreakAtX(getLdn(0.75), useWiderLeadLineBreak ? 0.7 : 0.6)
-		.addBreakAtX(getLdn(0.5), useWiderLeadLineBreak ? 0.7 : 0.6));
+		.addBreakAtX(getLdn(1), horiLineTickBreakMain)
+		.addBreakAtX(getLdn(0.75), horiLineTickBreakSub)
+		.addBreakAtX(getLdn(0.5), horiLineTickBreakSub));
 	// 4/4
-	sight.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.05], size: 0.5 }).withMirrored("x"));
+	sight.add(new TextSnippet({
+		text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.05], size: 0.5
+	}).withMirrored("x"));
 	// 3/4
-	sight.add(new TextSnippet({ text: "3", pos: [getLdn(0.75), -0.05], size: 0.42 }).withMirrored("x"));
+	sight.add(new TextSnippet({
+		text: leadingDivisionsDrawSpeed ?
+			Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString() :
+			"3",
+		pos: [getLdn(0.75), -0.05], size: 0.42
+	}).withMirrored("x"));
 	// 2/4
-	sight.add(new TextSnippet({ text: "2", pos: [getLdn(0.5), -0.05], size: 0.42 }).withMirrored("x"));
+	sight.add(new TextSnippet({
+		text: leadingDivisionsDrawSpeed ?
+			Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString() :
+			"2",
+		pos: [getLdn(0.5), -0.05], size: 0.42
+	}).withMirrored("x"));
 	// 1/4
-	sight.add(new Circle({ segment: [87, 93], diameter: getLdn(0.25) * 2, size: 2 }).withMirroredSeg("x"));
+	sight.add(new Circle({
+		segment: [87, 93], diameter: getLdn(0.25) * 2, size: 2
+	}).withMirroredSeg("x"));
 
 
 	// Sight tick info
-	sight.add(new TextSnippet({
-		text: `ASM MOVE - ${assumedMoveSpeed} kph`,
-		align: "right",
-		pos: [90, -1.4],
-		size: 0.9
-	}));
-	sight.add(new TextSnippet({
-		text: `ASM SHELL - ${(shellSpeed / 3.6).toFixed()} m/s`,
-		align: "right",
-		pos: [90, 1],
-		size: 0.9
-	}));
+	if (drawPromptCross) {
+		sight.add(new TextSnippet({
+			text: `ASM MOVE`,
+			align: "right", pos: [90, -1.4], size: 0.9
+		}));
+		sight.add(new TextSnippet({
+			text: `- ${assumedMoveSpeed} kph`,
+			align: "right", pos: [98.4, -1.4], size: 0.9
+		}));
+		sight.add(new TextSnippet({
+			text: `ASM SHELL`,
+			align: "right", pos: [90, 1], size: 0.9
+		}));
+		sight.add(new TextSnippet({
+			text: `- ${(shellSpeed / 3.6).toFixed()} m/s`,
+			align: "right", pos: [98.4, 1], size: 0.9
+		}));
+	} else {
+		// sight.add(new TextSnippet({
+		// 	text: `ASM MOVE`,
+		// 	align: "right", pos: [90, -1.2], size: 0.8
+		// }));
+		sight.add(new TextSnippet({
+			text: `${assumedMoveSpeed} kph`,
+			align: "left", pos: [105.5, -1.2], size: 0.8
+		}));
+		// sight.add(new TextSnippet({
+		// 	text: `ASM SHELL`,
+		// 	align: "right", pos: [90, 0.8], size: 0.8
+		// }));
+		sight.add(new TextSnippet({
+			text: `${(shellSpeed / 3.6).toFixed()} m/s`,
+			align: "left", pos: [105.5, 0.8], size: 0.8
+		}));
+	}
 };
 
 

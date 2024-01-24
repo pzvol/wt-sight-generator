@@ -22,6 +22,7 @@ let init = ({
 	assumedMoveSpeed = 55,
 	shellSpeed = 1650 * 3.6,
 	useHollowCenterDot = false,
+	useShortHorizontalLine = false,
 } = {}) => {
 
 	//// BASIC SETTINGS ////
@@ -76,7 +77,7 @@ let init = ({
 	sight.lines.addComment("Center prompt bold at screen borders");
 	sight.lines.addComment("horizontal");
 	for (let p of [
-		{toX: 33, biasY: 0.05},
+		{toX: useShortHorizontalLine ? 50 : 33, biasY: 0.05},
 		{toX: 66, biasY: 0.1},
 		{toX: 66, biasY: 0.15},
 	]) {
@@ -101,7 +102,8 @@ let init = ({
 	sight.add(new Circle({ pos: [0, -5], diameter: 0.1, size: 1 }));
 	sight.lines.addComment("Center cross horizontal");
 	let horiLine = new Line({
-		from: [ getLdn(assumedMoveSpeed, 0.5), 0], to: [450, 0]
+		from: [ getLdn(assumedMoveSpeed, 0.5), 0],
+		to: [useShortHorizontalLine ? getLdn(assumedMoveSpeed, 1) : 450, 0]
 	}).withMirrored("xy");  // y for bold
 	sight.add(horiLine);
 

@@ -20,6 +20,7 @@ sight.matchVehicle([
 base.init({
 	assumedMoveSpeed: 50,
 	shellSpeed: 1700 * 3.6,
+	drawPromptCross: false,
 	leadingDivisionsDrawSpeed: true,
 });
 

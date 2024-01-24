@@ -9,9 +9,10 @@ base.sightObj.matchVehicle([
 
 base.init({
 	shellSpeed: 1760 * 3.6,  // m/s * 3.6 (3BM22)
-	assumedMoveSpeed: 40,    // km/h
-
-	promptCurveAA: 0.75,
+	assumedMoveSpeed: 35,    // km/h
+	promptCurveAA: 1,
+	drawPromptCross: false,
+	useNarrowGunCenter: true,
 });
 
 

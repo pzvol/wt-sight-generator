@@ -10,6 +10,7 @@ base.init({
 	shellSpeed: 1430 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 40,    // km/h
 	useHollowCenterDot: true,
+	useShortHorizontalLine: true,
 });
 
 export default { sightObj: base.sightObj };

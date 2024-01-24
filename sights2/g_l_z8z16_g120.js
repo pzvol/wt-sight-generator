@@ -8,7 +8,8 @@ base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 base.init({
 	shellSpeed: 1650 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 55,    // km/h
-	leadingDivisionsDrawSpeed: true
+	drawPromptCross: true,
+	leadingDivisionsDrawSpeed: true,
 });
 
 export default { sightObj: base.sightObj };
