@@ -131,7 +131,7 @@ export default class Sight {
 	 *
 	 * Use `shown=0` to hide a displayed number.
 	 *
-	 * @param {{distance: number, shown?: number, shownPos?: [number, number]}|{distance: number, shown?: number, shownPos?: [number, number]}[]} input
+	 * @param {{distance: number, shown?: number, shownPos?: [number, number], tickExtension?: number}|{distance: number, shown?: number, shownPos?: [number, number], tickExtension?: number}[]} input
 	 */
 	addShellDistance(input) {
 		this.components.shellDistances.add(input);

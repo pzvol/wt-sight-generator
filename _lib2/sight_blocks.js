@@ -298,7 +298,7 @@ export class HoriThousandthsBlock extends SightBlock {
 export class ShellDistancesBlock extends SightBlock {
 	constructor({ autoAddMax = true, maxDist = 20000 } = {}) {
 		super("crosshair_distances");
-		/** @type {{distance: number, shown: number, shownPos: [number, number]}[]} */
+		/** @type {{distance: number, shown: number, shownPos: [number, number], tickExtension: number}[]} */
 		this.distLines = [];
 
 		this.settings = { autoAddMax, maxDist };
@@ -317,15 +317,15 @@ export class ShellDistancesBlock extends SightBlock {
 	 *
 	 * Use `shown=0` to hide a displayed number.
 	 *
-	 * @param {{distance: number, shown?: number, shownPos?: [number, number]}|{distance: number, shown?: number, shownPos?: [number, number]}[]} input
+	 * @param {{distance: number, shown?: number, shownPos?: [number, number], tickExtension?: number}|{distance: number, shown?: number, shownPos?: [number, number], tickExtension?: number}[]} input
 	 */
 	add(input) {
 		if (Array.isArray(input)) {
 			for (let d of input) {
-				this.p_addOne(d.distance, (d.shown || 0), (d.shownPos || [0, 0]));
+				this.p_addOne(d.distance, (d.shown || 0), (d.shownPos || [0, 0]), (d.tickExtension || 0));
 			}
 		} else {
-			this.p_addOne(input.distance, (input.shown || 0), (input.shownPos || [0, 0]));
+			this.p_addOne(input.distance, (input.shown || 0), (input.shownPos || [0, 0]), (input.tickExtension || 0));
 		}
 		return this;
 	}
@@ -336,7 +336,7 @@ export class ShellDistancesBlock extends SightBlock {
 		let topBlock = new BlkBlock(this.blockName);
 		for (let d of this.distLines) {
 			topBlock.push(new BlkBlock("distance", [
-				new BlkVariable("distance", [d.distance, d.shown, 0]),
+				new BlkVariable("distance", [d.distance, d.shown, d.tickExtension]),
 				new BlkVariable("textPos", d.shownPos),
 			], { useOneLine: true }));
 		}
@@ -350,8 +350,8 @@ export class ShellDistancesBlock extends SightBlock {
 	}
 
 
-	p_addOne(distance, shown = 0, shownPos = [0, 0]) {
-		this.distLines.push({ distance, shown, shownPos });
+	p_addOne(distance, shown = 0, shownPos = [0, 0], tickExtension = 0) {
+		this.distLines.push({ distance, shown, shownPos, tickExtension });
 		return this;
 	}
 }
