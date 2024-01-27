@@ -124,7 +124,7 @@ sight.add(new Circle({
 	segment: curveSeg, diameter: getAirLdn(1) * 2, size: 4.8
 }).withMirroredSeg("xy"));
 sight.add(new TextSnippet({
-	text: `4/4 - ${airTgting.tgtSpd} kph  ${airTgting.shell.main.name}`,
+	text: `${airTgting.tgtSpd} kph  ${airTgting.shell.main.name}`,
 	pos: [
 		getAirLdn(1) * textPosDeg.sin + 4,
 		getAirLdn(1) * textPosDeg.cos
@@ -148,7 +148,7 @@ sight.add(new Circle({
 	segment: curveSeg, diameter: getAirLdn(0.5) * 2, size: 3
 }).withMirroredSeg("xy"));
 sight.add(new TextSnippet({
-	text: `2/4 - ${airTgting.tgtSpd} kph`,
+	text: (airTgting.tgtSpd * 0.5).toFixed(),
 	pos: [
 		getAirLdn(0.5) * textPosDeg.sin + 4,
 		getAirLdn(0.5) * textPosDeg.cos

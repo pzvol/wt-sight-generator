@@ -3,6 +3,7 @@
 import Sight from "../_lib2/sight_main.js";
 import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
+import * as pd from "../_lib2/predefined.js"
 
 import base from "./g_msl_z4z8_alt.js";
 let sight = base.sightObj;
@@ -11,6 +12,14 @@ let sight = base.sightObj;
 sight.components.matchVehicleClasses.clear();
 sight.clearDescription();
 sight.addDescription("For Wiesel 1A2");
+
+
+// Re-configure colors
+sight.components.sightSettings.
+	removeCommentByContent("Color of sight").
+	removeVariableByName("crosshairColor").
+	removeVariableByName("crosshairLightColor");
+sight.components.sightSettings.add(pd.basic.colors.getLightGreenRed());
 
 
 //// ADDITIONAL ELEMENTS (IF ANY) ////
@@ -69,6 +78,51 @@ for (let row = 0; row < tthInfo.texts.length; row++) {
 // Move to correct pos and append elements
 tthTable.forEach((ele) => { ele.move([-30, 15]); });
 sight.add(tthTable);
+
+
+// Additional tick at 400m
+sight.add(new Circle({
+	segment: [90-15, 90+15],
+	diameter: Toolbox.calcDistanceMil(3.3, 300, "real"),
+	size: 1.8,
+}).withMirroredSeg("x"));
+sight.add(new TextSnippet({
+	text: "3",
+	pos: [Toolbox.calcDistanceMil(3.3, 300, "real")/2 + 0.6, 0.8], size: 0.7
+}));
+
+
+// Missile drop indication
+let mslDropMil = { d10: -13, d100: 2.9, };
+//   10m
+// sight.add(new Line({
+// 	from: [-1, dropMil.d10], to: [1, dropMil.d10],
+// 	move: true,
+// }));
+sight.add(new Circle({
+	pos: [0, mslDropMil.d10], segment: [90-70, 90+70],
+	diameter: 2, size: 1.2, move: true
+}).withMirroredSeg("x"));
+sight.add(new TextSnippet({
+	text: "10m", align: "right",
+	pos: [2.5, mslDropMil.d10 - 0.08],
+	size: 0.6, move: true
+}));
+//   100m
+sight.add(new Line({
+	from: [-0.5, mslDropMil.d100], to: [0.5, mslDropMil.d100], move: true
+}));
+// sight.add(new Circle({
+// 	pos: [0, dropMil.d100], segment: [-100, 100],
+// 	diameter: 1.5, size: 1.4, move: true
+// }));
+sight.add(new TextSnippet({
+	text: "100m", align: "right",
+	pos: [1.2, mslDropMil.d100 - 0.08],
+	size: 0.55, move: true
+}));
+
+
 
 
 //// OUTPUT ////

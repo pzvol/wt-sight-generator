@@ -6,7 +6,8 @@ import Sight from "../_lib2/sight_main.js";
 
 base.init({
 	shellSpeed: 1730 * 3.6,  // m/s * 3.6
-	assumedMoveSpeed: 40,    // km/h
+	assumedMoveSpeed: 35,    // km/h
+	useShortHorizontalLine: true,
 });
 
 export default { sightObj: base.sightObj };
