@@ -27,7 +27,7 @@ Requires mouse wheel sensitivity to be set to 75%
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.scale({ font: 0.9, line: 1.2 }),
-	pd.basic.colors.getGreenRed(),
+	pd.basic.colors.getLightGreenRed(),
 	pd.basicBuild.rgfdPos([160, -10]),  // [170, -10]
 	pd.basicBuild.detectAllyPos([160, -0.055]),  // [170, -0.055]
 	pd.basicBuild.gunDistanceValuePos([-0.22, 0.02]),
@@ -204,6 +204,7 @@ let extraBallisticsBlock = new BlkBlock("ballistics", [
 		})()),
 	]),
 ]);
+sight.addExtra(extraBallisticsBlock);
 
 
 
@@ -520,6 +521,7 @@ Toolbox.repeat(2, () => {
 		assumedTargetLength: assumedTargetLength,
 		assumedTargetHeight: 0.7,
 		textSize: 0.45,
+		displayedAngles: [0, 15, 30, 45, 60, 75, 90],
 		widthIndicationArrowHeight: 0.5,
 		showAssumedTargetSize: false,
 	}));
@@ -530,11 +532,8 @@ Toolbox.repeat(2, () => {
 
 
 //// OUTPUT ////
-export default { sightObj: sight, sightExtraBlocks: [extraBallisticsBlock] };
+export default { sightObj: sight };
 if (  // NodeJS/Deno main module check
 	(typeof require !== "undefined" && require.main === module) ||
 	(typeof import.meta.main !== "undefined" && import.meta.main === true)
-) {
-	sight.printCode();
-	console.log(extraBallisticsBlock.getCode());
-}
+) { sight.printCode(); }

@@ -22,7 +22,7 @@ Sight for Sturmtiger
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.scale({ font: 0.9, line: 1.2 }),
-	pd.basic.colors.getGreenRed(),
+	pd.basic.colors.getLightGreenRed(),
 	pd.basicBuild.rgfdPos([160, -5]),  // [170, -10]
 	pd.basicBuild.detectAllyPos([160, 0.015]),  // [170, -0.055]
 	pd.basicBuild.gunDistanceValuePos([-0.22, 0.02]),
@@ -57,9 +57,9 @@ sight.addSettings(pd.concatAllBasics(
 
 //// SIGHT DESIGNS ////
 // Target size assumption
-let assumedTgtWidth = 3.3;
-let binoCaliUpperTickUseRound = false;
-let assumedTargetLength = 6.6;
+let assumedTgtWidth = 3;
+let binoCaliUpperTickUseRound = true;
+let assumedTargetLength = 6;
 let getMilHalf = (dist) => (Toolbox.calcDistanceMil(assumedTgtWidth, dist) / 2);
 // Shell info and falldown mils
 let shell = {
@@ -68,6 +68,8 @@ let shell = {
 		// Data extracted from the official sight
 		// Reference: https://github.com/gszabi99/War-Thunder-Datamine/blob/3a032f0d5d724d693c4798b44e390bed14c0c98f/aces.vromfs.bin_u/config/tanksights.blkx
 		{ d: 0, mil: 0 },
+		{ d: 12, mil: 20 },
+		{ d: 25, mil: 27 },
 		{ d: 50, mil: 35 },
 		{ d: 100, mil: 47 },
 		{ d: 150, mil: 53.5 },
@@ -227,58 +229,57 @@ sight.add([
 
 
 // Targeting curve
-// 50
+// 25, 50 & 100m tick
 sight.add([
-	// on the horizon
-	new Line({
-		from: [getMilHalf(50) - 0.2, 0], to: [getMilHalf(50) + 0.2, 0], move: true
+	new TextSnippet({
+		text: "25",
+		pos: [-getMilHalf(25), getDrop(25) - 0.3],
+		size: 0.5, move: true
 	}).withMirrored("x"),
-	// vertical
-	new Line({
-		from: [getMilHalf(50), 0], to: [getMilHalf(50), getDrop(50)], move: true
-	}).withMirrored("x"),
-	// text
 	new TextSnippet({
 		text: "50",
-		pos: [-getMilHalf(50), getDrop(50) + 2.5],
+		pos: [-getMilHalf(50), getDrop(50) - 0.3],
 		size: 0.5, move: true
-	})
+	}).withMirrored("x"),
+	new TextSnippet({
+		text: "1",
+		pos: [-getMilHalf(100), getDrop(100) - 0.4],
+		size: 0.7, move: true
+	}).withMirrored("x")
 ]);
-// 50-100m curve
-(() => {
-	let basis = new Line({
-		from: [getMilHalf(50), getDrop(50)],
-		to: [getMilHalf(100), getDrop(100)], move: true
-	});
-	// right
-	sight.add(basis.copy());
-	// left
-	sight.add(basis.copy().mirrorX().addBreakAtX(-getMilHalf(100) - 2, 2));  // breaking for HE 100m text
-})();
-// 100~1200m curve
+// 0~12m curve
+sight.add(new Line({
+	from: [-450, 0], to: [-getMilHalf(12), getDrop(12)], move: true,
+}).withMirrored("x"));
+// 12~1200m curve
 (() => {
 	let anchorInfo = shell.dropMils.filter(
-		(ele) => (ele.d >= 100 && ele.d <= 1200)
+		(ele) => (ele.d > 0 && ele.d <= 1200)
 	);
+	let textBreaks = [
+		{atDist: 25, breakXWidth: 4},
+		{atDist: 50, breakXWidth: 5},
+		{atDist: 100, breakXWidth: 5},
+	]
 	for (let i = 0; i < anchorInfo.length - 1; i++) {
 		let currAnchor = [getMilHalf(anchorInfo[i].d), anchorInfo[i].mil];
 		let nextAnchor = [getMilHalf(anchorInfo[i + 1].d), anchorInfo[i + 1].mil];
-		sight.add(new Line({
+		let curveLine = new Line({
 			from: currAnchor, to: nextAnchor, move: true
-		}).withMirrored("x"));
+		}).withMirrored("x");
+		for (let textBreak of textBreaks) {
+			for (let posInfo of [
+				{ pos: currAnchor, dist: anchorInfo[i].d },
+				{ pos: nextAnchor, dist: anchorInfo[i + 1].d },
+			]) {
+				if (posInfo.dist === textBreak.atDist) {
+					curveLine.addBreakAtX(posInfo.pos[0], textBreak.breakXWidth);
+				}
+			}
+		}
+		sight.add(curveLine);
 	}
 })();
-// 100m tick
-sight.add(new Line({
-	from: [getMilHalf(100), getDrop(100) - 0.2],
-	to: [getMilHalf(100), getDrop(100) + 0.4],
-	move: true
-}).withMirrored("x"));
-sight.add(new TextSnippet({
-	text: "1",
-	pos: [-getMilHalf(100) - 2, getDrop(100) - 0.4],
-	size: 0.7, move: true
-}));
 // 200m tick
 sight.add(new Line({
 	from: [getMilHalf(200), getDrop(200)],
@@ -410,7 +411,7 @@ for (let d of [1600, 2000]) {
 // Binocular Calibration
 Toolbox.repeat(2, () => {
 	sight.add(bino.getCommonTwoTicks({
-		pos: [54, 20], assumedTgtWidth: assumedTgtWidth,
+		pos: [54, 40], assumedTgtWidth: assumedTgtWidth,
 		showAssumedTgtWidth: true,
 		upperTickShownAlwaysUseRound: binoCaliUpperTickUseRound,
 	}));
@@ -420,11 +421,12 @@ Toolbox.repeat(2, () => {
 // Target angle legend
 Toolbox.repeat(2, () => {
 	sight.add(tgtLgd.getAngleLegendGround({
-		pos: [54, 32],
+		pos: [54, 52],
 		assumedTargetWidth: assumedTgtWidth,
 		assumedTargetLength: assumedTargetLength,
 		assumedTargetHeight: 0.7,
 		textSize: 0.45,
+		displayedAngles: [0, 15, 30, 45, 60, 75, 90],
 		widthIndicationArrowHeight: 0.5,
 		showAssumedTargetSize: false,
 	}));
