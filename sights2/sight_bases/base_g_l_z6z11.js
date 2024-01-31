@@ -170,34 +170,18 @@ let init = ({
 	// Sight tick info
 	if (drawPromptCross) {
 		sight.add(new TextSnippet({
-			text: `ASM MOVE`,
+			text: `ASM MOVE - ${assumedMoveSpeed} kph`,
 			align: "right", pos: [90, -1.4], size: 0.9
 		}));
 		sight.add(new TextSnippet({
-			text: `- ${assumedMoveSpeed} kph`,
-			align: "right", pos: [98.4, -1.4], size: 0.9
-		}));
-		sight.add(new TextSnippet({
-			text: `ASM SHELL`,
+			text: `ASM SHELL - ${(shellSpeed / 3.6).toFixed()} m/s`,
 			align: "right", pos: [90, 1], size: 0.9
 		}));
-		sight.add(new TextSnippet({
-			text: `- ${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "right", pos: [98.4, 1], size: 0.9
-		}));
 	} else {
-		// sight.add(new TextSnippet({
-		// 	text: `ASM MOVE`,
-		// 	align: "right", pos: [90, -1.2], size: 0.8
-		// }));
 		sight.add(new TextSnippet({
 			text: `${assumedMoveSpeed} kph`,
 			align: "left", pos: [105.5, -1.2], size: 0.8
 		}));
-		// sight.add(new TextSnippet({
-		// 	text: `ASM SHELL`,
-		// 	align: "right", pos: [90, 0.8], size: 0.8
-		// }));
 		sight.add(new TextSnippet({
 			text: `${(shellSpeed / 3.6).toFixed()} m/s`,
 			align: "left", pos: [105.5, 0.8], size: 0.8

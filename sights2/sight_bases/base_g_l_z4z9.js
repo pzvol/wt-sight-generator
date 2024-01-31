@@ -156,38 +156,37 @@ let init = ({
 
 	if (drawPromptCross) {
 		sight.add(new TextSnippet({
-			text: `ASM MOVE`,
+			text: `ASM MOVE - ${assumedMoveSpeed.toFixed()} kph`,
 			align: "right", pos: [139, -2.2], size: 1
 		}));
 		sight.add(new TextSnippet({
-			text: `- ${assumedMoveSpeed.toFixed()} kph`,
-			align: "right", pos: [151.8, -2.2], size: 1
-		}));
-		sight.add(new TextSnippet({
-			text: `ASM SHELL`,
+			text: `ASM SHELL - ${(shellSpeed / 3.6).toFixed()} m/s`,
 			align: "right", pos: [139, 1.8], size: 1
 		}));
-		sight.add(new TextSnippet({
-			text: `- ${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "right", pos: [151.8, 1.8], size: 1
-		}));
 	} else {
+		let space = (normalSpaceNum, enSpaceNum) => {
+			let out = "";
+			Toolbox.repeat(normalSpaceNum, () => (out += " "));
+			Toolbox.repeat(enSpaceNum, () => (out += " "));
+			return out;
+		}
 		sight.add(new TextSnippet({
-			text: `ASM MOVE`,
+			text: `ASM MOVE${space(3, 3)}${assumedMoveSpeed.toFixed()} kph`,
 			align: "right", pos: [139, -1.6], size: 1
 		}));
 		sight.add(new TextSnippet({
-			text: `${assumedMoveSpeed.toFixed()} kph`,
-			align: "left", pos: [164, -1.6], size: 1
-		}));
-		sight.add(new TextSnippet({
-			text: `ASM SHELL`,
+			text: `ASM SHELL${space(2, 1)}${(shellSpeed / 3.6).toFixed()} m/s`,
 			align: "right", pos: [139, 1.2], size: 1
 		}));
-		sight.add(new TextSnippet({
-			text: `${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "left", pos: [164, 1.2], size: 1
-		}));
+		// Alternatively, values only:
+		// sight.add(new TextSnippet({
+		// 	text: `${assumedMoveSpeed.toFixed()} kph`,
+		// 	align: "left", pos: [164, -1.6], size: 1
+		// }));
+		// sight.add(new TextSnippet({
+		// 	text: `${(shellSpeed / 3.6).toFixed()} m/s`,
+		// 	align: "left", pos: [164, 1.2], size: 1
+		// }));
 	}
 };
 

@@ -134,27 +134,15 @@ let init = ({
 
 
 	sight.add(new TextSnippet({
-		text: `ASM MOVE`,
+		text: `ASM MOVE - ${assumedMoveSpeed.toFixed()} kph`,
 		align: "right",
 		pos: [67, -1.2],
 		size: 0.55
 	}));
 	sight.add(new TextSnippet({
-		text: `- ${assumedMoveSpeed.toFixed()} kph`,
-		align: "right",
-		pos: [74, -1.2],
-		size: 0.55
-	}));
-	sight.add(new TextSnippet({
-		text: `ASM SHELL`,
+		text: `ASM SHELL - ${(shellSpeed / 3.6).toFixed()} m/s`,
 		align: "right",
 		pos: [67, 1],
-		size: 0.55
-	}));
-	sight.add(new TextSnippet({
-		text: `- ${(shellSpeed / 3.6).toFixed()} m/s`,
-		align: "right",
-		pos: [74, 1],
 		size: 0.55
 	}));
 };
