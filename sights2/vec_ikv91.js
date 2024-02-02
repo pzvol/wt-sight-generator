@@ -50,39 +50,39 @@ sight.add(new Line({ from: [0, -8.25], to: [0, -450] }));
 sight.add(new Circle({ pos: [0, -7.75], diameter: 0.1 }));
 sight.add(new Circle({ pos: [0, -7.25], diameter: 0.1 }));
 sight.lines.addComment("bold");
-sight.add(new Line({ from: [0.05, -20], to: [0.05, -450] }).withExtra(Line.extraHori));
-sight.add(new Line({ from: [0.1, -30], to: [0.1, -450] }).withExtra(Line.extraHori));
-sight.add(new Line({ from: [0.15, -30], to: [0.15, -450] }).withExtra(Line.extraHori));
+sight.add(new Line({ from: [0.05, -20], to: [0.05, -450] }).withMirrored("x"));
+sight.add(new Line({ from: [0.1, -30], to: [0.1, -450] }).withMirrored("x"));
+sight.add(new Line({ from: [0.15, -30], to: [0.15, -450] }).withMirrored("x"));
 
 sight.addComment("Horizontal line", ["circles", "lines"]);
-sight.add(new Circle({ diameter: getLdMil(40, 0.25) * 2, size: 1.3, segment: [81, 99] }).withExtra(Circle.extraSegHori));
-let horiLine = new Line({ from: [getLdMil(40, 0.25), 0], to: [450, 0] }).withExtra(Line.extraHori);
+sight.add(new Circle({ diameter: getLdMil(40, 0.25) * 2, size: 1.3, segment: [81, 99] }).withMirroredSeg("x"));
+let horiLine = new Line({ from: [getLdMil(40, 0.25), 0], to: [450, 0] }).withMirrored("x");
 sight.add(horiLine);
 sight.lines.addComment("bold");
-sight.add(new Line({ from: [33, 0.05], to: [450, 0.05] }).withExtra(Line.extraFourQuad));
-sight.add(new Line({ from: [45, 0.1], to: [450, 0.1] }).withExtra(Line.extraFourQuad));
-sight.add(new Line({ from: [45, 0.15], to: [450, 0.15] }).withExtra(Line.extraFourQuad));
+sight.add(new Line({ from: [33, 0.05], to: [450, 0.05] }).withMirrored("xy"));
+sight.add(new Line({ from: [45, 0.1], to: [450, 0.1] }).withMirrored("xy"));
+sight.add(new Line({ from: [45, 0.15], to: [450, 0.15] }).withMirrored("xy"));
 
 
 sight.addComment("Leading values", ["texts"]);
 sight.add(new TextSnippet({
 	text: "40", pos: [getLdMil(40, 1), -0.1], size: 0.75
-}).withExtra(TextSnippet.extraHori));
+}).withMirrored("x"));
 horiLine.addBreakAtX(getLdMil(40, 1), 2);
 
 sight.add(new TextSnippet({
 	text: "3", pos: [getLdMil(40, 0.75), -0.07], size: 0.7
-}).withExtra(TextSnippet.extraHori));
+}).withMirrored("x"));
 horiLine.addBreakAtX(getLdMil(40, 0.75), 1);
 
 sight.add(new TextSnippet({
 	text: "2", pos: [getLdMil(40, 0.5), -0.07], size: 0.65
-}).withExtra(TextSnippet.extraHori));
+}).withMirrored("x"));
 horiLine.addBreakAtX(getLdMil(40, 0.5), 1);
 
 sight.add(new TextSnippet({
 	text: "1", pos: [getLdMil(40, 0.25) + 0.25, 0.9], size: 0.6
-}).withExtra(TextSnippet.extraHori));
+}).withMirrored("x"));
 
 
 sight.texts.addComment("Leading value desc table");

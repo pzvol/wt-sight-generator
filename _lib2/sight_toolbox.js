@@ -191,32 +191,6 @@ export default class Toolbox {
 		return (scaledNum / (10 ** digit));
 	}
 
-
-	/**
-	 * Check if a value is in a range
-	 * TODO: Apply epsilon for ends comparing
-	 * @param {number} v - checked value
-	 * @param {[number, number]} range - check value range
-	 * @param {[boolean, boolean]} includeEnds - if start/end is included
-	 */
-	static valueInRange(v, range, includeEnds = [true, true]) {
-		if (range[1] === range[0]) {
-			return ((includeEnds[0] || includeEnds[1]) && v === range[1]);
-		}
-		// Check if in range and return
-		return (
-			(includeEnds[0] && v === range[0]) ||
-			(includeEnds[1] && v === range[1]) ||
-			(range[0] < range[1] && range[0] < v && v < range[1]) ||
-			(range[1] < range[0] && range[1] < v && v < range[0])
-		);
-	}
-
-	/** Use JSON object to deep copy a value */
-	static copyValue(from) {
-		return JSON.parse(JSON.stringify(from));
-	}
-
 	static radToDeg(rad) {
 		return (rad / (2 * Math.PI) * 360);
 	}
