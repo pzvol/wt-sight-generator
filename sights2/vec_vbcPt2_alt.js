@@ -12,7 +12,7 @@ let sight = new Sight();
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
 	pd.basic.scales.getHighZoomSmall2Font(),
-	pd.basic.colors.getGreenRed(),
+	pd.basic.colors.getLightGreenRed(),
 	pd.basicBuild.rgfdPos([110, -0.02225]),
 	pd.basicBuild.detectAllyPos([110, -0.050]),
 	pd.basicBuild.gunDistanceValuePos([-0.167, 0.035]),
@@ -90,76 +90,63 @@ sight.add([
 ]);
 
 
-// Sight center prompt bold at borders
-// horizontal
-for (let l of [
-	{ toX: 200, biasY: 0 },
-	{ toX: 200, biasY: 0.2 },
-	{ toX: 200, biasY: 0.4 },
-]) {
-	sight.add(new Line({
-		from: [450, l.biasY], to: [l.toX, l.biasY]
-	}).withMirrored(l.biasY == 0 ? "x" : "xy"));
-}
-// vertical
-for (let l of [
-	{ toY: -115, biasX: 0 },
-	{ toY: -115, biasX: 0.2 },
-	{ toY: -115, biasX: 0.3 },
-]) {
-	sight.add(new Line({
-		from: [l.biasX, -450], to: [l.biasX, l.toY]
-	}).withMirrored(l.biasY == 0 ? null : "x"));
-}
+// // Sight center prompt bold at borders
+// // horizontal
+// for (let l of [
+// 	{ toX: 200, biasY: 0 },
+// 	{ toX: 200, biasY: 0.2 },
+// 	{ toX: 200, biasY: 0.4 },
+// ]) {
+// 	sight.add(new Line({
+// 		from: [450, l.biasY], to: [l.toX, l.biasY]
+// 	}).withMirrored(l.biasY == 0 ? "x" : "xy"));
+// }
+// // vertical
+// for (let l of [
+// 	{ toY: -115, biasX: 0 },
+// 	{ toY: -115, biasX: 0.2 },
+// 	{ toY: -115, biasX: 0.3 },
+// ]) {
+// 	sight.add(new Line({
+// 		from: [l.biasX, -450], to: [l.biasX, l.toY]
+// 	}).withMirrored(l.biasY == 0 ? null : "x"));
+// }
 
 
 // Air leading circles
-let textPosDeg = {
-	cos: Math.cos(Toolbox.degToRad(40)),
-	sin: Math.sin(Toolbox.degToRad(40)),
-};
-let curveSeg = [45 - 20, 45 + 20];
-// 4/4
+// Curves
+let segHalfLen = 15;
+//   lower
 sight.add(new Circle({
-	segment: curveSeg, diameter: getAirLdn(1) * 2, size: 4.8
-}).withMirroredSeg("xy"));
+	segment: [1.2, segHalfLen], diameter: getAirLdn(1) * 2, size: 4.8
+}).withMirroredSeg("x"));
+sight.add(new Circle({
+	segment: [2.4, segHalfLen], diameter: getAirLdn(0.5) * 2, size: 4
+}).withMirroredSeg("x"));
+//   others
+for (let segCenter of [90, 180, 270]) {
+	sight.add(new Circle({
+		segment: [segCenter - segHalfLen, segCenter + segHalfLen],
+		diameter: getAirLdn(1) * 2, size: 4.8
+	}));
+	sight.add(new Circle({
+		segment: [segCenter - segHalfLen, segCenter + segHalfLen],
+		diameter: getAirLdn(0.5) * 2, size: 4
+	}));
+}
+// Texts
+// 4/4
 sight.add(new TextSnippet({
 	text: `${airTgting.tgtSpd} kph  ${airTgting.shell.main.name}`,
-	pos: [
-		getAirLdn(1) * textPosDeg.sin + 4,
-		getAirLdn(1) * textPosDeg.cos
-	],
+	pos: [3, getAirLdn(1) + 3.5],
 	align: "right", size: 2
 }));
-//   sub shell prompt
-// sight.add(new Circle({
-// 	segment: [40, 50], diameter: getAirLdnSubShell(1) * 2, size: 4.8
-// }));
-// sight.add(new TextSnippet({
-// 	text: airTgting.shell.sub.name,
-// 	pos: [
-// 		getAirLdnSubShell(1) * textPosDeg.sin + 3,
-// 		getAirLdnSubShell(1) * textPosDeg.cos
-// 	],
-// 	align: "right", size: 1.7
-// }));
 // 2/4
-sight.add(new Circle({
-	segment: curveSeg, diameter: getAirLdn(0.5) * 2, size: 3
-}).withMirroredSeg("xy"));
 sight.add(new TextSnippet({
 	text: (airTgting.tgtSpd * 0.5).toFixed(),
-	pos: [
-		getAirLdn(0.5) * textPosDeg.sin + 4,
-		getAirLdn(0.5) * textPosDeg.cos
-	],
+	pos: [3, getAirLdn(0.5) + 3.5],
 	align: "right", size: 2
 }));
-//   sub shell prompt
-// sight.add(new Circle({
-// 	segment: [42, 48], diameter: getAirLdnSubShell(0.5) * 2, size: 3
-// }));
-
 
 
 

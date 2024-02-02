@@ -7,7 +7,7 @@ import * as pd from "../_lib2/predefined.js";
 let sight = base.sightObj;
 
 
-sight.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
+sight.matchVehicle([
 	"ussr_t_55_am",
 	"ussr_t_55_amd_1",
 ])
@@ -50,16 +50,16 @@ sight.add(new Line({
 }).withMirrored("y").move([-0.086, 0]));
 
 
-// Missile drop indication
+sight.addComment("Missile drop indication", ["circles", "texts"]);
 // 100m
-sight.add(new Circle({pos: [0, 2.5], size: 1, diameter: 1}).withMirroredSeg("x"));
+sight.add(new Circle({pos: [0, 2.5], size: 1, diameter: 1})).repeatLastAdd();
 sight.add(new TextSnippet({
 	text: "100",
 	align: "center",
 	pos: [4.0, 2.5 - 0.1], size: 0.5
 }));
 // 200m
-sight.add(new Circle({pos: [0, 1.1], size: 1, diameter: 0.5}).withMirroredSeg("x"));
+sight.add(new Circle({pos: [0, 1.1], size: 1, diameter: 0.5})).repeatLastAdd();
 sight.add(new TextSnippet({
 	text: "200",
 	align: "center",
