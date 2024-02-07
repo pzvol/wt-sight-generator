@@ -19,8 +19,7 @@ sight.matchVehicle([
 
 //// ADDITIONAL ELEMENTS (IF ANY) ////
 // Move gun correction info further left side
-sight.components.sightSettings.removeVariableByName("distanceCorrectionPos");
-sight.addSettings(pd.basicBuild.gunDistanceValuePos([-0.36, 0.015]));
+sight.updateOrAddSettings(pd.basicBuild.gunDistanceValuePos([-0.36, 0.015]));
 
 
 let assumedTgtWidth = 3.3;

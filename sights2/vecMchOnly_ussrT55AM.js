@@ -21,10 +21,7 @@ base.init({
 
 
 // Re-configure shell corrections
-sight.components.sightSettings.removeVariableByName("crosshairDistHorSizeMain");
-sight.components.sightSettings.removeVariableByName("crosshairDistHorSizeAdditional");
-sight.components.sightSettings.removeVariableByName("distancePos");
-sight.components.sightSettings.add(pd.basicBuild.shellDistanceTickVars(
+sight.updateOrAddSettings(pd.basicBuild.shellDistanceTickVars(
 	[-0.005, -0.005],
 	[0.005, 0],
 	[0.08, 0]

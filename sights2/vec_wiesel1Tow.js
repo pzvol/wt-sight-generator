@@ -15,11 +15,7 @@ sight.addDescription("For Wiesel 1A2");
 
 
 // Re-configure colors
-sight.components.sightSettings.
-	removeCommentByContent("Color of sight").
-	removeVariableByName("crosshairColor").
-	removeVariableByName("crosshairLightColor");
-sight.components.sightSettings.add(pd.basic.colors.getLightGreenRed());
+sight.updateOrAddSettings(pd.basic.colors.getLightGreenRed());
 
 
 //// ADDITIONAL ELEMENTS (IF ANY) ////

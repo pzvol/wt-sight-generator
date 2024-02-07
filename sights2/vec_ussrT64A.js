@@ -3,7 +3,6 @@
 import Sight from "../_lib2/sight_main.js";
 import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
-import { BlkVariable } from "../_lib2/sight_code_basis.js";
 import * as pd from "../_lib2/predefined.js";
 
 import rgfd from "./sight_components/rangefinder.js"
