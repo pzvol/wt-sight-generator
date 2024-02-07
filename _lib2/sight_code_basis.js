@@ -49,7 +49,8 @@ export class BlkVariable {
 	 *
 	 * @param {string} vName - variable name
 	 * @param {number|string|boolean|number[]} vValue
-	 * @param {null|"i"|"t"|"r"|"c"|"b"|"p2"|"p3"|"p4"} vType - output type. `null` for auto
+	 * @param {null|"i"|"t"|"r"|"c"|"b"|"p2"|"p3"|"p4"} vType - output type. By
+	 *   default `null` is used for auto detecting when output
 	 *
 	 * Note that:
 	 * 1. for sight text align, the vType `"r"` will be selected by default, so
@@ -66,6 +67,57 @@ export class BlkVariable {
 		this.type = vType;
 	}
 
+
+	//// GETTERS ////
+	/** Get variable name (key) */
+	getName() {
+		return this.name;
+	}
+	/** Get variable value in JavaScript datatypes */
+	getValue() {
+		// For `number[]`, do a shallow copy
+		if (Array.isArray(this.value)) {
+			return [...this.value];
+		}
+		return this.value;
+	}
+	/**
+	 * Get variable output type
+	 *
+	 * BE AWARE:
+	 * - **this is NOT raw JavaScript type**
+	 * - `null` will be returned for "auto detecting when output"
+	 */
+	getTypeOfOutput() {
+		return this.type;
+	}
+
+
+	//// SETTERS ////
+	/**
+	 * Set variable name
+	 * @param {string} newName
+	 */
+	setName(newName) {
+		this.name = newName;
+		return this;
+	}
+
+	/**
+	 * Set variable value
+	 * @param {number|string|boolean|number[]} newValue
+	 * @param {null|"i"|"t"|"r"|"c"|"b"|"p2"|"p3"|"p4"} newType - output type.
+	 *   By default `null` is used for auto detecting when output
+	 * @returns
+	 */
+	setValue(newValue, newType = null) {
+		this.value = newValue;
+		this.type = newType;
+		return this;
+	}
+
+
+	//// OUTPUT METHOD ////
 	getCode() {
 		let valueOut;
 		let typeOut = this.type;
@@ -104,8 +156,10 @@ export class BlkBlock {
 	 *                       or have method `getCode` which return a string
 	 *
 	 * @param {Object} settings
-	 * @param {boolean} settings.useOneLine
-	 * @param {number} settings.baseIndentLevel
+	 * @param {boolean} settings.useOneLine - if block contents are output in
+	 *   one single line. Inner block(s) will not be affected by this.
+	 * @param {number} settings.baseIndentLevel - level of indentation of this
+	 *   block. Inner block(s) will not be affected by this.
 	 */
 	constructor(bName, bLines = [], {
 		useOneLine = false,
@@ -122,10 +176,48 @@ export class BlkBlock {
 		};
 	}
 
+
+	//// GETTERS ////
+	/** Get block name (key) */
+	getName() {
+		return this.name;
+	}
+
+	/**
+	 * Get block content elements
+	 *
+	 * BE AWARE that the array is passed **without** copy, so
+	 * following modifications will reflect to the original block
+	 *
+	 * TODO: Alternative `getContentsCopied` for deep-copied return?
+	 */
+	getContentArray() {
+		return this.contentLines;
+	}
+
+	/** Get block's output settings params */
+	getSettings() {
+		return {
+			useOneLine: this.settings.useOneLine,
+			baseIndentLevel: this.settings.baseIndentLevel,
+		};
+	}
+
+
+	//// SETTERS ////
+	/**
+	 * Set block name
+	 * @param {string} newName
+	 */
+	setName(newName) {
+		this.name = newName;
+		return this;
+	}
+
 	/**
 	 * Append a new content line of block
-	 * @param {*|*[]} input - appended item(s). Must either be a string or
-	 *                    has `getCode` method
+	 * @param {*|*[]} input - appended item(s). Input or elements in input array
+	 *                        MUST either be a string or has `getCode` method
 	 */
 	push(input) {
 		if (Array.isArray(input)) {
@@ -136,6 +228,34 @@ export class BlkBlock {
 		return this;
 	}
 
+	/**
+	 * Clear all block contents
+	 */
+	clear() {
+		this.contentLines.length = 0;
+		return this;
+	}
+
+	/**
+	 * Update code output settings
+	 * @param {Object} updateObj
+	 * @param {boolean=} updateObj.useOneLine - if block contents are output in
+	 *   one single line. Inner blocks will not be affected by this.
+	 * @param {number=} updateObj.baseIndentLevel - level of indentation of this
+	 *   block. Inner blocks will not be affected by this.
+	 */
+	setSettings(updateObj) {
+		if (updateObj.hasOwnProperty("useOneLine")) {
+			this.settings.useOneLine = updateObj.useOneLine;
+		}
+		if (updateObj.hasOwnProperty("baseIndentLevel")) {
+			this.settings.baseIndentLevel = updateObj.baseIndentLevel;
+		}
+		return this;
+	}
+
+
+	//// OUTPUT METHOD ////
 	getCode() {
 		// Empty block:
 		if (this.contentLines.length === 0) {

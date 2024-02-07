@@ -38,6 +38,9 @@ export default {
 };
 
 
+// TODO: Code reconstruction
+
+
 /** "Abstract" block class for sight blocks */
 class SightBlock {
 	constructor(blockName) {
@@ -84,6 +87,31 @@ export class BasicSettings {
 		} else {
 			this.settingLines.push(input);
 		}
+		return this;
+	}
+
+	/**
+	 * Update the value and datatype of one/an array of BlkVariable,
+	 * or add the provided new one(s)
+	 * @param {BlkVariable|BlkVariable[]} input
+	 */
+	updateOrAddVariable(input) {
+		let arr = (Array.isArray(input)) ? input : [input];
+		for (let inVar of arr) {
+			let inVarName = inVar.getName();
+			let existingVar = this.settingLines.find((ele) => (
+				ele instanceof BlkVariable && ele.getName() === inVarName
+			));
+			// Add given one or modify existing one
+			if (typeof existingVar === "undefined") {
+				this.add(inVar);
+			} else {
+				existingVar.setValue(
+					inVar.getValue(), inVar.getTypeOfOutput()
+				);
+			}
+		}
+
 		return this;
 	}
 

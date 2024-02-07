@@ -40,13 +40,11 @@ export const basicBuild = {
 	 * @param {[number, number, number, number]} in.sub - sub color
 	 */
 	color: ({ main, sub } = {}) => [
-		new BlkComment("Color of sight"),
 		new BlkVariable("crosshairColor", main, "c"),
 		new BlkVariable("crosshairLightColor", sub, "c"),
 	],
 
 	scale: ({ font, line } = {}) => [
-		new BlkComment("Sight scales"),
 		new BlkVariable("fontSizeMult", font),
 		new BlkVariable("lineSizeMult", line),
 	],
