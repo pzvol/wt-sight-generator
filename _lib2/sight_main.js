@@ -31,7 +31,7 @@ import { Quad, Circle, Line, TextSnippet } from "./sight_elements.js";
 
 /** An all-in-one entrance for creating a user sight */
 export default class Sight {
-	static libVersion = "20240207";
+	static libVersion = "20240207a";
 
 	static commonVehicleTypes = block.MatchVehicleClassBlock.commonTypes;
 
@@ -39,7 +39,7 @@ export default class Sight {
 		this.components = {
 			/** @type {string[]} */
 			description: [],
-			settings: new block.BasicSettings(),
+			sightSettings: new block.BasicSettings(),
 			matchVehicleClasses: new block.MatchVehicleClassBlock(),
 			horiThousandths: new block.HoriThousandthsBlock(),
 			shellDistances: new block.ShellDistancesBlock(),
@@ -92,7 +92,7 @@ export default class Sight {
 	 * @param {string|BlkVariable|BlkComment|(string|BlkVariable|BlkComment)[]} input
 	 */
 	addSettings(input) {
-		this.components.settings.add(input);
+		this.components.sightSettings.add(input);
 		return this;
 	}
 
@@ -105,7 +105,7 @@ export default class Sight {
 	 * @param {BlkVariable|BlkVariable[]} input
 	 */
 	updateOrAddSettings(input) {
-		this.components.settings.updateOrAddVariable(input);
+		this.components.sightSettings.updateOrAddVariable(input);
 		return this;
 	}
 
@@ -113,12 +113,12 @@ export default class Sight {
 	 * @param {string|string[]} input - variable name(s)
 	 */
 	removeSettingsByVariableName(input) {
-		this.components.settings.removeVariableByName(input);
+		this.components.sightSettings.removeVariableByName(input);
 		return this;
 	}
 
 	clearSettings() {
-		this.components.settings.clear();
+		this.components.sightSettings.clear();
 		return this;
 	}
 
@@ -205,7 +205,7 @@ export default class Sight {
 
 		for (let t of toArr) {
 			if (t === "settings") {
-				this.components.settings.addComment(content);
+				this.components.sightSettings.addComment(content);
 			} else if (t === "quads") {
 				this.components.quads.addComment(content);
 			} else if (t === "circles") {
@@ -278,7 +278,7 @@ export default class Sight {
 		}
 
 		blkFile.push([
-			this.components.settings, "",
+			this.components.sightSettings, "",
 			this.components.matchVehicleClasses, "",
 			this.components.horiThousandths, "",
 			this.components.shellDistances, "",

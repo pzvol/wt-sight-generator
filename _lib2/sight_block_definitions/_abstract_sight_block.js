@@ -1,9 +1,3 @@
-/**
- * Blocks of a user sight
- *
- * V2 - overhauled version for cleaner files and simpler code writing
- */
-
 // WT Sight Generator: a simple library for generating War Thunder user sights
 // from JavaScript
 //
@@ -24,30 +18,19 @@
 
 'use strict';
 
-import BasicSettings from "./sight_block_definitions/basic_settings.js";
-import MatchVehicleClassBlock from "./sight_block_definitions/match_vehicle_class_block.js";
-import HoriThousandthsBlock from "./sight_block_definitions/hori_thousandths_block.js";
-import ShellDistancesBlock from "./sight_block_definitions/shell_distances_block.js";
-import {
-	CirclesBlock,
-	LinesBlock,
-	TextsBlock,
-	QuadsBlock
-} from "./sight_block_definitions/element_blocks.js"
 
-
-export default {
-	description: "Blocks of a user sight"
-};
-
-
-export {
-	BasicSettings,
-	MatchVehicleClassBlock,
-	HoriThousandthsBlock,
-	ShellDistancesBlock,
-	CirclesBlock,
-	LinesBlock,
-	TextsBlock,
-	QuadsBlock,
-};
+/** "Abstract" block class for sight blocks */
+export default class SightBlock {
+	constructor(blockName) {
+		/** Block name after compiling to `.blk` */
+		this.blockName = blockName;
+	}
+	/**
+	 * Gets the code of the whole block
+	 * @returns {string}
+	 */
+	getCode() {
+		let errorText = `ERROR: Unset method 'getCode' for sight block '${this.blockName}'`;
+		throw new Error(errorText);
+	}
+}

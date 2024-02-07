@@ -19,7 +19,7 @@
 'use strict';
 
 import { SETTINGS, BlkVariable, BlkBlock } from "../sight_code_basis.js";
-import DefTool from "./element_def_tools.js";
+import DefTool from "./_element_def_tools.js";
 
 
 export default class Line {
