@@ -45,11 +45,11 @@ sight.addShellDistance([
 //// SIGHT DESIGNS ////
 // Sight center segments (tiny cross)
 for (let direction of [90, 180, 270, 360]) {
-	let curveHalfWidth = 20;
+	let curveHalfWidth = 15;
 	sight.add(new Circle({
 		segment: [direction - curveHalfWidth, direction + curveHalfWidth],
-		diameter: 0.8,
-		size: 1.2,
+		diameter: 1.2,
+		size: 1.4,
 	}));
 }
 
