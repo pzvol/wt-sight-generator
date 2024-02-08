@@ -91,10 +91,13 @@ export const concatAllBasics = (zoomScale, color, rgfdPos, detectAllyPos, gunDis
  */
 export const basic = {
 	colors: {
-		getGreenRed: ({ main = [0, 200, 40, 255], sub = [180, 0, 0, 255] } = {}) => basicBuild.color({ main, sub }),
+		getGreenRed: ({ main = [10, 210, 50, 255], sub = [180, 0, 0, 255] } = {}) => basicBuild.color({ main, sub }),
+		// ^ Old green: [0, 200, 40, 255]
+		// Unused:
+		// getLessLightGreenRed: ({ main = [103, 245, 103, 255], sub = [180, 0, 0, 255] } = {}) => basicBuild.color({ main, sub }),
 		getLightGreenRed: ({ main = [153, 255, 153, 255], sub = [180, 0, 0, 255] } = {}) => basicBuild.color({ main, sub }),
 
-		getRedGreen: ({ main = [180, 0, 0, 255], sub = [0, 200, 40, 255] } = {}) => basicBuild.color({ main, sub }),
+		getRedGreen: ({ main = [180, 0, 0, 255], sub = [10, 210, 50, 255] } = {}) => basicBuild.color({ main, sub }),
 		getRedLightGreen: ({ main = [180, 0, 0, 255], sub = [153, 255, 153, 255] } = {}) => basicBuild.color({ main, sub }),
 
 		getBlackYellow: ({ main = [0, 0, 0, 255], sub = [200, 200, 0, 255] } = {}) => basicBuild.color({ main, sub }),
