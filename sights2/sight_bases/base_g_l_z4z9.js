@@ -23,6 +23,8 @@ let init = ({
 	// cross at display borders for quickly finding the center of sight;
 	// can be disabled for cleaner view on this low-magnification optics.
 	drawPromptCross = true,
+	// Use arrows for leading ticks
+	leadingDivisionsUseArrowType = false,
 } = {}) => {
 
 	//// BASIC SETTINGS ////
@@ -130,28 +132,78 @@ let init = ({
 
 
 	// leading values for shooting while moving
-	let ldHoriLine = new Line({
-		from: [getLdn(1), 0], to: [getLdn(0.5), 0]
-	}).withMirrored("x");
-	sight.add(ldHoriLine);
-	// 4/4 AA
-	Toolbox.repeat(2, () => {
-		sight.add(new TextSnippet({
-			text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.1], size: 0.5
-		}).withMirrored("x"));
-	});
-	ldHoriLine.addBreakAtX(getLdn(1), 1.7)
-	// 3/4 ~ 1/4
-	for (let aa of [0.25, 0.5, 0.75]) {
-		for (let biasY of Toolbox.rangeIE(-0.05, 0.05, 0.05)) {
-			let Xradius = 0.05;
-			sight.add(new Line({
-				from: [getLdn(aa) - Xradius, biasY],
-				to: [getLdn(aa) + Xradius, biasY],
-			}).withMirrored("x"));
+	if (leadingDivisionsUseArrowType) {
+		// Arrow type
+		let arrowDegree = 60;
+		let getArrowElements = (xPos, yLen) => {
+			let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
+			let halfElements = [
+				new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
+				new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
+			]
+			let elements = [];
+			halfElements.forEach((ele) => {
+				elements.push(ele);
+				elements.push(ele.copy().mirrorX());
+			});
+			elements.forEach((ele) => {
+				ele.move([xPos, 0]).withMirrored("x");
+			});
+			return elements;
 		}
+		let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
+			let elements = [];
+			for (let biasX of drawnXBiases) {
+				elements.push(new Line({
+					from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
+				}).withMirrored("x"));
+			}
+			return elements;
+		}
+
+		// 4/4 AA
+		sight.add(getArrowElements(getLdn(1), 0.5));
+		sight.add(new TextSnippet({
+			text: assumedMoveSpeed.toFixed(),
+			pos: [getLdn(1), 1.3-0.1],
+			size: 0.4
+		}).withMirrored("x")).repeatLastAdd();
+		// 3/4
+		sight.add(getTickElements(
+			getLdn(0.75), 0.2, [-0.04, 0.04]
+		));
+		// 2/4
+		sight.add(getArrowElements(getLdn(0.5), 0.35));
+		// 1/4
+		sight.add(getTickElements(
+			getLdn(0.25), 0.1, [-0.02, 0.02]
+		));
+
+	} else {
+		// Line type
+		let ldHoriLine = new Line({
+			from: [getLdn(1), 0], to: [getLdn(0.5), 0]
+		}).withMirrored("x");
+		sight.add(ldHoriLine);
+		// 4/4 AA
+		Toolbox.repeat(2, () => {
+			sight.add(new TextSnippet({
+				text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.1], size: 0.5
+			}).withMirrored("x"));
+		});
+		ldHoriLine.addBreakAtX(getLdn(1), 1.7)
+		// 3/4 ~ 1/4
+		for (let aa of [0.25, 0.5, 0.75]) {
+			for (let biasY of Toolbox.rangeIE(-0.05, 0.05, 0.05)) {
+				let Xradius = 0.05;
+				sight.add(new Line({
+					from: [getLdn(aa) - Xradius, biasY],
+					to: [getLdn(aa) + Xradius, biasY],
+				}).withMirrored("x"));
+			}
+		}
+		ldHoriLine.addBreakAtX(getLdn(0.75), 0.7);
 	}
-	ldHoriLine.addBreakAtX(getLdn(0.75), 0.7);
 
 
 	if (drawPromptCross) {

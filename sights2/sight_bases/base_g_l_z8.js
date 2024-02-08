@@ -25,6 +25,9 @@ let init = ({
 	// cross at display borders for quickly finding the center of sight.
 	drawPromptCross = true,
 	useNarrowGunCenter = false,
+
+	// Use arrows for leading ticks
+	leadingDivisionsUseArrowType = false,
 } = {}) => {
 
 	//// BASIC SETTINGS ////
@@ -117,22 +120,71 @@ let init = ({
 	}));
 
 
-	// leading values for shooting while moving
-	sight.addComment(`Horizontal line with general leading for APFSDS - ${assumedMoveSpeed}kph`, ["texts", "lines"]);
-	sight.add(
-		new Line({ from: [getLdn(assumedMoveSpeed, 1), 0], to: [getLdn(assumedMoveSpeed, 0.5), 0] }).
-			addBreakAtX(getLdn(assumedMoveSpeed, 1), 1.6).
-			addBreakAtX(getLdn(assumedMoveSpeed, 0.75), 0.6).
-			addBreakAtX(getLdn(assumedMoveSpeed, 0.5), 0.6).
-			withMirrored("xy")  // y for bold
-	);
-	Toolbox.repeat(2, () => {
-		sight.texts.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(assumedMoveSpeed, 1), -0.08], size: 0.5 }).withMirrored("x"));
-	})
-	sight.circles.addComment(`Horizontal general leading for APFSDS - 1/4~3/4 AA`);
-	sight.add(new Circle({ segment: [88, 92], diameter: getLdn(assumedMoveSpeed, 0.25) * 2, size: 2.4 }).withMirroredSeg("x"));
-	sight.add(new Circle({ segment: [87, 93], diameter: getLdn(assumedMoveSpeed, 0.5) * 2, size: 1.8 }).withMirroredSeg("x"));
-	sight.add(new Circle({ segment: [88, 92], diameter: getLdn(assumedMoveSpeed, 0.75) * 2, size: 2.4 }).withMirroredSeg("x"));
+	sight.addComment(`Leading values for shooting while moving - ${assumedMoveSpeed}kph`, ["texts", "lines"]);
+	if (leadingDivisionsUseArrowType) {
+		// Arrow type
+		let arrowDegree = 60;
+		let getArrowElements = (xPos, yLen) => {
+			let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
+			let halfElements = [
+				new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
+				new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
+			]
+			let elements = [];
+			halfElements.forEach((ele) => {
+				elements.push(ele);
+				elements.push(ele.copy().mirrorX());
+			});
+			elements.forEach((ele) => {
+				ele.move([xPos, 0]).withMirrored("x");
+			});
+			return elements;
+		}
+		let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
+			let elements = [];
+			for (let biasX of drawnXBiases) {
+				elements.push(new Line({
+					from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
+				}).withMirrored("x"));
+			}
+			return elements;
+		}
+
+		// 4/4 AA
+		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 1), 0.8));
+		sight.add(new TextSnippet({
+			text: assumedMoveSpeed.toFixed(),
+			pos: [getLdn(assumedMoveSpeed, 1), 1.7-0.08],
+			size: 0.5
+		}).withMirrored("x")).repeatLastAdd();
+		// 3/4
+		sight.add(getTickElements(
+			getLdn(assumedMoveSpeed, 0.75), 0.3, [-0.04, 0.04]
+		));
+		// 2/4
+		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 0.5), 0.7));
+		// 1/4
+		sight.add(getTickElements(
+			getLdn(assumedMoveSpeed, 0.25), 0.2, [-0.03, 0.03]
+		));
+
+	} else {
+		// Line type
+		sight.add(
+			new Line({ from: [getLdn(assumedMoveSpeed, 1), 0], to: [getLdn(assumedMoveSpeed, 0.5), 0] }).
+				addBreakAtX(getLdn(assumedMoveSpeed, 1), 1.6).
+				addBreakAtX(getLdn(assumedMoveSpeed, 0.75), 0.6).
+				addBreakAtX(getLdn(assumedMoveSpeed, 0.5), 0.6).
+				withMirrored("xy")  // y for bold
+		);
+		Toolbox.repeat(2, () => {
+			sight.texts.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(assumedMoveSpeed, 1), -0.08], size: 0.5 }).withMirrored("x"));
+		})
+		sight.circles.addComment(`Horizontal general leading for APFSDS - 1/4~3/4 AA`);
+		sight.add(new Circle({ segment: [88, 92], diameter: getLdn(assumedMoveSpeed, 0.25) * 2, size: 2.4 }).withMirroredSeg("x"));
+		sight.add(new Circle({ segment: [87, 93], diameter: getLdn(assumedMoveSpeed, 0.5) * 2, size: 1.8 }).withMirroredSeg("x"));
+		sight.add(new Circle({ segment: [88, 92], diameter: getLdn(assumedMoveSpeed, 0.75) * 2, size: 2.4 }).withMirroredSeg("x"));
+	}
 
 	if (drawPromptCross) {
 		sight.add(new TextSnippet({

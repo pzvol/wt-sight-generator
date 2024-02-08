@@ -25,7 +25,10 @@ let init = ({
 
 	// cross at display borders for quickly finding the center of sight.
 	drawPromptCross = true,
-	// leading divisions use apporiximate speed instead of denominators
+	// Use arrows for leading ticks
+	leadingDivisionsUseArrowType = false,
+	// leading divisions use apporiximate speed instead of denominators;
+	// for arrow type ticks, denominators will be hidden instead
 	leadingDivisionsDrawSpeed = false,
 } = {}) => {
 
@@ -33,9 +36,16 @@ let init = ({
 	sight.addSettings(pd.concatAllBasics(
 		pd.basic.scales.getHighZoom(),
 		pd.basic.colors.getGreenRed(),
-		pd.basicBuild.rgfdPos([110, -0.01925]),
-		pd.basicBuild.detectAllyPos([110, -0.04]),
-		pd.basicBuild.gunDistanceValuePos([-0.175, 0.03]),
+		pd.basicBuild.rgfdPos([
+			110, leadingDivisionsUseArrowType ? -0.03925 : -0.01925
+		]),
+		pd.basicBuild.detectAllyPos([
+			110, leadingDivisionsUseArrowType ? -0.06 : -0.04
+		]),
+		pd.basicBuild.gunDistanceValuePos([
+			leadingDivisionsUseArrowType ? -0.16 : -0.175,
+			leadingDivisionsUseArrowType ? 0.053 : 0.03
+		]),
 		pd.basicBuild.shellDistanceTickVars(
 			[-0.0050, -0.0050],
 			[0, 0.0005],
@@ -132,33 +142,93 @@ let init = ({
 	}));
 
 
-	// leading values for shooting while moving
-	sight.addComment(`Horizontal line with general leading for APFSDS - ${assumedMoveSpeed}kph`, ["texts", "lines"]);
-	sight.add(
-		new Line({ from: [getLdn(assumedMoveSpeed, 1), 0], to: [getLdn(assumedMoveSpeed, 0.5), 0] }).
-			addBreakAtX(getLdn(assumedMoveSpeed, 1), 1.2).
-			addBreakAtX(getLdn(assumedMoveSpeed, 0.75), leadingDivisionsDrawSpeed ? 0.95 : 0.6).
-			addBreakAtX(getLdn(assumedMoveSpeed, 0.5), leadingDivisionsDrawSpeed ? 0.95 : 0.6).
-			withMirrored("xy")  // y for bold
-	);
-	Toolbox.repeat(1, () => {
-		sight.texts.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(assumedMoveSpeed, 1), -0.03], size: 0.6 }).withMirrored("x"));
-		sight.texts.add(new TextSnippet({
-			text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString() : "3",
-			pos: [getLdn(assumedMoveSpeed, 0.75), -0.03], size: 0.5
-		}).withMirrored("x"));
-		sight.texts.add(new TextSnippet({
-			text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString() : "2",
-			pos: [getLdn(assumedMoveSpeed, 0.5), -0.03], size: 0.5
-		}).withMirrored("x"));
-	});
-	sight.lines.addComment(`Horizontal leading for APFSDS - 1/4 AA`);
-	for (let biasY of Toolbox.rangeIE(-0.05, 0.05, 0.05)) {
-		let Xradius = 0.05;
-		sight.add(new Line({
-			from: [getLdn(assumedMoveSpeed, 0.25) - Xradius, biasY],
-			to: [getLdn(assumedMoveSpeed, 0.25) + Xradius, biasY],
-		}).withMirrored("x"))
+	sight.addComment(`Leading values for shooting while moving - ${assumedMoveSpeed}kph`, ["texts", "lines"]);
+	if (leadingDivisionsUseArrowType) {
+		// Arrow type
+		let arrowDegree = 60;
+		let getArrowElements = (xPos, yLen) => {
+			let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
+			let halfElements = [
+				new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
+				new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
+			]
+			let elements = [];
+			halfElements.forEach((ele) => {
+				elements.push(ele);
+				elements.push(ele.copy().mirrorX());
+			});
+			elements.forEach((ele) => {
+				ele.move([xPos, 0]).withMirrored("x");
+			});
+			return elements;
+		}
+		let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
+			let elements = [];
+			for (let biasX of drawnXBiases) {
+				elements.push(new Line({
+					from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
+				}).withMirrored("x"));
+			}
+			return elements;
+		}
+
+		// 4/4 AA
+		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 1), 0.3));
+		sight.add(new TextSnippet({
+			text: assumedMoveSpeed.toFixed(),
+			pos: [getLdn(assumedMoveSpeed, 1), 0.8-0.03],
+			size: 0.5
+		}).withMirrored("x")).repeatLastAdd();
+		// 3/4
+		sight.add(getTickElements(
+			getLdn(assumedMoveSpeed, 0.75), 0.15, [-0.02, 0.02]
+		));
+		// 2/4
+		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 0.5), 0.3));
+		// 1/4
+		sight.add(getTickElements(
+			getLdn(assumedMoveSpeed, 0.25), 0.15, [-0.02, 0.02]
+		));
+		// Draw speed numbers if required
+		if (leadingDivisionsDrawSpeed) {
+			sight.texts.add(new TextSnippet({
+				text: Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString(),
+				pos: [getLdn(assumedMoveSpeed, 0.75), 0.8-0.03], size: 0.45
+			}).withMirrored("x"));
+			sight.texts.add(new TextSnippet({
+				text: Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString(),
+				pos: [getLdn(assumedMoveSpeed, 0.5), 0.8-0.03], size: 0.45
+			}).withMirrored("x"));
+		}
+
+	} else {
+		// Line type
+		sight.add(
+			new Line({ from: [getLdn(assumedMoveSpeed, 1), 0], to: [getLdn(assumedMoveSpeed, 0.5), 0] }).
+				addBreakAtX(getLdn(assumedMoveSpeed, 1), 1.2).
+				addBreakAtX(getLdn(assumedMoveSpeed, 0.75), leadingDivisionsDrawSpeed ? 0.95 : 0.6).
+				addBreakAtX(getLdn(assumedMoveSpeed, 0.5), leadingDivisionsDrawSpeed ? 0.95 : 0.6).
+				withMirrored("xy")  // y for bold
+		);
+		Toolbox.repeat(1, () => {
+			sight.texts.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(assumedMoveSpeed, 1), -0.03], size: 0.6 }).withMirrored("x"));
+			sight.texts.add(new TextSnippet({
+				text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString() : "3",
+				pos: [getLdn(assumedMoveSpeed, 0.75), -0.03], size: 0.5
+			}).withMirrored("x"));
+			sight.texts.add(new TextSnippet({
+				text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString() : "2",
+				pos: [getLdn(assumedMoveSpeed, 0.5), -0.03], size: 0.5
+			}).withMirrored("x"));
+		});
+		sight.lines.addComment(`Horizontal leading for APFSDS - 1/4 AA`);
+		for (let biasY of Toolbox.rangeIE(-0.05, 0.05, 0.05)) {
+			let Xradius = 0.05;
+			sight.add(new Line({
+				from: [getLdn(assumedMoveSpeed, 0.25) - Xradius, biasY],
+				to: [getLdn(assumedMoveSpeed, 0.25) + Xradius, biasY],
+			}).withMirrored("x"))
+		}
 	}
 
 	if (drawPromptCross) {
@@ -171,29 +241,29 @@ let init = ({
 			align: "right", pos: [66.5, 1], size: 0.9
 		}));
 	} else {
-		let space = (normalSpaceNum, enSpaceNum) => {
-			let out = "";
-			Toolbox.repeat(normalSpaceNum, () => (out += " "));
-			Toolbox.repeat(enSpaceNum, () => (out += " "));
-			return out;
-		}
-		sight.add(new TextSnippet({
-			text: `ASM MOVE${space(0, 5)}${assumedMoveSpeed.toFixed()} kph`,
-			align: "right", pos: [66.5, -1.0], size: 0.9
-		}));
-		sight.add(new TextSnippet({
-			text: `ASM SHELL${space(1, 2)}${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "right", pos: [66.5, 0.8], size: 0.9
-		}));
+		// let space = (normalSpaceNum, enSpaceNum) => {
+		// 	let out = "";
+		// 	Toolbox.repeat(normalSpaceNum, () => (out += " "));
+		// 	Toolbox.repeat(enSpaceNum, () => (out += " "));
+		// 	return out;
+		// }
+		// sight.add(new TextSnippet({
+		// 	text: `ASM MOVE${space(0, 5)}${assumedMoveSpeed.toFixed()} kph`,
+		// 	align: "right", pos: [66.5, -0.8], size: 0.9
+		// }));
+		// sight.add(new TextSnippet({
+		// 	text: `ASM SHELL${space(1, 2)}${(shellSpeed / 3.6).toFixed()} m/s`,
+		// 	align: "right", pos: [66.5, 0.6], size: 0.9
+		// }));
 		// Alternatively, values only:
-		// sight.add(new TextSnippet({
-		// 	text: `${assumedMoveSpeed.toFixed()} kph`,
-		// 	align: "left", pos: [79, -1.0], size: 0.9
-		// }));
-		// sight.add(new TextSnippet({
-		// 	text: `${(shellSpeed / 3.6).toFixed()} m/s`,
-		// 	align: "left", pos: [79, 0.8], size: 0.9
-		// }));
+		sight.add(new TextSnippet({
+			text: `${assumedMoveSpeed.toFixed()} kph`,
+			align: "left", pos: [79, -0.8], size: 0.9
+		}));
+		sight.add(new TextSnippet({
+			text: `${(shellSpeed / 3.6).toFixed()} m/s`,
+			align: "left", pos: [79, 0.6], size: 0.9
+		}));
 	}
 };
 

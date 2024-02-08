@@ -14,6 +14,7 @@ base.init({
 	shellSpeed: 1455 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 45,    // km/h
 	drawPromptCross: false,
+	leadingDivisionsUseArrowType: true,
 });
 
 export default { sightObj: base.sightObj };

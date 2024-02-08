@@ -85,9 +85,12 @@ let init = ({
 	shellSpeed = 1730 * 3.6,
 	assumedMoveSpeed = 40,
 	drawPromptCross = true,
-	useLongerLeadLine = false,
-	useWiderLeadLineBreak = false,
-	// leading divisions use apporiximate speed instead of denominators
+	// Use arrows for leading ticks
+	leadingDivisionsUseArrowType = false,
+	useLongerLeadLine = false,  // For line type only
+	useWiderLeadLineBreak = false,  // For line type only
+	// leading divisions use apporiximate speed instead of denominators;
+	// for arrow type ticks, denominators will be hidden instead
 	leadingDivisionsDrawSpeed = false,
 } = {}) => {
 	let getLdn = (aa) => Toolbox.calcLeadingMil(shellSpeed, assumedMoveSpeed, aa);
@@ -131,40 +134,101 @@ let init = ({
 
 
 	sight.addComment("Horizontal leading for APFSDS", ["texts", "circles", "lines"]);
-	// line between 4/4 and 3/4
-	let horiLineTickBreakMain = useWiderLeadLineBreak ? 1.4 : 1.2;
-	let horiLineTickBreakSub = useWiderLeadLineBreak ? 0.7 : 0.6;
-	if(leadingDivisionsDrawSpeed) {
-		horiLineTickBreakSub += 0.45;
+	if (leadingDivisionsUseArrowType) {
+		// Arrow type
+		let arrowDegree = 60;
+		let getArrowElements = (xPos, yLen) => {
+			let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
+			let halfElements = [
+				new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
+				new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
+			]
+			let elements = [];
+			halfElements.forEach((ele) => {
+				elements.push(ele);
+				elements.push(ele.copy().mirrorX());
+			});
+			elements.forEach((ele) => {
+				ele.move([xPos, 0]).withMirrored("x");
+			});
+			return elements;
+		}
+		let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
+			let elements = [];
+			for (let biasX of drawnXBiases) {
+				elements.push(new Line({
+					from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
+				}).withMirrored("x"));
+			}
+			return elements;
+		}
+
+		// 4/4 AA
+		sight.add(getArrowElements(getLdn(1), 0.6));
+		sight.add(new TextSnippet({
+			text: assumedMoveSpeed.toFixed(),
+			pos: [getLdn(1), 1.2-0.05],
+			size: 0.47
+		}).withMirrored("x")).repeatLastAdd();
+		// 3/4
+		sight.add(getTickElements(
+			getLdn(0.75), 0.15, [-0.04, 0.04]
+		));
+		// 2/4
+		sight.add(getArrowElements(getLdn(0.5), 0.5));
+		// 1/4
+		sight.add(getTickElements(
+			getLdn(0.25), 0.15, [-0.04, 0.04]
+		));
+		// Draw speed numbers if required
+		if (leadingDivisionsDrawSpeed) {
+			sight.texts.add(new TextSnippet({
+				text: Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString(),
+				pos: [getLdn(0.75), 1.2-0.05], size: 0.4
+			}).withMirrored("x"));
+			sight.texts.add(new TextSnippet({
+				text: Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString(),
+				pos: [getLdn(0.5), 1.2-0.05], size: 0.4
+			}).withMirrored("x"));
+		}
+
+	} else {
+		// Line type
+		// line between 4/4 and 3/4
+		let horiLineTickBreakMain = useWiderLeadLineBreak ? 1.4 : 1.2;
+		let horiLineTickBreakSub = useWiderLeadLineBreak ? 0.7 : 0.6;
+		if(leadingDivisionsDrawSpeed) {
+			horiLineTickBreakSub += 0.45;
+		}
+		sight.add(new Line({
+			from: [getLdn(useLongerLeadLine ? 0.5 : 0.75), 0], to: [getLdn(1), 0]
+		}).withMirrored("x")
+			.addBreakAtX(getLdn(1), horiLineTickBreakMain)
+			.addBreakAtX(getLdn(0.75), horiLineTickBreakSub)
+			.addBreakAtX(getLdn(0.5), horiLineTickBreakSub));
+		// 4/4
+		sight.add(new TextSnippet({
+			text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.05], size: 0.5
+		}).withMirrored("x"));
+		// 3/4
+		sight.add(new TextSnippet({
+			text: leadingDivisionsDrawSpeed ?
+				Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString() :
+				"3",
+			pos: [getLdn(0.75), -0.05], size: 0.42
+		}).withMirrored("x"));
+		// 2/4
+		sight.add(new TextSnippet({
+			text: leadingDivisionsDrawSpeed ?
+				Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString() :
+				"2",
+			pos: [getLdn(0.5), -0.05], size: 0.42
+		}).withMirrored("x"));
+		// 1/4
+		sight.add(new Circle({
+			segment: [87, 93], diameter: getLdn(0.25) * 2, size: 2
+		}).withMirroredSeg("x"));
 	}
-	sight.add(new Line({
-		from: [getLdn(useLongerLeadLine ? 0.5 : 0.75), 0], to: [getLdn(1), 0]
-	}).withMirrored("x")
-		.addBreakAtX(getLdn(1), horiLineTickBreakMain)
-		.addBreakAtX(getLdn(0.75), horiLineTickBreakSub)
-		.addBreakAtX(getLdn(0.5), horiLineTickBreakSub));
-	// 4/4
-	sight.add(new TextSnippet({
-		text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.05], size: 0.5
-	}).withMirrored("x"));
-	// 3/4
-	sight.add(new TextSnippet({
-		text: leadingDivisionsDrawSpeed ?
-			Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString() :
-			"3",
-		pos: [getLdn(0.75), -0.05], size: 0.42
-	}).withMirrored("x"));
-	// 2/4
-	sight.add(new TextSnippet({
-		text: leadingDivisionsDrawSpeed ?
-			Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString() :
-			"2",
-		pos: [getLdn(0.5), -0.05], size: 0.42
-	}).withMirrored("x"));
-	// 1/4
-	sight.add(new Circle({
-		segment: [87, 93], diameter: getLdn(0.25) * 2, size: 2
-	}).withMirroredSeg("x"));
 
 
 	// Sight tick info

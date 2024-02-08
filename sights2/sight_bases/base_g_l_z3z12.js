@@ -21,7 +21,10 @@ let init = ({
 
 	// cross at display borders for quickly finding the center of sight.
 	drawPromptCross = true,
-	// leading divisions use apporiximate speed instead of denominators
+	// Use arrows for leading ticks
+	leadingDivisionsUseArrowType = false,
+	// leading divisions use apporiximate speed instead of denominators;
+	// for arrow type ticks, denominators will be hidden instead
 	leadingDivisionsDrawSpeed = false,
 } = {}) => {
 
@@ -132,33 +135,93 @@ let init = ({
 	sight.add(new Line({ from: [0.03, 450], to: [0.03, getLdn(assumedMoveSpeed, 0.75)] }).withMirrored("x"));
 
 
-	// leading values for shooting while moving
-	sight.addComment(`Horizontal line with leading for APFSDS - ${assumedMoveSpeed}kph`, ["texts", "lines"]);
-	sight.add(
-		new Line({ from: [getLdn(assumedMoveSpeed, 1), 0], to: [getLdn(assumedMoveSpeed, 0.5), 0] }).
-			addBreakAtX(getLdn(assumedMoveSpeed, 1), 1.2).
-			addBreakAtX(getLdn(assumedMoveSpeed, 0.75), leadingDivisionsDrawSpeed ? 1 : 0.7).
-			addBreakAtX(getLdn(assumedMoveSpeed, 0.5), leadingDivisionsDrawSpeed ? 1 : 0.7).
-			withMirrored("xy")  // y for bold
-	);
-	Toolbox.repeat(2, () => {
-		sight.texts.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(assumedMoveSpeed, 1), -0.05], size: 0.55 }).withMirrored("x"));
-		sight.texts.add(new TextSnippet({
-			text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString() : "3",
-			pos: [getLdn(assumedMoveSpeed, 0.75), -0.03], size: 0.45
-		}).withMirrored("x"));
-		sight.texts.add(new TextSnippet({
-			text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString() : "2",
-			pos: [getLdn(assumedMoveSpeed, 0.5), -0.03], size: 0.45
-		}).withMirrored("x"));
-	});
-	sight.lines.addComment(`Horizontal leading for APFSDS - 1/4 AA`);
-	for (let biasY of Toolbox.rangeIE(-0.075, 0.075, 0.075)) {
-		let Xradius = 0.05;
-		sight.add(new Line({
-			from: [getLdn(assumedMoveSpeed, 0.25) - Xradius, biasY],
-			to: [getLdn(assumedMoveSpeed, 0.25) + Xradius, biasY],
-		}).withMirrored("x"))
+	sight.addComment(`Leading values for shooting while moving - ${assumedMoveSpeed}kph`, ["texts", "lines"]);
+	if (leadingDivisionsUseArrowType) {
+		// Arrow type
+		let arrowDegree = 60;
+		let getArrowElements = (xPos, yLen) => {
+			let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
+			let halfElements = [
+				new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
+				new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
+			]
+			let elements = [];
+			halfElements.forEach((ele) => {
+				elements.push(ele);
+				elements.push(ele.copy().mirrorX());
+			});
+			elements.forEach((ele) => {
+				ele.move([xPos, 0]).withMirrored("x");
+			});
+			return elements;
+		}
+		let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
+			let elements = [];
+			for (let biasX of drawnXBiases) {
+				elements.push(new Line({
+					from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
+				}).withMirrored("x"));
+			}
+			return elements;
+		}
+
+		// 4/4 AA
+		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 1), 0.4));
+		sight.add(new TextSnippet({
+			text: assumedMoveSpeed.toFixed(),
+			pos: [getLdn(assumedMoveSpeed, 1), 1-0.03],
+			size: 0.5
+		}).withMirrored("x")).repeatLastAdd();
+		// 3/4
+		sight.add(getTickElements(
+			getLdn(assumedMoveSpeed, 0.75), 0.2, [-0.02, 0.02]
+		));
+		// 2/4
+		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 0.5), 0.4));
+		// 1/4
+		sight.add(getTickElements(
+			getLdn(assumedMoveSpeed, 0.25), 0.2, [-0.02, 0.02]
+		));
+		// Draw speed numbers if required
+		if (leadingDivisionsDrawSpeed) {
+			sight.texts.add(new TextSnippet({
+				text: Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString(),
+				pos: [getLdn(assumedMoveSpeed, 0.75), 1-0.03], size: 0.45
+			}).withMirrored("x"));
+			sight.texts.add(new TextSnippet({
+				text: Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString(),
+				pos: [getLdn(assumedMoveSpeed, 0.5), 1-0.03], size: 0.45
+			}).withMirrored("x"));
+		}
+
+	} else {
+		// Line type
+		sight.add(
+			new Line({ from: [getLdn(assumedMoveSpeed, 1), 0], to: [getLdn(assumedMoveSpeed, 0.5), 0] }).
+				addBreakAtX(getLdn(assumedMoveSpeed, 1), 1.2).
+				addBreakAtX(getLdn(assumedMoveSpeed, 0.75), leadingDivisionsDrawSpeed ? 1 : 0.7).
+				addBreakAtX(getLdn(assumedMoveSpeed, 0.5), leadingDivisionsDrawSpeed ? 1 : 0.7).
+				withMirrored("xy")  // y for bold
+		);
+		Toolbox.repeat(2, () => {
+			sight.texts.add(new TextSnippet({ text: assumedMoveSpeed.toFixed(), pos: [getLdn(assumedMoveSpeed, 1), -0.05], size: 0.55 }).withMirrored("x"));
+			sight.texts.add(new TextSnippet({
+				text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString() : "3",
+				pos: [getLdn(assumedMoveSpeed, 0.75), -0.03], size: 0.45
+			}).withMirrored("x"));
+			sight.texts.add(new TextSnippet({
+				text: leadingDivisionsDrawSpeed ? Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString() : "2",
+				pos: [getLdn(assumedMoveSpeed, 0.5), -0.03], size: 0.45
+			}).withMirrored("x"));
+		});
+		sight.lines.addComment(`Horizontal leading for APFSDS - 1/4 AA`);
+		for (let biasY of Toolbox.rangeIE(-0.075, 0.075, 0.075)) {
+			let Xradius = 0.05;
+			sight.add(new Line({
+				from: [getLdn(assumedMoveSpeed, 0.25) - Xradius, biasY],
+				to: [getLdn(assumedMoveSpeed, 0.25) + Xradius, biasY],
+			}).withMirrored("x"))
+		}
 	}
 
 	if (drawPromptCross) {

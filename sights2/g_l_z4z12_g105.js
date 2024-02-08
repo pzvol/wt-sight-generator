@@ -8,6 +8,7 @@ base.init({
 	shellSpeed: 1455 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 55,    // km/h
 	drawPromptCross: false,
+	leadingDivisionsUseArrowType: true, useLowerGunDistTexts: true,
 	leadingDivisionsDrawSpeed: true,
 });
 
