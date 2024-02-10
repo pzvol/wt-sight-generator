@@ -19,68 +19,6 @@ making it easier to snapshoot.
 `.trim());
 
 
-//// BASIC SETTINGS ////
-sight.addSettings(pd.concatAllBasics(
-	pd.basic.scales.getHighZoom({ line: 1.6 }),
-	pd.basic.colors.getLightGreenRed(),
-	pd.basicBuild.rgfdPos([110, -0.01725]),
-	pd.basicBuild.detectAllyPos([110, -0.038]),
-	pd.basicBuild.gunDistanceValuePos([-0.165, 0.030]),
-	pd.basicBuild.shellDistanceTickVars(
-		[-0.0100, -0.0100],
-		[0, 0.00015],
-		[0.193, 0]
-	),
-	pd.basic.miscVars.getCommon(),
-));
-
-
-//// VEHICLE TYPES ////
-// NOT DEFINED IN BASE
-
-
-//// SHELL DISTANCES ////
-sight.addShellDistance([
-	{ distance: 400 },
-	{ distance: 800 },
-	{ distance: 2000, shown: 20, shownPos: [0.0035, 0.007] },
-	{ distance: 4000, shown: 40, shownPos: [0.0035, 0.007] },
-]);
-
-
-//// SIGHT DESIGNS ////
-sight.lines.addComment("Gun center");
-sight.add(new Line({
-	from: [0.0035, 0], to: [0.0055, 0], move: true, thousandth: false
-}).withMirrored("xy"));  // y mirroring for bold
-sight.add(new Line({
-	from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
-}));  // center dot
-
-sight.lines.addComment("0m correction line");
-sight.add(new Line({ from: [-0.203, 0.0], to: [-0.193, 0.0], move: true, thousandth: false }));
-
-
-sight.lines.addComment("Gun correction value indicator");
-let corrValLine = [
-	new Line({ from: [0.006, 0.00045], to: [0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
-	new Line({ from: [-0.006, 0.00045], to: [-0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
-];
-// move arrow to apporiate place
-corrValLine.forEach((l) => { l.move([-0.198, 0]); });  //
-sight.add(corrValLine);
-
-
-sight.lines.addComment("Sight center arrow and bold");
-for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
-	sight.add(new Line({
-		from: [0, CenterBoldPadY], to: [0.6, 1.5]
-	}).move([0, 0.02]).withMirrored("x"));
-	// ^ Moving down a little bit to let the arrow vertex stays the center
-	//   with being less effected by line widths
-}
-
-
 let init = ({
 	shellSpeed = 1730 * 3.6,
 	assumedMoveSpeed = 40,
@@ -94,6 +32,75 @@ let init = ({
 	leadingDivisionsDrawSpeed = false,
 } = {}) => {
 	let getLdn = (aa) => Toolbox.calcLeadingMil(shellSpeed, assumedMoveSpeed, aa);
+
+	//// BASIC SETTINGS ////
+	sight.addSettings(pd.concatAllBasics(
+		pd.basic.scales.getHighZoom({ line: 1.6 }),
+		pd.basic.colors.getLightGreenRed(),
+		pd.basicBuild.rgfdPos([
+			110, leadingDivisionsUseArrowType ? -0.02225 : -0.01725
+		]),
+		pd.basicBuild.detectAllyPos([
+			110, leadingDivisionsUseArrowType ? -0.043 : -0.038
+		]),
+		pd.basicBuild.gunDistanceValuePos([
+			leadingDivisionsUseArrowType ? -0.168 : -0.165,
+			leadingDivisionsUseArrowType ? 0.037 : 0.030
+		]),
+		pd.basicBuild.shellDistanceTickVars(
+			[-0.0100, -0.0100],
+			[0, 0.00015],
+			[0.193, 0]
+		),
+		pd.basic.miscVars.getCommon(),
+	));
+
+
+	//// VEHICLE TYPES ////
+	// NOT DEFINED IN BASE
+
+
+	//// SHELL DISTANCES ////
+	sight.addShellDistance([
+		{ distance: 400 },
+		{ distance: 800 },
+		{ distance: 2000, shown: 20, shownPos: [0.0035, 0.007] },
+		{ distance: 4000, shown: 40, shownPos: [0.0035, 0.007] },
+	]);
+
+
+	//// SIGHT DESIGNS ////
+	sight.lines.addComment("Gun center");
+	sight.add(new Line({
+		from: [0.0035, 0], to: [0.0055, 0], move: true, thousandth: false
+	}).withMirrored("xy"));  // y mirroring for bold
+	sight.add(new Line({
+		from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
+	}));  // center dot
+
+	sight.lines.addComment("0m correction line");
+	sight.add(new Line({ from: [-0.203, 0.0], to: [-0.193, 0.0], move: true, thousandth: false }));
+
+
+	sight.lines.addComment("Gun correction value indicator");
+	let corrValLine = [
+		new Line({ from: [0.006, 0.00045], to: [0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
+		new Line({ from: [-0.006, 0.00045], to: [-0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	];
+	// move arrow to apporiate place
+	corrValLine.forEach((l) => { l.move([-0.198, 0]); });  //
+	sight.add(corrValLine);
+
+
+	sight.lines.addComment("Sight center arrow and bold");
+	for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
+		sight.add(new Line({
+			from: [0, CenterBoldPadY], to: [0.6, 1.5]
+		}).move([0, 0.02]).withMirrored("x"));
+		// ^ Moving down a little bit to let the arrow vertex stays the center
+		//   with being less effected by line widths
+	}
+
 
 	if (drawPromptCross) {
 		sight.lines.addComment("Horizontal lines near sight borders and bold");
@@ -164,10 +171,10 @@ let init = ({
 		}
 
 		// 4/4 AA
-		sight.add(getArrowElements(getLdn(1), 0.6));
+		sight.add(getArrowElements(getLdn(1), 0.5));
 		sight.add(new TextSnippet({
 			text: assumedMoveSpeed.toFixed(),
-			pos: [getLdn(1), 1.2-0.05],
+			pos: [getLdn(1), 1.1-0.05],
 			size: 0.47
 		}).withMirrored("x")).repeatLastAdd();
 		// 3/4
@@ -175,20 +182,20 @@ let init = ({
 			getLdn(0.75), 0.15, [-0.04, 0.04]
 		));
 		// 2/4
-		sight.add(getArrowElements(getLdn(0.5), 0.5));
+		sight.add(getArrowElements(getLdn(0.5), 0.45));
 		// 1/4
 		sight.add(getTickElements(
-			getLdn(0.25), 0.15, [-0.04, 0.04]
+			getLdn(0.25), 0.1, [-0.02, 0.02]
 		));
 		// Draw speed numbers if required
 		if (leadingDivisionsDrawSpeed) {
 			sight.texts.add(new TextSnippet({
 				text: Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString(),
-				pos: [getLdn(0.75), 1.2-0.05], size: 0.4
+				pos: [getLdn(0.75), 1.1-0.05], size: 0.4
 			}).withMirrored("x"));
 			sight.texts.add(new TextSnippet({
 				text: Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString(),
-				pos: [getLdn(0.5), 1.2-0.05], size: 0.4
+				pos: [getLdn(0.5), 1.1-0.05], size: 0.4
 			}).withMirrored("x"));
 		}
 
