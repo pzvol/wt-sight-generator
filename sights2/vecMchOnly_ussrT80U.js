@@ -1,8 +1,3 @@
-import Sight from "../_lib2/sight_main.js";
-import Toolbox from "../_lib2/sight_toolbox.js";
-import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
-import * as pd from "../_lib2/predefined.js";
-
 import base from "./sight_bases/base_g_l_z3z12.js";
 let sight = base.sightObj;
 
@@ -21,6 +16,7 @@ base.init({
 	assumedMoveSpeed: 50,
 	shellSpeed: 1700 * 3.6,
 	drawPromptCross: false,
+	leadingDivisionsUseArrowType: true,
 	leadingDivisionsDrawSpeed: true,
 });
 

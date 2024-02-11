@@ -32,9 +32,18 @@ let init = ({
 	sight.addSettings(pd.concatAllBasics(
 		pd.basic.scales.getHighZoomSmall2Font(),
 		pd.basic.colors.getGreenRed(),
-		pd.basicBuild.rgfdPos([110, -0.02225]),
-		pd.basicBuild.detectAllyPos([110, -0.050]),
-		pd.basicBuild.gunDistanceValuePos([-0.167, 0.035]),
+		pd.basicBuild.rgfdPos([
+			leadingDivisionsUseArrowType ? 120 : 110,
+			-0.02225
+		]),
+		pd.basicBuild.detectAllyPos([
+			leadingDivisionsUseArrowType ? 120 : 110,
+			-0.050
+		]),
+		pd.basicBuild.gunDistanceValuePos([
+			leadingDivisionsUseArrowType ? -0.173 : -0.167,
+			leadingDivisionsUseArrowType ? 0.038 : 0.035
+		]),
 		pd.basicBuild.shellDistanceTickVars(
 			[-0.01, -0.01],
 			[0, 0.0005],
@@ -166,10 +175,10 @@ let init = ({
 		}
 
 		// 4/4 AA
-		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 1), 0.4));
+		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 1), 0.43));
 		sight.add(new TextSnippet({
 			text: assumedMoveSpeed.toFixed(),
-			pos: [getLdn(assumedMoveSpeed, 1), 1-0.03],
+			pos: [getLdn(assumedMoveSpeed, 1), 0.97-0.03],
 			size: 0.5
 		}).withMirrored("x")).repeatLastAdd();
 		// 3/4
@@ -177,7 +186,7 @@ let init = ({
 			getLdn(assumedMoveSpeed, 0.75), 0.2, [-0.02, 0.02]
 		));
 		// 2/4
-		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 0.5), 0.4));
+		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 0.5), 0.43));
 		// 1/4
 		sight.add(getTickElements(
 			getLdn(assumedMoveSpeed, 0.25), 0.2, [-0.02, 0.02]
@@ -186,11 +195,11 @@ let init = ({
 		if (leadingDivisionsDrawSpeed) {
 			sight.texts.add(new TextSnippet({
 				text: Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString(),
-				pos: [getLdn(assumedMoveSpeed, 0.75), 1-0.03], size: 0.45
+				pos: [getLdn(assumedMoveSpeed, 0.75), 0.97-0.03], size: 0.45
 			}).withMirrored("x"));
 			sight.texts.add(new TextSnippet({
 				text: Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString(),
-				pos: [getLdn(assumedMoveSpeed, 0.5), 1-0.03], size: 0.45
+				pos: [getLdn(assumedMoveSpeed, 0.5), 0.97-0.03], size: 0.45
 			}).withMirrored("x"));
 		}
 
