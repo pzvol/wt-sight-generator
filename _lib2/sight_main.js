@@ -31,7 +31,7 @@ import { Quad, Circle, Line, TextSnippet } from "./sight_elements.js";
 
 /** An all-in-one entrance for creating a user sight */
 export default class Sight {
-	static libVersion = "20240214";
+	static libVersion = "20240214a";
 
 	static commonVehicleTypes = block.MatchVehicleClassBlock.commonTypes;
 

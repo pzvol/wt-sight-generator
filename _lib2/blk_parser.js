@@ -436,7 +436,7 @@ export default class BlkParser {
 
 		} else if (astLike.level === BlkParser.LTYPE.VARIABLE) {
 			output.push(new BlkVariable(
-				astLike.name, astLike.value, astLike.varType | null
+				astLike.name, astLike.value, astLike.varType || null
 			));
 		}
 
