@@ -159,7 +159,7 @@ export class BlkBlock {
 	 * @param {boolean} settings.useOneLine - if block contents are output in
 	 *   one single line. Inner block(s) will not be affected by this.
 	 * @param {number} settings.baseIndentLevel - level of indentation of this
-	 *   block. Inner block(s) will not be affected by this.
+	 *   block. Inner blocks will be further indented based on this
 	 */
 	constructor(bName, bLines = [], {
 		useOneLine = false,
@@ -242,7 +242,7 @@ export class BlkBlock {
 	 * @param {boolean=} updateObj.useOneLine - if block contents are output in
 	 *   one single line. Inner blocks will not be affected by this.
 	 * @param {number=} updateObj.baseIndentLevel - level of indentation of this
-	 *   block. Inner blocks will not be affected by this.
+	 *   block. Inner blocks will be further indented based on this
 	 */
 	setSettings(updateObj) {
 		if (updateObj.hasOwnProperty("useOneLine")) {
