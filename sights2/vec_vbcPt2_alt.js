@@ -13,9 +13,12 @@ let sight = new Sight();
 sight.addSettings(pd.concatAllBasics(
 	pd.basic.scales.getHighZoomSmall2Font(),
 	pd.basic.colors.getLightGreenRed(),
-	pd.basicBuild.rgfdPos([110, -0.02225]),
-	pd.basicBuild.detectAllyPos([110, -0.050]),
-	pd.basicBuild.gunDistanceValuePos([-0.167, 0.035]),
+	// pd.basicBuild.rgfdPos([110, -0.02225]),
+	// pd.basicBuild.detectAllyPos([110, -0.050]),
+	// pd.basicBuild.gunDistanceValuePos([-0.167, 0.035]),
+	pd.basicBuild.rgfdPos([110, -0.03625]),
+	pd.basicBuild.detectAllyPos([110, -0.064]),
+	pd.basicBuild.gunDistanceValuePos([-0.167, 0.05]),
 	pd.basicBuild.shellDistanceTickVars(
 		[0, 0],
 		[0.003, 0.0012],
@@ -35,38 +38,33 @@ sight.addShellDistance([
 
 
 //// SIGHT DESIGNS ////
-let shellInfo = {
+let shells = {
 	he: { name: "HE", spd: 1100 * 3.6 },
 	apfsds: { name: "APFSDS", spd: 1385 * 3.6 },
 };
 
 let airTgting = {
-	shell: {
-		main: shellInfo.apfsds,
-		sub: shellInfo.he,
-	},
+	shell: shells.apfsds,
 	tgtSpd: 500,  // kph
 };
+let gndTgting = {
+	shell: shells.he,
+	tgtSpd: 55,  // kph
+};
 let getAirLdn = (aa) => Toolbox.calcLeadingMil(
-	airTgting.shell.main.spd, airTgting.tgtSpd, aa
+	airTgting.shell.spd, airTgting.tgtSpd, aa
+);
+let getGndLdn = (aa) => Toolbox.calcLeadingMil(
+	gndTgting.shell.spd, gndTgting.tgtSpd, aa
 );
 
 
-// Sight center and bold
-// let arrowLowerEnd = [2.15, 5.25];
-// let arrowMoveDown = 0.02;  // moving down for keeping the vertex at the center
-// let arrowTan = 2.15 / 5.25;
-// for (let startYBias of Toolbox.rangeIE(0, 0.3, 0.1)) {
-// 	// arrow lower ends will all have the same Y while keeping paralleled
-// 	let endXBias = startYBias * arrowTan;
-// 	sight.add(new Line({
-// 		from: [0, startYBias],
-// 		to: [arrowLowerEnd[0] - endXBias, arrowLowerEnd[1]]
-// 	}).move([0, arrowMoveDown]).withMirrored("x"));
-// }
+// Sight center
 for (let bias of Toolbox.rangeIE(-0.08, 0.08, 0.04)) {
-	sight.add(new Line({ from: [1, bias], to: [3, bias] }).withMirrored("x"));
-	//sight.add(new Line({ from: [bias, 1], to: [bias, 3] }));
+	//sight.add(new Line({ from: [1, bias], to: [3, bias] }).withMirrored("x"));
+	sight.add(new Line({
+		from: [getGndLdn(0.25), bias], to: [getGndLdn(0.25) - 2, bias]
+	}).withMirrored("x"));
 }
 
 
@@ -108,7 +106,7 @@ for (let segCenter of [90, 180, 270]) {
 // Texts
 // 4/4
 sight.add(new TextSnippet({
-	text: `${airTgting.tgtSpd} kph  ${airTgting.shell.main.name}`,
+	text: `${airTgting.tgtSpd} kph  ${airTgting.shell.name}`,
 	pos: [3, getAirLdn(1) + 3.5],
 	align: "right", size: 2
 }));
@@ -119,6 +117,59 @@ sight.add(new TextSnippet({
 	align: "right", size: 2
 }));
 
+
+// Ground moving offsets
+(() => {
+	let arrowDegree = 60;
+	let getArrowElements = (xPos, yLen) => {
+		let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
+		let halfElements = [
+			new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
+			new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
+		]
+		let elements = [];
+		halfElements.forEach((ele) => {
+			elements.push(ele);
+			elements.push(ele.copy().mirrorX());
+		});
+		elements.forEach((ele) => {
+			ele.move([xPos, 0]).withMirrored("x");
+		});
+		return elements;
+	}
+	let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
+		let elements = [];
+		for (let biasX of drawnXBiases) {
+			elements.push(new Line({
+				from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
+			}).withMirrored("x"));
+		}
+		return elements;
+	}
+
+	// 4/4 AA
+	sight.add(getArrowElements(getGndLdn(1), 0.8));
+	sight.add(new TextSnippet({
+		text: gndTgting.tgtSpd.toFixed(),
+		pos: [getGndLdn(1), 1.7-0.03],
+		size: 0.5
+	}).withMirrored("x"));
+	// 3/4
+	sight.add(getTickElements(getGndLdn(0.75), 0.4, [-0.02, 0.02]));
+	// 2/4
+	sight.add(getArrowElements(getGndLdn(0.5), 0.7));
+	// 1/4
+	sight.add(getTickElements(getGndLdn(0.25), 0.4, [-0.02, 0.02]));
+	// Additional speed numbers
+	sight.add(new TextSnippet({
+		text: Toolbox.roundToHalf(0.75*gndTgting.tgtSpd, -1).toString(),
+		pos: [getGndLdn(0.75), 1.7-0.03], size: 0.45
+	}).withMirrored("x"));
+	sight.add(new TextSnippet({
+		text: Toolbox.roundToHalf(0.5*gndTgting.tgtSpd, -1).toString(),
+		pos: [getGndLdn(0.5), 1.7-0.03], size: 0.45
+	}).withMirrored("x"));
+})();
 
 
 //// OUTPUT ////
