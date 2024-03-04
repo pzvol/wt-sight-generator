@@ -31,7 +31,7 @@ import { Quad, Circle, Line, TextSnippet } from "./sight_elements.js";
 
 /** An all-in-one entrance for creating a user sight */
 export default class Sight {
-	static libVersion = "20240214a";
+	static libVersion = "20240303";
 
 	static commonVehicleTypes = block.MatchVehicleClassBlock.commonTypes;
 
@@ -63,8 +63,11 @@ export default class Sight {
 		this.lines = this.components.lines;
 		this.texts = this.components.texts;
 
-		/** The very recently added element by calling `add` method */
-		this.lastestElementByAdd = null;
+		/**
+		 * The very recently added elements by calling `add` method. Be noted
+		 * that only `add` from `Sight` class will take effect.
+		 */
+		this.lastAddedElements = [];
 	}
 
 	getComponents() { return this.components; }
@@ -166,8 +169,10 @@ export default class Sight {
 	/**
 	 * Draw one/multiple circles/lines/texts
 	 * @param {Quad|Circle|Line|TextSnippet|(Quad|Circle|Line|TextSnippet)[]} input
+	 * @param {boolean} updateLastAddedElements - if update recorded recently
+	 *                                            added elements
 	 */
-	add(input) {
+	add(input, updateLastAddedElements = true) {
 		let arr;
 		if (Array.isArray(input)) { arr = input; }
 		else { arr = [input]; }
@@ -184,9 +189,15 @@ export default class Sight {
 			}
 		}
 
-		// Record the last added element
-		if (arr.length > 0) {
-			this.lastestElementByAdd = arr[arr.length - 1];
+		// Record added elements
+		if (arr.length > 0 && updateLastAddedElements) {
+			if (Array.isArray(input)) {
+				// `arr` is directly from input - do a shallow copy
+				this.lastAddedElements = Array.from(arr);
+			} else {
+				// `arr` is created inside this function - directly use it
+				this.lastAddedElements = arr;
+			}
 		}
 
 		return this;
@@ -245,15 +256,15 @@ export default class Sight {
 	 * Repetitively `add` the latest (one single) element for given times (so it will be
 	 * drawn for multiple times while compiling)
 	 *
-	 * BE NOTICE that only the very recently appended element involved by `add`
-	 * method will be considered
+	 * BE NOTICED that only elements appended by `add` method from this
+	 * `Sight` class will be considered
 	 *
 	 * @param {number} n number of repetition (`1` by default)
 	 */
 	repeatLastAdd(n = 1) {
-		if (this.lastestElementByAdd === null) { return this; }
+		if (this.lastAddedElements.length <= 0) { return this; }
 		for (let count = 0; count < n; count++) {
-			this.add(this.lastestElementByAdd);
+			this.add(this.lastAddedElements, false);
 		}
 		return this;
 	}
