@@ -50,12 +50,6 @@ let airTgting = {
 let getAirLdn = (aa) => Toolbox.calcLeadingMil(
 	airTgting.shell.main.spd, airTgting.tgtSpd, aa
 );
-let getAirLdnSubShell = (aa) => Toolbox.calcLeadingMil(
-	airTgting.shell.sub.spd, airTgting.tgtSpd, aa
-);
-
-let getGndWidthMilHalf = (dist) => Toolbox.calcDistanceMil(3.3, dist) / 2;
-
 
 
 // Sight center and bold
@@ -70,7 +64,7 @@ let getGndWidthMilHalf = (dist) => Toolbox.calcDistanceMil(3.3, dist) / 2;
 // 		to: [arrowLowerEnd[0] - endXBias, arrowLowerEnd[1]]
 // 	}).move([0, arrowMoveDown]).withMirrored("x"));
 // }
-for (let bias of Toolbox.rangeIE(-0.1, 0.1, 0.05)) {
+for (let bias of Toolbox.rangeIE(-0.08, 0.08, 0.04)) {
 	sight.add(new Line({ from: [1, bias], to: [3, bias] }).withMirrored("x"));
 	//sight.add(new Line({ from: [bias, 1], to: [bias, 3] }));
 }
@@ -88,29 +82,6 @@ sight.add([
 	new Line({ from: [0, 8.25], to: [0, 450] }),
 	new Line({ from: [0.04, 8.25], to: [0.04, 450] }).withMirrored("x"),
 ]);
-
-
-// // Sight center prompt bold at borders
-// // horizontal
-// for (let l of [
-// 	{ toX: 200, biasY: 0 },
-// 	{ toX: 200, biasY: 0.2 },
-// 	{ toX: 200, biasY: 0.4 },
-// ]) {
-// 	sight.add(new Line({
-// 		from: [450, l.biasY], to: [l.toX, l.biasY]
-// 	}).withMirrored(l.biasY == 0 ? "x" : "xy"));
-// }
-// // vertical
-// for (let l of [
-// 	{ toY: -115, biasX: 0 },
-// 	{ toY: -115, biasX: 0.2 },
-// 	{ toY: -115, biasX: 0.3 },
-// ]) {
-// 	sight.add(new Line({
-// 		from: [l.biasX, -450], to: [l.biasX, l.toY]
-// 	}).withMirrored(l.biasY == 0 ? null : "x"));
-// }
 
 
 // Air leading circles

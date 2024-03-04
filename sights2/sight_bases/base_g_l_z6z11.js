@@ -23,13 +23,21 @@ let init = ({
 	shellSpeed = 1730 * 3.6,
 	assumedMoveSpeed = 40,
 	drawPromptCross = true,
-	// Use arrows for leading ticks
-	leadingDivisionsUseArrowType = false,
-	useLongerLeadLine = false,  // For line type only
-	useWiderLeadLineBreak = false,  // For line type only
+
+	// Can be one of the following types:
+	//   "line"
+	//   "arrow"
+	//   "values_only"
+	leadingDivisionsType = "line",
+
+	// Meaningful for line type only:
+	useLongerLeadLine = false,
+	useWiderLeadLineBreak = false,
+
 	// leading divisions use apporiximate speed instead of denominators;
 	// for arrow type ticks, denominators will be hidden instead
 	leadingDivisionsDrawSpeed = false,
+
 } = {}) => {
 	let getLdn = (aa) => Toolbox.calcLeadingMil(shellSpeed, assumedMoveSpeed, aa);
 
@@ -38,14 +46,14 @@ let init = ({
 		pd.basic.scales.getHighZoom({ line: 1.6 }),
 		pd.basic.colors.getLightGreenRed(),
 		pd.basicBuild.rgfdPos([
-			110, leadingDivisionsUseArrowType ? -0.02225 : -0.01725
+			110, (leadingDivisionsType === "arrow") ? -0.02225 : -0.01725
 		]),
 		pd.basicBuild.detectAllyPos([
-			110, leadingDivisionsUseArrowType ? -0.043 : -0.038
+			110, (leadingDivisionsType === "arrow") ? -0.043 : -0.038
 		]),
 		pd.basicBuild.gunDistanceValuePos([
-			leadingDivisionsUseArrowType ? -0.168 : -0.165,
-			leadingDivisionsUseArrowType ? 0.037 : 0.030
+			(leadingDivisionsType === "arrow") ? -0.168 : -0.165,
+			(leadingDivisionsType === "arrow") ? 0.037 : 0.030
 		]),
 		pd.basicBuild.shellDistanceTickVars(
 			[-0.0100, -0.0100],
@@ -141,7 +149,7 @@ let init = ({
 
 
 	sight.addComment("Horizontal leading for APFSDS", ["texts", "circles", "lines"]);
-	if (leadingDivisionsUseArrowType) {
+	if (leadingDivisionsType === "arrow") {
 		// Arrow type
 		let arrowDegree = 60;
 		let getArrowElements = (xPos, yLen) => {
@@ -199,20 +207,28 @@ let init = ({
 			}).withMirrored("x"));
 		}
 
-	} else {
-		// Line type
-		// line between 4/4 and 3/4
-		let horiLineTickBreakMain = useWiderLeadLineBreak ? 1.4 : 1.2;
-		let horiLineTickBreakSub = useWiderLeadLineBreak ? 0.7 : 0.6;
-		if(leadingDivisionsDrawSpeed) {
-			horiLineTickBreakSub += 0.45;
+	} else if (
+		leadingDivisionsType === "line" ||
+		leadingDivisionsType === "values_only"
+	) {
+		// Line type / Numbers only
+		// Line elements
+		if (leadingDivisionsType === "line") {
+			// line between 4/4 and 3/4
+			let horiLineTickBreakMain = useWiderLeadLineBreak ? 1.4 : 1.2;
+			let horiLineTickBreakSub = useWiderLeadLineBreak ? 0.7 : 0.6;
+			if(leadingDivisionsDrawSpeed) {
+				horiLineTickBreakSub += 0.45;
+			}
+			sight.add(new Line({
+				from: [getLdn(useLongerLeadLine ? 0.5 : 0.75), 0],
+				to: [getLdn(1), 0]
+			}).withMirrored("x")
+				.addBreakAtX(getLdn(1), horiLineTickBreakMain)
+				.addBreakAtX(getLdn(0.75), horiLineTickBreakSub)
+				.addBreakAtX(getLdn(0.5), horiLineTickBreakSub));
 		}
-		sight.add(new Line({
-			from: [getLdn(useLongerLeadLine ? 0.5 : 0.75), 0], to: [getLdn(1), 0]
-		}).withMirrored("x")
-			.addBreakAtX(getLdn(1), horiLineTickBreakMain)
-			.addBreakAtX(getLdn(0.75), horiLineTickBreakSub)
-			.addBreakAtX(getLdn(0.5), horiLineTickBreakSub));
+		// Number elements
 		// 4/4
 		sight.add(new TextSnippet({
 			text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.05], size: 0.5

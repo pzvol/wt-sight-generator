@@ -9,8 +9,11 @@ base.init({
 	shellSpeed: 1730 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 35,    // km/h
 	drawPromptCross: false,
-	useLongerLeadLine: true,
-	useWiderLeadLineBreak: false,
+
+	leadingDivisionsType: "arrow",
+	// useLongerLeadLine: true,
+	// useWiderLeadLineBreak: false,
+
 	leadingDivisionsDrawSpeed: false,
 });
 base.sightObj.printCode();

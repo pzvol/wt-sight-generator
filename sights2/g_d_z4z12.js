@@ -25,7 +25,7 @@ sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.gunDistanceValuePos([-0.17, 0.035]),
 	pd.basicBuild.shellDistanceTickVars(
 		[0, 0],
-		[0.007, 0.003],
+		[0.007, 0.002],  // [0.007, 0.003],
 		[0.005, 0]
 	),
 	pd.basic.miscVars.getCommon(),
@@ -72,20 +72,20 @@ for (let posYBias of Toolbox.rangeIE(0, 0.08, 0.02)) {
 
 
 // Center prompt crossline starting from screen sides
-// - horizontal and bold
-sight.add(new Line({ from: [450, 0], to: [100, 0] }).withMirrored("x"));
-for (let posYBias of [0.1, 0.2]) {
-	sight.add(new Line({
-		from: [450, posYBias], to: [132, posYBias]
-	}).withMirrored("xy"));
-}
-// - vertical upper and bold
-sight.add(new Line({ from: [0, -450], to: [0, -45] }));
-for (let posXBias of [0.1, 0.2]) {
-	sight.add(new Line({
-		from: [posXBias, -450], to: [posXBias, -77.5]
-	}).withMirrored("x"));
-}
+// // - horizontal and bold
+// sight.add(new Line({ from: [450, 0], to: [100, 0] }).withMirrored("x"));
+// for (let posYBias of [0.1, 0.2]) {
+// 	sight.add(new Line({
+// 		from: [450, posYBias], to: [132, posYBias]
+// 	}).withMirrored("xy"));
+// }
+// // - vertical upper and bold
+// sight.add(new Line({ from: [0, -450], to: [0, -45] }));
+// for (let posXBias of [0.1, 0.2]) {
+// 	sight.add(new Line({
+// 		from: [posXBias, -450], to: [posXBias, -77.5]
+// 	}).withMirrored("x"));
+// }
 // - vertical lower and bold
 sight.add(new Line({ from: [0, 450], to: [0, getDistMilHalf(400)] }));
 sight.add(new Line({ from: [0.03, 450], to: [0.03, getDistMilHalf(200)] }).withMirrored("x"));
@@ -103,7 +103,7 @@ sight.add(new TextSnippet({text: "2", pos: [getDistMilHalf(200), -0.1], size: 0.
 rfHoriLine.addBreakAtX(getDistMilHalf(200), 1);
 sight.add(new TextSnippet({text: "4", pos: [getDistMilHalf(400), -0.06], size: 0.6}).withMirrored("x")).repeatLastAdd();
 rfHoriLine.addBreakAtX(getDistMilHalf(400), 1.1);
-sight.add(new Circle({segment: [86, 94], diameter: getDistMil(800), size: 1.6}).withMirroredSeg("x"))
+sight.add(new Circle({segment: [84, 96], diameter: getDistMil(800), size: 1.6}).withMirroredSeg("x")).repeatLastAdd();
 
 
 // Rangefinder

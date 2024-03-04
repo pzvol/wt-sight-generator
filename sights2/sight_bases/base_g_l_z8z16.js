@@ -206,8 +206,8 @@ let init = ({
 		sight.add(
 			new Line({ from: [getLdn(assumedMoveSpeed, 1), 0], to: [getLdn(assumedMoveSpeed, 0.5), 0] }).
 				addBreakAtX(getLdn(assumedMoveSpeed, 1), 1.2).
-				addBreakAtX(getLdn(assumedMoveSpeed, 0.75), leadingDivisionsDrawSpeed ? 0.95 : 0.6).
-				addBreakAtX(getLdn(assumedMoveSpeed, 0.5), leadingDivisionsDrawSpeed ? 0.95 : 0.6).
+				addBreakAtX(getLdn(assumedMoveSpeed, 0.75), leadingDivisionsDrawSpeed ? 1.1 : 0.6).
+				addBreakAtX(getLdn(assumedMoveSpeed, 0.5), leadingDivisionsDrawSpeed ? 1.1 : 0.6).
 				withMirrored("xy")  // y for bold
 		);
 		Toolbox.repeat(1, () => {

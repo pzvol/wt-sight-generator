@@ -10,8 +10,7 @@ base.init({
 	shellSpeed: 1770 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 50,    // km/h
 	drawPromptCross: false,
-	useLongerLeadLine: true,
-	useWiderLeadLineBreak: false,
+	leadingDivisionsType: "values_only",
 	leadingDivisionsDrawSpeed: true,
 });
 base.sightObj.printCode();
