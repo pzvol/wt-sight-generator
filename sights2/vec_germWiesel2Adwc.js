@@ -58,7 +58,7 @@ for (let padding of [-0.1, 0, 0.1]) {
 // 	radarLongRange: 15,
 // 	radarShortRange: 8,
 
-// 	pos: [-75.5, -12],
+// 	pos: [-75.5, -10],
 // 	curveRadius: 17,
 // 	pieDivisionCurveSizeMain: 1.5,
 // 	pieDivisionCurveSizeSub: 1,

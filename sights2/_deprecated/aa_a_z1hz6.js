@@ -64,11 +64,10 @@ let drawX = (fromRadius, toRadius) => (new Line({ from: [fromRadius * sin45, fro
 let drawCurveCross = (radius, [segFrom, segTo], size) => [new Circle({ segment: [segFrom, segTo], diameter: radius * 2, size: size }).withMirroredSeg("x"), new Circle({ segment: [segFrom + 90, segTo + 90], diameter: radius * 2, size: size }).withMirroredSeg("y")];
 let drawCurveX = (radius, [segFrom, segTo], size) => (new Circle({ segment: [segFrom, segTo], diameter: radius * 2, size: size }).withMirroredSeg("xy"))
 //   center segments
-sight.add(drawCross(4.125, 22.5));
+sight.add(drawCross(4.125, 22.5)).add(drawX(90, 180));
 //   middle segments
 sight.add(drawCross(45, 90));
-sight.add(drawCross(135, 180)).add(drawX(90, 180));
-sight.add(drawCurveCross(180, [87, 93], 4));
+sight.add(drawCross(135, 180)).add(drawCurveCross(180, [87, 93], 4));
 //   outer segments
 sight.add(drawCurveCross(270, [89.3, 90.7], 4));
 sight.add(drawCross(270, 450));

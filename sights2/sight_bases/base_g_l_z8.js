@@ -22,9 +22,11 @@ let init = ({
 	shellSpeed = 1650 * 3.6,
 
 	promptCurveAA = 0.5,
-	// cross at display borders for quickly finding the center of sight.
+	// Cross at display borders for quickly finding the center of sight.
 	drawPromptCross = true,
-	useNarrowGunCenter = false,
+	// Use narrower gun center, and
+	// for arrow type leading reticles, use smaller arrows and ticks
+	useNarrowCentralElements = false,
 
 	// Use arrows for leading ticks
 	leadingDivisionsUseArrowType = false,
@@ -64,8 +66,8 @@ let init = ({
 
 	sight.lines.addComment("Gun center");
 	sight.add(new Line({
-		from: [(useNarrowGunCenter ? 0.002 : 0.0055), 0],
-		to: [(useNarrowGunCenter ? 0.004 : 0.0085), 0],
+		from: [(useNarrowCentralElements ? 0.002 : 0.0055), 0],
+		to: [(useNarrowCentralElements ? 0.004 : 0.0085), 0],
 		move: true, thousandth: false
 	}).withMirrored("xy"));  // y for bold
 	// sight.add(new Line({
@@ -151,21 +153,34 @@ let init = ({
 		}
 
 		// 4/4 AA
-		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 1), 0.8));
+		sight.add(getArrowElements(
+			getLdn(assumedMoveSpeed, 1),
+			useNarrowCentralElements ? 0.6 : 0.8
+		));
 		sight.add(new TextSnippet({
 			text: assumedMoveSpeed.toFixed(),
-			pos: [getLdn(assumedMoveSpeed, 1), 1.7-0.08],
-			size: 0.5
+			pos: [
+				getLdn(assumedMoveSpeed, 1),
+				(useNarrowCentralElements ? 1.4 : 1.7)-0.08
+			],
+			size: useNarrowCentralElements ? 0.41 : 0.5
 		}).withMirrored("x")).repeatLastAdd();
 		// 3/4
 		sight.add(getTickElements(
-			getLdn(assumedMoveSpeed, 0.75), 0.3, [-0.04, 0.04]
+			getLdn(assumedMoveSpeed, 0.75),
+			useNarrowCentralElements ? 0.2 : 0.3,
+			[-0.04, 0.04]
 		));
 		// 2/4
-		sight.add(getArrowElements(getLdn(assumedMoveSpeed, 0.5), 0.7));
+		sight.add(getArrowElements(
+			getLdn(assumedMoveSpeed, 0.5),
+			useNarrowCentralElements ? 0.5 : 0.7
+		));
 		// 1/4
 		sight.add(getTickElements(
-			getLdn(assumedMoveSpeed, 0.25), 0.2, [-0.03, 0.03]
+			getLdn(assumedMoveSpeed, 0.25),
+			useNarrowCentralElements ? 0.15 : 0.2,
+			[-0.03, 0.03]
 		));
 
 	} else {

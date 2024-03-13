@@ -9,10 +9,6 @@ import * as pd from "../_lib2/predefined.js";
 let sight = new Sight();
 
 
-// Introduction comment
-sight.addDescription(`INTRODUCTION COMMENT`.trim());
-
-
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
 	pd.basic.scales.getHighZoomSmall2Font(),
@@ -44,13 +40,16 @@ sight.addShellDistance([
 
 //// SIGHT DESIGNS ////
 let shells = {
-	apds: {name: "30mm APDS", spd: 1120 * 3.6},
-	ap: {name: "30mm AP", spd: 970 * 3.6},
-	he: {name: "30mm HEF", spd: 960 * 3.6},
+	apds: { name: "30mm APDS", spd: 1120 * 3.6, d400NotMilY: 0.0165 },
+	ap: { name: "30mm AP", spd: 970 * 3.6, d400NotMilY: 0.0232 },
+	he: { name: "30mm HEF", spd: 960 * 3.6, d400NotMilY: 0.0240 },
 };
+// let shellsGun100 = {
+// 	he: { name: "100mm 3OF70", spd: 355 * 3.6, d400NotMilY: 0.1559 }
+// }
 let airShell = shells.he;
-let gndShell = shells.ap;
-let assumedAirTgtSpd = 500;  // kph
+let gndShell = shells.apds;
+let assumedAirTgtSpd = 300;  // kph  // 600 for avaitions?
 let assumedGndTgtSpd = 45;  // kph
 let getAirLdn = (aa) => Toolbox.calcLeadingMil(
 	airShell.spd, assumedAirTgtSpd, aa
@@ -61,18 +60,85 @@ let getGndLdn = (aa) => Toolbox.calcLeadingMil(
 
 
 // 0m correction
-sight.add(new Line({ from: [-0.20, 0.0], to: [-0.21, 0.0], move: true, thousandth: false }));
+// sight.add(new Line({ from: [-0.20, 0.0], to: [-0.21, 0.0], move: true, thousandth: false }));
+sight.add(new Line({
+	from: [-0.0055, 0], to: [0.016, 0], move: true, thousandth: false
+}).move([-0.205, 0]));
 
-// Line for correction value check
+// Pointer for correction value check
 let corrValLine = [
 	new Line({ from: [0.006, 0], to: [0.016, 0], thousandth: false }),
-	new Line({ from: [-0.006, 0], to: [-0.016, 0], thousandth: false }),
-	new Line({ from: [0.006, 0.0006], to: [0.016, 0.0006], thousandth: false }).withMirrored("y"),  // mirrored for bold
-	new Line({ from: [-0.006, 0.0006], to: [-0.016, 0.0006], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	new Line({ from: [-0.006, 0], to: [-0.008, 0], thousandth: false }),
+	new Line({ from: [0.006, 0.0007], to: [0.016, 0.0007], thousandth: false }).withMirrored("y"),
+	new Line({ from: [-0.006, 0.0007], to: [-0.008, 0.0007], thousandth: false }).withMirrored("y"),
 ];
-//   move arrow to apporiate place
+//   move pointer to apporiate place
 corrValLine.forEach((l) => { l.move([-0.205, 0]); });
 sight.add(corrValLine);
+
+
+// Marks for identifying used gun
+(() => {
+	let marksTickLen = 0.001;
+	let marksXPos = -0.205;
+	let marksMidHalfWidth = 0.009; // 0.016 + 0.0035;
+	let getRangeElements = (rangeArr, tickLen, promptText) => {
+		let templateElements = [];
+		//   hori ticks
+		if (tickLen > 0) {
+			for (let y of rangeArr) {
+				templateElements.push(new Line({
+					from: [0, y], to: [-tickLen, y],
+					thousandth: false, move: true
+				}));
+			}
+		}
+		//   vert range line
+		templateElements.push(new Line({
+			from: [-tickLen, rangeArr[0]],
+			to: [-tickLen, rangeArr[1]],
+			thousandth: false, move: true
+		}));
+		templateElements.push(  // bold
+			templateElements[templateElements.length-1].copy().move([-0.0005, 0])
+		);
+
+		let outElements = [];
+		templateElements.forEach((ele) => {
+			outElements.push(ele.copy().move([marksXPos - marksMidHalfWidth, 0]));
+		});
+		outElements.push(new TextSnippet({
+			text: promptText,
+			pos: [
+				-tickLen - 0.006,
+				((rangeArr[0] + rangeArr[1]) / 2) - 0.0009
+			],
+			size: 0.45, align: "left",
+			thousandth: false, move: true
+		}).move([marksXPos - marksMidHalfWidth, 0]));
+		return outElements;
+	};
+
+	// 30mm gun
+	let gun30YRange = (() => {
+		let yValues = [
+			shells.apds, shells.ap, shells.he
+		].map((ele) => (ele.d400NotMilY));
+		return [yValues[0], yValues[yValues.length - 1]];
+	})();
+	sight.add(getRangeElements(
+		gun30YRange, marksTickLen, "MAIN 30MM ?"
+	)).repeatLastAdd();
+
+	// // 100mm gun
+	// let gun100YRange = [
+	// 	shellsGun100.he.d400NotMilY - 0.005,
+	// 	shellsGun100.he.d400NotMilY + 0.005,
+	// ];
+	// sight.add(getRangeElements(
+	// 	gun100YRange, marksTickLen, "100mm HE ?"
+	// )).repeatLastAdd();
+})();
 
 
 // Gun center
@@ -102,6 +168,7 @@ for (let posYBias of Toolbox.rangeIE(0, 0.08, 0.02)) {
 	sight.add(addedLine);
 }
 
+
 // Center arrow position prompt curve
 sight.add(new Circle({
 	segment: [-centerArrowDeg, centerArrowDeg],
@@ -113,6 +180,22 @@ sight.add(new Line({ from: [0, 450], to: [0, getGndLdn(0.5)] }));
 sight.add(new Line({
 	from: [0.03, 450], to: [0.03, getGndLdn(0.75)]
 }).withMirrored("x"));
+
+
+// Missile drop indicators
+// 100m
+sight.add(new Circle({
+	segment: [90-30, 90+45],
+	pos: [-0.12, 2.12],
+	diameter: 0.8, size: 1.2, move: true
+}).withMirroredSeg("x"));
+// missile will smoothly goes to sight center (and stays after ~125m)
+// if gun correction is adjusted to this position
+sight.add(new Circle({
+	segment: [-centerArrowDeg, centerArrowDeg],
+	pos: [0, 3.35],
+	diameter: 1.2, size: 1, move: true
+}).withMirroredSeg("x"));
 
 
 // Leading offset arrows
@@ -204,6 +287,17 @@ sight.add(new Circle({
 	segment: [180 - segHalfLens.upper, 180 + segHalfLens.upper],
 	diameter: getAirLdn(0.5) * 2, size: curveSizes.inner
 }));
+//   additional 3/4
+if (assumedAirTgtSpd > 550) {  // when 4/4 upper tick out of screen
+	// sight.add(new Line({from: [getAirLdn(0.75), 0], to: [getAirLdn(1), 0]}).withMirrored("x"));
+	// sight.add(new Line({from: [0, -getAirLdn(0.75)], to: [0, -getAirLdn(1)]}));
+	for (let segCenter of [0, 90, 180, 270]) {
+		sight.add(new Circle({
+			segment: [segCenter - segHalfLens.hori/6, segCenter + segHalfLens.hori/6],
+			diameter: getAirLdn(0.75) * 2, size: curveSizes.outer
+		}));
+	}
+}
 // Texts
 // 4/4
 sight.add(new TextSnippet({
@@ -226,7 +320,8 @@ for (let shellKey in shells) {
 	let currShell = shells[shellKey];
 	let colContents = [
 		(
-			// "air" uses EnSpace for formatting
+			// "a/g" and "air" uses EnSpace for formatting
+			currShell.spd == airShell.spd && currShell.spd == gndShell.spd ? '[ A/G ]' :
 			currShell.spd == airShell.spd ? '[ AIR ]' :
 			currShell.spd == gndShell.spd ? '[ GND ]' :
 			'[         ]'

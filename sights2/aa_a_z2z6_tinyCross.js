@@ -31,7 +31,8 @@ sight.addSettings(pd.concatAllBasics(
 
 //// VEHICLE TYPES ////
 sight.matchVehicle(Sight.commonVehicleTypes.spaas).matchVehicle([
-	"germ_wiesel_1_mk20",
+	"cn_pgz_04a",
+	"ussr_zsu_23_4",
 ]);
 
 
@@ -65,14 +66,13 @@ let drawX = (fromRadius, toRadius) => (new Line({ from: [fromRadius * sin45, fro
 let drawCurveCross = (radius, [segFrom, segTo], size) => [new Circle({ segment: [segFrom, segTo], diameter: radius * 2, size: size }).withMirroredSeg("x"), new Circle({ segment: [segFrom + 90, segTo + 90], diameter: radius * 2, size: size }).withMirroredSeg("y")];
 let drawCurveX = (radius, [segFrom, segTo], size) => (new Circle({ segment: [segFrom, segTo], diameter: radius * 2, size: size }).withMirroredSeg("xy"))
 //   center segments
-sight.add(drawCross(4.125, 16));
+sight.add(drawCross(4.125, 16)).add(drawX(16 * 0.75, 16));
 //   middle segments
 sight.add(drawCross(32, 64));
-sight.add(drawCross(96, 128)).add(drawX(64, 128));
-sight.add(drawCurveCross(128, [87, 93], 4));
+// sight.add(drawCross(96, 128)).add(drawCurveCross(128, [87, 93], 4));
 //   outer segments
-sight.add(drawCurveCross(192, [89.3, 90.7], 4));
-sight.add(drawCross(192, 450));
+// sight.add(drawCurveCross(192, [89.3, 90.7], 4));
+// sight.add(drawCross(192, 450));
 
 
 

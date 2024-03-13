@@ -24,7 +24,7 @@ base.sightObj.matchVehicle(Sight.commonVehicleTypes.spaas).matchVehicle([
 //// ADDITIONAL ELEMENTS (IF ANY) ////
 // Radar range prompt
 base.sightObj.add(rdr.buildRadarPrompt({
-	pos: [-75.5, -12],
+	pos: [-75.5, -10],
 	curveRadius: 17,
 	pieDivisionCurveSizeMain: 2,
 	pieDivisionCurveSizeSub: 1.5,

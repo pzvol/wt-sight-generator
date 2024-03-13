@@ -31,7 +31,7 @@ let mslInfo = {
 
 // Radar prompt
 sight.add(rdr.buildRadarPrompt({
-	pos: [-76, -13],
+	pos: [-76, -10],
 	curveDegree: 30,
 	curveRadius: 17,
 	pieDivisionCurveSizeMain: 3,
@@ -42,7 +42,7 @@ sight.add(rdr.buildRadarPrompt({
 	textSizeLongRange: 0.85,
 	textSizeShortRange: 0.65,
 	textSizeLegend: 0.5,
-	textPosPaddingLongRange: [0, 2],
+	textPosPaddingLongRange: [0, 1.8],
 	textPosPaddingShortRange: [-0.5, -1.75],
 	textPosPaddingLegendLong: [0.5, -1],
 	textPosPaddingLegendShort: [1.25, 0.5],
@@ -68,11 +68,11 @@ let tthTable = [
 	// Title line
 	new TextSnippet({
 		text: mslInfo.name, align: "right",
-		pos: [-1.5, 0], size: 0.7
+		pos: [-1.5, 0], size: 0.65
 	}),
 	new TextSnippet({
 		text: `Avg ${(mslInfo.spd).toFixed()} m/s`, align: "left",
-		pos: [19, 0], size: 0.7
+		pos: [19, 0], size: 0.65
 	}),
 	// Table row separation
 	new Line({from: [-2, 4.125], to: [19, 4.125]})
@@ -104,7 +104,7 @@ for (let row = 0; row < tthInfo.texts.length; row++) {
 	}
 }
 // Move to correct pos and append elements
-tthTable.forEach((ele) => { ele.move([-76, -4]); });
+tthTable.forEach((ele) => { ele.move([-76, -1]); });
 sight.add(tthTable);
 
 

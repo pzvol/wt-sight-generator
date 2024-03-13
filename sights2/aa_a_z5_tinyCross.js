@@ -15,7 +15,7 @@ Generic sight for SPAAs with 5X.
 
 //// BASIC SETTINGS ////
 sight.addSettings(pd.concatAllBasics(
-	pd.basic.scales.getCommonLargeFont(),
+	pd.basic.scales.getCommonLargeFont({line: 1.6}),
 	pd.basic.colors.getRedGreen(),
 	pd.basicBuild.rgfdPos([100, -0.02]),
 	pd.basicBuild.detectAllyPos([100, -0.045]),
@@ -63,14 +63,13 @@ sight.add(new Circle({ segment: [30, 160], diameter: 4.125, size: 3.5 }).withMir
 
 // Cross lines
 //   center segments
-sight.add(drawCross(4.125, 16));
+sight.add(drawCross(4.125, 16)).add(drawX(16 * 0.75, 16));
 //   outer segments
-sight.add(drawCross(32, 450));
-sight.add(drawX(32, 64));
-sight.add([
-	new Circle({ segment: [88, 89.7], diameter: 64*2, size: 2 }).withMirroredSeg("xy"),
-	new Circle({ segment: [178, 179.7], diameter: 64*2, size: 2 }).withMirroredSeg("xy"),
-])
+// sight.add(drawCross(32, 450));
+// sight.add([
+// 	new Circle({ segment: [88, 89.7], diameter: 64*2, size: 2 }).withMirroredSeg("xy"),
+// 	new Circle({ segment: [178, 179.7], diameter: 64*2, size: 2 }).withMirroredSeg("xy"),
+// ])
 
 
 //// OUTPUT ////
