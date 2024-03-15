@@ -84,7 +84,7 @@ let init = ({
 	}).withMirrored("x").move([0, 0.02]);
 	// ^ Moving down a little bit to let the arrow vertex stays the center
 	//   with being less effected by line widths
-	for (let posYBias of Toolbox.rangeIE(0, 0.06, 0.03)) {
+	for (let posYBias of Toolbox.rangeIE(0, 0.12, 0.03)) {
 		sight.add(arrowLineBasis.copy().move([0, posYBias]));
 	}
 
