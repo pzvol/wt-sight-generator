@@ -66,8 +66,14 @@ let init = ({
 
 	sight.lines.addComment("Gun center");
 	sight.add(new Line({
-		from: [(useNarrowCentralElements ? 0.002 : 0.0055), 0],
-		to: [(useNarrowCentralElements ? 0.004 : 0.0085), 0],
+		from: [
+			(useNarrowCentralElements ? 0.002 : 0.0055),
+			(useNarrowCentralElements ? 0.00025 : 0)
+		],
+		to: [
+			(useNarrowCentralElements ? 0.004 : 0.0085),
+			(useNarrowCentralElements ? 0.00025 : 0)
+		],
 		move: true, thousandth: false
 	}).withMirrored("xy"));  // y for bold
 	// sight.add(new Line({
@@ -179,8 +185,8 @@ let init = ({
 		// 1/4
 		sight.add(getTickElements(
 			getLdn(assumedMoveSpeed, 0.25),
-			useNarrowCentralElements ? 0.15 : 0.2,
-			[-0.03, 0.03]
+			useNarrowCentralElements ? 0.15 : 0.25,
+			[-0.035, 0.035]
 		));
 
 	} else {
