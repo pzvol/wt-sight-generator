@@ -22,6 +22,13 @@ sight.matchVehicle([
 sight.updateOrAddSettings(pd.basicBuild.gunDistanceValuePos([-0.36, 0.015]));
 
 
+// Find line elements for aiming
+let sightReticleLines = sight.lines.getAllElements().filter((ele) => (
+	(ele instanceof Line) &&
+	(ele.lineEnds.from[1] > 100 || ele.lineEnds.to[1] > 100)
+));
+
+
 let assumedTgtWidth = 3.3;
 let getMil = (dist) => Toolbox.calcDistanceMil(assumedTgtWidth, dist);
 let getHalfMil = (dist) => (getMil(dist) / 2);
@@ -46,6 +53,7 @@ let simAimedPosWithLaser = [
 let getSimAimedPosWithLaser = (d) => simAimedPosWithLaser.find((ele) => (ele.dist === d)).pos;
 
 let isMoved = true;
+// Shell points of fall
 // 0-25m
 sight.add(new Line({
 	from: getSimAimedPos(-1), to: getSimAimedPos(25), move: isMoved
@@ -99,70 +107,97 @@ sight.add(new Circle({
 }));
 sight.add(new Line({ from: getSimAimedPos(100), to: getSimAimedPosWithLaser(100), move: isMoved }).
 	addBreakAtX(getSimAimedPos(100)[0], 0.3).
-	addBreakAtX(getSimAimedPosWithLaser(100)[0], 0.15)
+	addBreakAtX(getSimAimedPosWithLaser(100)[0], 0.15).
+	addBreakAtX((getSimAimedPos(100)[0] + getSimAimedPosWithLaser(100)[0]) / 2, 2)
 );
 sight.add(new TextSnippet({
 	text: "1", pos: getSimAimedPos(100), size: 0.9, move: isMoved
 }).move([0, 1.0]));
 
 
-// Width prompt for 25m
-let wPLineTplt25 = new Line({
-	from: [50, 0], to: [getHalfMil(25), 0], move: isMoved
-});
+// Width prompts for points of fall
+
+// Shorthand for drawing vertical mirrored bold line
+let drawVertBoldLine = (centerPos, xOffset, yLen, drawnXBiases = [0]) => {
+	let elements = [];
+	for (let biasX of drawnXBiases) {
+		elements.push(new Line({
+			from: [xOffset + biasX, 0], to: [xOffset + biasX, yLen],
+			move: isMoved
+		}).move(centerPos));
+		elements.push(new Line({
+			from: [-xOffset + biasX, 0], to: [-xOffset + biasX, yLen],
+			move: isMoved
+		}).move(centerPos));
+	}
+	return elements;
+}
+// Shorthand for drawing horizontal bold line
+let drawHoriBoldLine = (centerPos, xLenHalf, middleBreakWidth, drawnYBiases = [0]) => {
+	let elements = [];
+	for (let biasY of drawnYBiases) {
+		elements.push(new Line({
+			from: [-xLenHalf, biasY], to: [xLenHalf, biasY],
+			move: isMoved
+		}).move(centerPos).addBreakAtX(centerPos[0], middleBreakWidth));
+	}
+	return elements;
+}
+
+// 25m
 sight.add([
-	wPLineTplt25.copy().move(getSimAimedPos(25)),
-	wPLineTplt25.copy().mirrorX().move(getSimAimedPos(25)),
-	new TextSnippet({
-		text: "25m width", align: "right",
-		pos: [-getHalfMil(25) + 1.5, 1.5],
-		size: 1.5, move: isMoved
-	}).move(getSimAimedPos(25)),
-	new Circle({
-		segment: [88, 90], diameter: getMil(25), size: 8, move: isMoved
-	}).move(getSimAimedPos(25)),
-	new Circle({
-		segment: [88, 90], diameter: getMil(25), size: 8, move: isMoved
-	}).mirrorSegmentX().move(getSimAimedPos(25)),
+	// new TextSnippet({
+	// 	text: "25m", align: "right",
+	// 	pos: [-getHalfMil(25) + 1.5, 2],
+	// 	size: 1.8, move: isMoved
+	// }).move(getSimAimedPos(25)),
+	...drawVertBoldLine(getSimAimedPos(25), getHalfMil(25), 6, Toolbox.rangeIE(-0.15, 0.15, 0.05)),
+	...drawHoriBoldLine(getSimAimedPos(25), getHalfMil(25), 10, Toolbox.rangeIE(-0.03, 0.03, 0.03))
 ]);
-// Width prompt for 50m
-let wPLineTplt50 = new Line({
-	from: [getHalfMil(50) - 6, 0], to: [getHalfMil(50), 0], move: isMoved
-});
+// 50m
 sight.add([
-	wPLineTplt50.copy().move(getSimAimedPos(50)),
-	wPLineTplt50.copy().mirrorX().move(getSimAimedPos(50)),
-	new TextSnippet({
-		text: "50", align: "right",
-		pos: [-getHalfMil(50) + 1, 1],
-		size: 1.2, move: isMoved
-	}).move(getSimAimedPos(50)),
-	new Circle({
-		segment: [87, 90], diameter: getMil(50), size: 6, move: isMoved
-	}).move(getSimAimedPos(50)),
-	new Circle({
-		segment: [87, 90], diameter: getMil(50), size: 6, move: isMoved
-	}).mirrorSegmentX().move(getSimAimedPos(50)),
+	// new TextSnippet({
+	// 	text: "50", align: "right",
+	// 	pos: [-getHalfMil(50) + 1.5, 2],
+	// 	size: 1.4, move: isMoved
+	// }).move(getSimAimedPos(50)),
+	...drawVertBoldLine(getSimAimedPos(50), getHalfMil(50), 4, Toolbox.rangeIE(-0.10, 0.10, 0.05)),
+	...drawHoriBoldLine(
+		getSimAimedPos(50), getHalfMil(50),
+		(getHalfMil(50) - 6) * 2,
+		Toolbox.rangeIE(-0.02, 0.02, 0.02)
+	)
 ]);
-// Width prompt for 100m
-let wPLineTplt100 = new Line({
-	from: [getHalfMil(100) - 1, 0], to: [getHalfMil(100), 0], move: isMoved
-});
+// 100m
 sight.add([
-	wPLineTplt100.copy().move(getSimAimedPos(100)),
-	wPLineTplt100.copy().mirrorX().move(getSimAimedPos(100)),
 	new TextSnippet({
 		text: "1", align: "right",
-		pos: [-getHalfMil(100) + 0.4, 0.6],
-		size: 0.6, move: isMoved
+		pos: [-getHalfMil(100) + 0.4, 0.9],
+		size: 0.8, move: isMoved
 	}).move(getSimAimedPos(100)),
-	new Circle({
-		segment: [86, 90], diameter: getMil(100), size: 4, move: isMoved
-	}).move(getSimAimedPos(100)),
-	new Circle({
-		segment: [86, 90], diameter: getMil(100), size: 4, move: isMoved
-	}).mirrorSegmentX().move(getSimAimedPos(100)),
+	...drawVertBoldLine(getSimAimedPos(100), getHalfMil(100), 2, Toolbox.rangeIE(-0.04, 0.04, 0.04)),
+	...drawHoriBoldLine(
+		getSimAimedPos(100), getHalfMil(100),
+		getMil(100) - 2,
+		Toolbox.rangeIE(-0.02, 0.02, 0.02)
+	)
 ]);
+
+sightReticleLines.forEach((ele) => {
+	if (!(ele instanceof Line)) {return;}
+	// if (ele.lineEnds.from[0] === ele.lineEnds.to[0]) {return;}
+	let breakRange = [
+		getSimAimedPos(25)[1] + 0.5, getSimAimedPos(25)[1] - 4.5
+	];
+	let breakWidth = breakRange[0] - breakRange[1];
+	if (ele.lineEnds.from[0] !== ele.lineEnds.to[0]) {
+		breakWidth /= Math.cos(Toolbox.degToRad(40))
+	}
+	ele.addBreakAtY(
+		(breakRange[0] + breakRange[1]) / 2,
+		breakWidth,
+	);
+})
 
 
 
