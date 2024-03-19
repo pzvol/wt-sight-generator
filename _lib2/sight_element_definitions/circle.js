@@ -64,6 +64,27 @@ export default class Circle {
 	}
 
 
+	//// GETTERS ////
+
+	/** @returns {[number, number]} */
+	getSegment() { return [...this.spec.segment]; }
+
+	/** @returns {[number, number]} */
+	getPos() { return [...this.spec.pos]; }
+
+	/** @returns {number} */
+	getDiameter() { return this.spec.diameter; }
+
+	/** @returns {number} */
+	getSizeOfLine() { return this.spec.size; }
+
+	/** @returns {boolean} */
+	getMovable() { return this.spec.move; }
+
+	/** @returns {boolean} */
+	getUseThousandthUnit() { return this.spec.thousandth; }
+
+
 	//// GENERAL METHODS ////
 
 	/**

@@ -219,6 +219,20 @@ export default class Quad {
 	}
 
 
+	//// GETTERS ////
+
+	/**
+	 * @returns {{topLeft: [number, number], topRight: [number, number], bottomLeft: [number, number], bottomRight: [number, number]}}
+	 */
+	getCorners() { return DefTool.copyValue(this.corners); }
+
+	/** @returns {boolean} */
+	getMovable() { return this.specMisc.move; }
+
+	/** @returns {boolean} */
+	getUseThousandthUnit() { return this.specMisc.thousandth; }
+
+
 	//// GENERAL METHODS ////
 
 	/**

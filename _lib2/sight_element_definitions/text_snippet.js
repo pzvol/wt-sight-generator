@@ -69,6 +69,39 @@ export default class TextSnippet {
 	}
 
 
+	//// GETTERS ////
+
+	/** @returns {string} */
+	getText() { return this.spec.text; }
+
+	/** @returns {number} */
+	getAlign() { return this.spec.align; }
+
+	getAlignAsString() {
+		switch (this.spec.align) {
+			case 0: return "center";
+			case 1: return "left";
+			case 2: return "right";
+			default: "unknown";
+		}
+	}
+
+	/** @returns {[number, number]} */
+	getPos() { return [...this.spec.pos]; }
+
+	/** @returns {number} */
+	getSize() { return this.spec.size; }
+
+	/** @returns {boolean} */
+	getMovable() { return this.spec.move; }
+
+	/** @returns {boolean} */
+	getUseThousandthUnit() { return this.spec.thousandth; }
+
+	/** @returns {boolean} */
+	getIsHighlighted() { return this.spec.highlight; }
+
+
 	//// GENERAL METHODS ////
 
 	/**

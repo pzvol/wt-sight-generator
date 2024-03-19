@@ -79,6 +79,20 @@ export default class Line {
 	}
 
 
+	//// GETTERS ////
+
+	/** @returns {{from: [number, number], to: [number, number]}} */
+	getLineEnds() { return DefTool.copyValue(this.lineEnds); }
+
+	/** @returns {boolean} */
+	getMovable() { return this.specMisc.move; }
+
+	/** @returns {boolean} */
+	getUseThousandthUnit() { return this.specMisc.thousandth; }
+
+	hasLineBreak() { return (this.lineBreaks.length > 0); }
+
+
 	//// GENERAL METHODS ////
 
 	/**
@@ -369,12 +383,8 @@ export default class Line {
 		return this;
 	}
 
-	/**
-	 * Get code for all line frags into an array without extra drawn ones
-	 * @returns {string[]}
-	 */
-	p_getSelfCodeFrags() {
-		// Sort breakpoints.
+	/** Sort line breaks */
+	p_sortLineBreaks() {
 		// (Same start & end will potentially cause error - it's not allowed anyway)
 		if (this.lineCalcInfo.endDiffs.x !== 0) {
 			if (this.lineCalcInfo.endDiffs.x > 0) {
@@ -389,6 +399,16 @@ export default class Line {
 				this.lineBreaks.sort((a, b) => -(a.from[1] - b.from[1]));
 			}
 		}
+		return this;
+	}
+
+	/**
+	 * Get code for all line frags into an array without extra drawn ones
+	 * @returns {string[]}
+	 */
+	p_getSelfCodeFrags() {
+		// Sort breakpoints.
+		this.p_sortLineBreaks();
 
 		// Find all line frags
 		let lineFragStarts = [this.lineEnds.from];

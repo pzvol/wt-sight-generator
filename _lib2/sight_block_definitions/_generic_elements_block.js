@@ -33,6 +33,15 @@ export default class ElementsBlock extends SightBlock {
 	}
 
 
+	//// GETTERS ////
+	/**
+	 * Get all included elements in the block
+	 *
+	 * @returns {object[]} a shallow-copied array with all included elements
+	 */
+	getAllElements() { return [...this.blockLines]; }
+
+
 	//// SETTERS ////
 	/**
 	 * Clear all included elements
