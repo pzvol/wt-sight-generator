@@ -42,6 +42,7 @@ let simAimedPos = [
 	{ dist: 25, pos: [-31.35, 17.17] },
 	{ dist: 50, pos: [-15.86, 8.73] },
 	{ dist: 100, pos: [-7.15, 4.03] },
+	{ dist: 200, pos: [-3.18, 2.12] },
 ];
 let getSimAimedPos = (d) => simAimedPos.find((ele) => (ele.dist === d)).pos;
 // Aimed pos after auto-correction from laser rgfd
@@ -49,6 +50,7 @@ let simAimedPosWithLaser = [
 	{ dist: 25, pos: [-28.16, 15.42] },  // TODO
 	{ dist: 50, pos: [-11.91, 6.59] },
 	{ dist: 100, pos: [-3.98, 2.4] },
+	{ dist: 200, pos: [0, 0.44] },
 ];
 let getSimAimedPosWithLaser = (d) => simAimedPosWithLaser.find((ele) => (ele.dist === d)).pos;
 
@@ -99,20 +101,34 @@ sight.add(new TextSnippet({
 // 100m
 sight.add(new Circle({
 	pos: getSimAimedPos(100),
-	diameter: 0.3, size: 2, move: isMoved
+	diameter: 0.4, size: 2.5, move: isMoved
 }));
 sight.add(new Circle({
 	pos: getSimAimedPosWithLaser(100),
-	diameter: 0.15, size: 2, move: isMoved
+	diameter: 0.25, size: 2, move: isMoved
 }));
 sight.add(new Line({ from: getSimAimedPos(100), to: getSimAimedPosWithLaser(100), move: isMoved }).
-	addBreakAtX(getSimAimedPos(100)[0], 0.3).
-	addBreakAtX(getSimAimedPosWithLaser(100)[0], 0.15).
-	addBreakAtX((getSimAimedPos(100)[0] + getSimAimedPosWithLaser(100)[0]) / 2, 2)
+	addBreakAtX(getSimAimedPos(100)[0], 0.4).
+	addBreakAtX(getSimAimedPosWithLaser(100)[0], 0.25)
 );
 sight.add(new TextSnippet({
-	text: "1", pos: getSimAimedPos(100), size: 0.9, move: isMoved
+	text: "1", pos: getSimAimedPos(100), size: 0.8, move: isMoved
 }).move([0, 1.0]));
+// 200m
+sight.add(new Circle({
+	pos: getSimAimedPos(200),
+	diameter: 0.15, size: 2.5, move: isMoved
+}));
+sight.add(new Line({ from: getSimAimedPos(200), to: getSimAimedPosWithLaser(200), move: isMoved }).
+	addBreakAtX(getSimAimedPos(200)[0], 0.15).
+	addBreakAtX(
+		getSimAimedPosWithLaser(200)[0],
+		Toolbox.calcLineLength(getSimAimedPos(200), getSimAimedPosWithLaser(200)) * 1.5
+	)
+);
+sight.add(new TextSnippet({
+	text: "2", pos: getSimAimedPos(200), size: 0.5, move: isMoved
+}).move([0, 0.6]));
 
 
 // Width prompts for points of fall
@@ -175,14 +191,30 @@ sight.add([
 		pos: [-getHalfMil(100) + 0.4, 0.9],
 		size: 0.8, move: isMoved
 	}).move(getSimAimedPos(100)),
-	...drawVertBoldLine(getSimAimedPos(100), getHalfMil(100), 2, Toolbox.rangeIE(-0.04, 0.04, 0.04)),
+	...drawVertBoldLine(getSimAimedPos(100), getHalfMil(100), 2, Toolbox.rangeIE(-0.06, 0.06, 0.06)),
 	...drawHoriBoldLine(
 		getSimAimedPos(100), getHalfMil(100),
 		getMil(100) - 2,
 		Toolbox.rangeIE(-0.02, 0.02, 0.02)
 	)
 ]);
+// 200m
+sight.add([
+	new TextSnippet({
+		text: "2", align: "right",
+		pos: [-getHalfMil(200) + 0.3, 0.75],
+		size: 0.6, move: isMoved
+	}).move(getSimAimedPos(200)),
+	...drawVertBoldLine(getSimAimedPos(200), getHalfMil(200), 1.5, Toolbox.rangeIE(-0.04, 0.04, 0.04)),
+	...drawHoriBoldLine(
+		getSimAimedPos(200), getHalfMil(200),
+		getMil(200) - 1,
+		Toolbox.rangeIE(-0.02, 0.02, 0.02)
+	)
+]);
 
+
+// Edit aiming arrow
 sightReticleLines.forEach((ele) => {
 	if (!(ele instanceof Line)) {return;}
 	// if (ele.lineEnds.from[0] === ele.lineEnds.to[0]) {return;}

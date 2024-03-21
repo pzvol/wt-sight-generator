@@ -35,6 +35,7 @@ let simAimedPos = [
 	{ dist: 25, pos: [-29.68, 7.5] },
 	{ dist: 50, pos: [-14.8, 3.85] },
 	{ dist: 100, pos: [-7.01, 2.03] },
+	{ dist: 200, pos: [-3.9, 1.39] },
 ];
 let getSimAimedPos = (d) => simAimedPos.find((ele) => (ele.dist === d)).pos;
 // Aimed pos after auto-correction from laser rgfd
@@ -42,6 +43,7 @@ let simAimedPosWithLaser = [
 	{ dist: 25, pos: [-26.5, 6.74] },
 	{ dist: 50, pos: [-11.7, 3.08] },
 	{ dist: 100, pos: [-3.89, 1.24] },
+	{ dist: 200, pos: [0, 0.44] },
 ];
 let getSimAimedPosWithLaser = (d) => simAimedPosWithLaser.find((ele) => (ele.dist === d)).pos;
 
@@ -92,19 +94,24 @@ sight.add(new TextSnippet({
 // 100m
 sight.add(new Circle({
 	pos: getSimAimedPos(100),
-	diameter: 0.3, size: 2, move: isMoved
+	diameter: 0.4, size: 2.5, move: isMoved
 }));
 sight.add(new Circle({
 	pos: getSimAimedPosWithLaser(100),
-	diameter: 0.15, size: 2, move: isMoved
+	diameter: 0.25, size: 2, move: isMoved
 }));
 sight.add(new Line({ from: getSimAimedPos(100), to: getSimAimedPosWithLaser(100), move: isMoved }).
-	addBreakAtX(getSimAimedPos(100)[0], 0.3).
-	addBreakAtX(getSimAimedPosWithLaser(100)[0], 0.15).
-	addBreakAtX((getSimAimedPos(100)[0] + getSimAimedPosWithLaser(100)[0]) / 2, 1.8)
+	addBreakAtX(getSimAimedPos(100)[0], 0.4).
+	addBreakAtX(getSimAimedPosWithLaser(100)[0], 0.25).
+	addBreakAtX(
+		(getSimAimedPos(100)[0] + getSimAimedPosWithLaser(100)[0]) / 2,
+		Toolbox.calcLineLength(
+			getSimAimedPos(100), getSimAimedPosWithLaser(100)
+		) / 3
+	)
 );
 sight.add(new TextSnippet({
-	text: "1", pos: getSimAimedPos(100), size: 0.9, move: isMoved
+	text: "1", pos: getSimAimedPos(100), size: 0.8, move: isMoved
 }).move([0, 1.0]));
 
 
@@ -163,14 +170,27 @@ sight.add([
 		pos: [-getHalfMil(100) + 0.4, 0.9],
 		size: 0.8, move: isMoved
 	}).move(getSimAimedPos(100)),
-	...drawVertBoldLine(getSimAimedPos(100), getHalfMil(100), 2, Toolbox.rangeIE(-0.04, 0.04, 0.04)),
+	...drawVertBoldLine(getSimAimedPos(100), getHalfMil(100), 2, Toolbox.rangeIE(-0.06, 0.06, 0.06)),
 	...drawHoriBoldLine(
 		getSimAimedPos(100), getHalfMil(100),
 		getMil(100) - 2,
 		Toolbox.rangeIE(-0.02, 0.02, 0.02)
 	)
 ]);
-
+// 200m
+sight.add([
+	new TextSnippet({
+		text: "2", align: "right",
+		pos: [-getHalfMil(200) + 0.2, 0.45],
+		size: 0.5, move: isMoved
+	}).move(getSimAimedPos(200)),
+	...drawVertBoldLine(getSimAimedPos(200), getHalfMil(200), 0.5, Toolbox.rangeIE(-0.05, 0.05, 0.05)),
+	...drawHoriBoldLine(
+		getSimAimedPos(200), getHalfMil(200),
+		getMil(200) - 0.5,
+		Toolbox.rangeIE(-0.02, 0.02, 0.02)
+	)
+]);
 
 
 
