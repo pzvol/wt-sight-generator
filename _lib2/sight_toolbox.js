@@ -145,7 +145,6 @@ export default class Toolbox {
 		return execResults;
 	}
 
-
 	/**
 	 * Get the round of a value with give digit number
 	 *
@@ -263,5 +262,18 @@ export default class Toolbox {
 	 */
 	static calcLeadingMil(shellSpeed, tgtSpeed, tgtAspectAngle = 1, type = "real") {
 		return Math.asin(tgtSpeed / shellSpeed) / Toolbox.MIL[type].rad * tgtAspectAngle;
+	}
+
+	/**
+	 * Calcuate length of a line, a.k.a the distance between two points
+	 * @param {[number, number]} fromPos
+	 * @param {[number, number]} toPos
+	 * @returns {number}
+	 */
+	static calcLineLength(fromPos, toPos) {
+		return Math.sqrt(
+			Math.pow(toPos[0] - fromPos[0], 2) +
+			Math.pow(toPos[1] - fromPos[1], 2)
+		);
 	}
 }
