@@ -65,14 +65,16 @@ sight.add(new Circle({
 	pos: getSimAimedPos(25),
 	diameter: 1, size: 4, move: isMoved
 }));
-sight.add(new Circle({
-	pos: getSimAimedPosWithLaser(25),
-	diameter: 0.5, size: 4, move: isMoved
-}));
-sight.add(new Line({ from: getSimAimedPos(25), to: getSimAimedPosWithLaser(25), move: isMoved }).
-	addBreakAtX(getSimAimedPos(25)[0], 1).
-	addBreakAtX(getSimAimedPosWithLaser(25)[0], 0.5)
-);
+if (isMoved) {
+	sight.add(new Circle({
+		pos: getSimAimedPosWithLaser(25),
+		diameter: 0.5, size: 4, move: isMoved
+	}));
+	sight.add(new Line({ from: getSimAimedPos(25), to: getSimAimedPosWithLaser(25), move: isMoved }).
+		addBreakAtX(getSimAimedPos(25)[0], 1).
+		addBreakAtX(getSimAimedPosWithLaser(25)[0], 0.5)
+	);
+}
 sight.add(new TextSnippet({
 	text: "25", pos: getSimAimedPos(25), size: 1.5, move: isMoved
 }).move([0, 2.0]));
@@ -84,14 +86,16 @@ sight.add(new Circle({
 	pos: getSimAimedPos(50),
 	diameter: 0.75, size: 4, move: isMoved
 }));
-sight.add(new Circle({
-	pos: getSimAimedPosWithLaser(50),
-	diameter: 0.375, size: 4, move: isMoved
-}));
-sight.add(new Line({ from: getSimAimedPos(50), to: getSimAimedPosWithLaser(50), move: isMoved }).
-	addBreakAtX(getSimAimedPos(50)[0], 0.75).
-	addBreakAtX(getSimAimedPosWithLaser(50)[0], 0.375)
-);
+if (isMoved) {
+	sight.add(new Circle({
+		pos: getSimAimedPosWithLaser(50),
+		diameter: 0.375, size: 4, move: isMoved
+	}));
+	sight.add(new Line({ from: getSimAimedPos(50), to: getSimAimedPosWithLaser(50), move: isMoved }).
+		addBreakAtX(getSimAimedPos(50)[0], 0.75).
+		addBreakAtX(getSimAimedPosWithLaser(50)[0], 0.375)
+	);
+}
 sight.add(new TextSnippet({
 	text: "50", pos: getSimAimedPos(50), size: 1.0, move: isMoved
 }).move([0, 1.5]));
@@ -103,14 +107,16 @@ sight.add(new Circle({
 	pos: getSimAimedPos(100),
 	diameter: 0.4, size: 2.5, move: isMoved
 }));
-sight.add(new Circle({
-	pos: getSimAimedPosWithLaser(100),
-	diameter: 0.25, size: 2, move: isMoved
-}));
-sight.add(new Line({ from: getSimAimedPos(100), to: getSimAimedPosWithLaser(100), move: isMoved }).
-	addBreakAtX(getSimAimedPos(100)[0], 0.4).
-	addBreakAtX(getSimAimedPosWithLaser(100)[0], 0.25)
-);
+if (isMoved) {
+	sight.add(new Circle({
+		pos: getSimAimedPosWithLaser(100),
+		diameter: 0.25, size: 2, move: isMoved
+	}));
+	sight.add(new Line({ from: getSimAimedPos(100), to: getSimAimedPosWithLaser(100), move: isMoved }).
+		addBreakAtX(getSimAimedPos(100)[0], 0.4).
+		addBreakAtX(getSimAimedPosWithLaser(100)[0], 0.25)
+	);
+}
 sight.add(new TextSnippet({
 	text: "1", pos: getSimAimedPos(100), size: 0.8, move: isMoved
 }).move([0, 1.0]));
@@ -119,13 +125,15 @@ sight.add(new Circle({
 	pos: getSimAimedPos(200),
 	diameter: 0.15, size: 2.5, move: isMoved
 }));
-sight.add(new Line({ from: getSimAimedPos(200), to: getSimAimedPosWithLaser(200), move: isMoved }).
-	addBreakAtX(getSimAimedPos(200)[0], 0.15).
-	addBreakAtX(
-		getSimAimedPosWithLaser(200)[0],
-		Toolbox.calcLineLength(getSimAimedPos(200), getSimAimedPosWithLaser(200)) * 1.5
-	)
-);
+if (isMoved) {
+	sight.add(new Line({ from: getSimAimedPos(200), to: getSimAimedPosWithLaser(200), move: isMoved }).
+		addBreakAtX(getSimAimedPos(200)[0], 0.15).
+		addBreakAtX(
+			getSimAimedPosWithLaser(200)[0],
+			Toolbox.calcLineLength(getSimAimedPos(200), getSimAimedPosWithLaser(200)) * 1.5
+		)
+	);
+}
 sight.add(new TextSnippet({
 	text: "2", pos: getSimAimedPos(200), size: 0.5, move: isMoved
 }).move([0, 0.6]));
@@ -219,7 +227,8 @@ sightReticleLines.forEach((ele) => {
 	if (!(ele instanceof Line)) {return;}
 	// if (ele.lineEnds.from[0] === ele.lineEnds.to[0]) {return;}
 	let breakRange = [
-		getSimAimedPos(25)[1] + 0.5, getSimAimedPos(25)[1] - 4.5
+		getSimAimedPos(25)[1] + 0.5,
+		getSimAimedPos(25)[1] - (isMoved ? 4.5 : 1)
 	];
 	let breakWidth = breakRange[0] - breakRange[1];
 	if (ele.lineEnds.from[0] !== ele.lineEnds.to[0]) {

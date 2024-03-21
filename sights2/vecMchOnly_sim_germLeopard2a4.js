@@ -58,14 +58,16 @@ sight.add(new Circle({
 	pos: getSimAimedPos(25),
 	diameter: 1, size: 4, move: isMoved
 }));
-sight.add(new Circle({
-	pos: getSimAimedPosWithLaser(25),
-	diameter: 0.5, size: 4, move: isMoved
-}));
-sight.add(new Line({ from: getSimAimedPos(25), to: getSimAimedPosWithLaser(25), move: isMoved }).
-	addBreakAtX(getSimAimedPos(25)[0], 1).
-	addBreakAtX(getSimAimedPosWithLaser(25)[0], 0.5)
-);
+if (isMoved) {
+	sight.add(new Circle({
+		pos: getSimAimedPosWithLaser(25),
+		diameter: 0.5, size: 4, move: isMoved
+	}));
+	sight.add(new Line({ from: getSimAimedPos(25), to: getSimAimedPosWithLaser(25), move: isMoved }).
+		addBreakAtX(getSimAimedPos(25)[0], 1).
+		addBreakAtX(getSimAimedPosWithLaser(25)[0], 0.5)
+	);
+}
 sight.add(new TextSnippet({
 	text: "25", pos: getSimAimedPos(25), size: 1.5, move: isMoved
 }).move([0, 2.0]));
@@ -77,14 +79,16 @@ sight.add(new Circle({
 	pos: getSimAimedPos(50),
 	diameter: 0.75, size: 4, move: isMoved
 }));
-sight.add(new Circle({
-	pos: getSimAimedPosWithLaser(50),
-	diameter: 0.375, size: 4, move: isMoved
-}));
-sight.add(new Line({ from: getSimAimedPos(50), to: getSimAimedPosWithLaser(50), move: isMoved }).
-	addBreakAtX(getSimAimedPos(50)[0], 0.75).
-	addBreakAtX(getSimAimedPosWithLaser(50)[0], 0.375)
-);
+if (isMoved) {
+	sight.add(new Circle({
+		pos: getSimAimedPosWithLaser(50),
+		diameter: 0.375, size: 4, move: isMoved
+	}));
+	sight.add(new Line({ from: getSimAimedPos(50), to: getSimAimedPosWithLaser(50), move: isMoved }).
+		addBreakAtX(getSimAimedPos(50)[0], 0.75).
+		addBreakAtX(getSimAimedPosWithLaser(50)[0], 0.375)
+	);
+}
 sight.add(new TextSnippet({
 	text: "50", pos: getSimAimedPos(50), size: 1.0, move: isMoved
 }).move([0, 1.5]));
@@ -96,23 +100,35 @@ sight.add(new Circle({
 	pos: getSimAimedPos(100),
 	diameter: 0.4, size: 2.5, move: isMoved
 }));
-sight.add(new Circle({
-	pos: getSimAimedPosWithLaser(100),
-	diameter: 0.25, size: 2, move: isMoved
-}));
-sight.add(new Line({ from: getSimAimedPos(100), to: getSimAimedPosWithLaser(100), move: isMoved }).
-	addBreakAtX(getSimAimedPos(100)[0], 0.4).
-	addBreakAtX(getSimAimedPosWithLaser(100)[0], 0.25).
-	addBreakAtX(
-		(getSimAimedPos(100)[0] + getSimAimedPosWithLaser(100)[0]) / 2,
-		Toolbox.calcLineLength(
-			getSimAimedPos(100), getSimAimedPosWithLaser(100)
-		) / 3
-	)
-);
+if (isMoved) {
+	sight.add(new Circle({
+		pos: getSimAimedPosWithLaser(100),
+		diameter: 0.25, size: 2, move: isMoved
+	}));
+	sight.add(new Line({ from: getSimAimedPos(100), to: getSimAimedPosWithLaser(100), move: isMoved }).
+		addBreakAtX(getSimAimedPos(100)[0], 0.4).
+		addBreakAtX(getSimAimedPosWithLaser(100)[0], 0.25).
+		addBreakAtX(
+			(getSimAimedPos(100)[0] + getSimAimedPosWithLaser(100)[0]) / 2,
+			Toolbox.calcLineLength(
+				getSimAimedPos(100), getSimAimedPosWithLaser(100)
+			) / 3
+		)
+	);
+}
 sight.add(new TextSnippet({
 	text: "1", pos: getSimAimedPos(100), size: 0.8, move: isMoved
 }).move([0, 1.0]));
+// 200m
+if (!isMoved) {
+	sight.add(new Circle({
+		pos: getSimAimedPos(200),
+		diameter: 0.15, size: 2.5, move: isMoved
+	}));
+	sight.add(new TextSnippet({
+		text: "2", pos: getSimAimedPos(200), size: 0.5, move: isMoved
+	}).move([0, 0.6]));
+}
 
 
 // Width prompts for points of fall
@@ -163,6 +179,20 @@ sight.add([
 		) * 2,
 		Toolbox.rangeIE(-0.03, 0.03, 0.03))
 ]);
+// 50m
+sight.add([
+	new TextSnippet({
+		text: "50", align: "right",
+		pos: [-getHalfMil(50) + 1, 1.5],
+		size: 1.4, move: isMoved
+	}).move(getSimAimedPos(50)),
+	...drawVertBoldLine(getSimAimedPos(50), getHalfMil(50), 3, Toolbox.rangeIE(-0.10, 0.10, 0.05)),
+	...drawHoriBoldLine(
+		getSimAimedPos(50), getHalfMil(50),
+		(getHalfMil(50) - 6) * 2,
+		Toolbox.rangeIE(-0.02, 0.02, 0.02)
+	)
+]);
 // 100m
 sight.add([
 	new TextSnippet({
@@ -181,16 +211,26 @@ sight.add([
 sight.add([
 	new TextSnippet({
 		text: "2", align: "right",
-		pos: [-getHalfMil(200) + 0.2, 0.45],
+		pos: [-getHalfMil(200) + 0.3, 0.5],
 		size: 0.5, move: isMoved
 	}).move(getSimAimedPos(200)),
-	...drawVertBoldLine(getSimAimedPos(200), getHalfMil(200), 0.5, Toolbox.rangeIE(-0.05, 0.05, 0.05)),
+	...drawVertBoldLine(getSimAimedPos(200), getHalfMil(200), 1, Toolbox.rangeIE(-0.05, 0.05, 0.05)),
 	...drawHoriBoldLine(
 		getSimAimedPos(200), getHalfMil(200),
 		getMil(200) - 0.5,
 		Toolbox.rangeIE(-0.02, 0.02, 0.02)
 	)
 ]);
+
+
+// Move detect-ally text if 100m width is shown
+let detectAllyVar = sight.components.sightSettings.settingLines.find((v) => (
+	v instanceof BlkVariable && v.getName() === "detectAllyOffset"
+));
+let detectAllyVarValue = detectAllyVar.getValue();
+detectAllyVarValue[1] += 0.055;
+detectAllyVar.setValue(detectAllyVarValue);
+
 
 
 
