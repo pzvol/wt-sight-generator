@@ -146,6 +146,19 @@ export default class Toolbox {
 	}
 
 	/**
+	 * Execute modifications on each element of an array and return it
+	 *
+	 * @param {*[]} items - an array of items to be modified
+	 * @param {Function} execFunc - callback to be run on each item
+	 *                              (as the callback of `Array.prototype.forEach`)
+	 * @returns {*[]} the input `items` array
+	 */
+	static withMod(items, execFunc) {
+		items.forEach(execFunc);
+		return items;
+	}
+
+	/**
 	 * Get the round of a value with give digit number
 	 *
 	 * @param {number} value

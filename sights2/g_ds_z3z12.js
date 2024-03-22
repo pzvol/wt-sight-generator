@@ -66,16 +66,17 @@ let getHalfWidthMil = (d) => Toolbox.calcDistanceMil(assumedTgtWidth, d) / 2;
 sight.lines.addComment("0m correction line");
 sight.add(new Line({ from: [-0.20, 0.0], to: [-0.21, 0.0], move: true, thousandth: false }));
 
-sight.texts.addComment("Line for correction value check");
-let corrValLine = [
-	new Line({ from: [0.006, 0], to: [0.016, 0], thousandth: false }),
-	new Line({ from: [-0.006, 0], to: [-0.016, 0], thousandth: false }),
-	new Line({ from: [0.006, 0.0006], to: [0.016, 0.0006], thousandth: false }).withMirrored("y"),  // mirrored for bold
-	new Line({ from: [-0.006, 0.0006], to: [-0.016, 0.0006], thousandth: false }).withMirrored("y"),  // mirrored for bold
-];
-// move arrow to apporiate place
-corrValLine.forEach((l) => { l.move([-0.205, 0]); });
-sight.add(corrValLine);
+sight.lines.addComment("Line for correction value check");
+sight.add(Toolbox.withMod(
+	[
+		new Line({ from: [0.006, 0], to: [0.016, 0], thousandth: false }),
+		new Line({ from: [-0.006, 0], to: [-0.016, 0], thousandth: false }),
+		new Line({ from: [0.006, 0.0006], to: [0.016, 0.0006], thousandth: false }).withMirrored("y"),  // mirrored for bold
+		new Line({ from: [-0.006, 0.0006], to: [-0.016, 0.0006], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	],
+	// move arrow to apporiate place
+	(l) => { l.move([-0.205, 0]); }
+));
 
 
 sight.lines.addComment("Gun center");
