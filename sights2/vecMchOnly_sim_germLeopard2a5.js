@@ -54,7 +54,8 @@ let simAimedPosWithLaser = [
 ];
 let getSimAimedPosWithLaser = (d) => simAimedPosWithLaser.find((ele) => (ele.dist === d)).pos;
 
-let isMoved = true;
+// If uses movable scheme
+let isMoved = false;
 // Shell points of fall
 // 0-25m
 sight.add(new Line({

@@ -4,12 +4,13 @@ import Sight from "../_lib2/sight_main.js";
 base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 	"germ_leopard_2a6",
 	"germ_leopard_2a7v",
-])
+]);
 
 base.init({
 	shellSpeed: 1750 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 45,    // km/h
 	drawPromptCross: false,
+	drawBinoCali: true,
 	leadingDivisionsUseArrowType: true,
 });
 

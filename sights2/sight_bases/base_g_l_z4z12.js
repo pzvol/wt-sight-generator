@@ -4,6 +4,7 @@ import Sight from "../../_lib2/sight_main.js";
 import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
+import binoCali from "../sight_components/binocular_calibration_2.js"
 
 
 let sight = new Sight();
@@ -24,6 +25,8 @@ let init = ({
 
 	// cross at display borders for quickly finding the center of sight.
 	drawPromptCross = true,
+	// binocular estimation for 3.3m target
+	drawBinoCali = false,
 	// Make gun distance and rangefinder texts placed lower, avoiding overlapping
 	// with arrow type leading elements
 	useLowerGunDistTexts = false,
@@ -145,6 +148,20 @@ let init = ({
 		diameter: getLdn(assumedMoveSpeed, 0.5) * 2,
 		size: 1.2
 	}));
+
+
+	if (drawBinoCali) {
+		sight.addComment("Binocular reference", ["lines", "texts"]);
+		let binoCaliEles = binoCali.getBinoCaliSimplified({
+			pos: [0, 14.5],
+			drawCenterCross: false,
+			// drawHoriLine: true,
+			binoMainTickHeight: 1.2,
+			binoSubTickPer: 1,
+		})
+		sight.add(binoCaliEles);
+		// sight.add(binoCaliEles.filter((ele) => (ele instanceof Line)));
+	}
 
 
 	sight.addComment(`Leading values for shooting while moving - ${assumedMoveSpeed}kph`, ["texts", "lines"]);

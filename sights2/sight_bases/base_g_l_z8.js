@@ -4,6 +4,7 @@ import Sight from "../../_lib2/sight_main.js";
 import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
+import binoCali from "../sight_components/binocular_calibration_2.js"
 
 
 let sight = new Sight();
@@ -24,6 +25,8 @@ let init = ({
 	promptCurveAA = 0.5,
 	// Cross at display borders for quickly finding the center of sight.
 	drawPromptCross = true,
+	// binocular estimation for 3.3m target
+	drawBinoCali = false,
 	// Use narrower gun center, and
 	// for arrow type leading reticles, use smaller arrows and ticks
 	useNarrowCentralElements = false,
@@ -55,7 +58,7 @@ let init = ({
 	//// SHELL DISTANCES ////
 	sight.addShellDistance([
 		{ distance: 400 },
-		{ distance: 2000 },
+		{ distance: 2000, shown: 20, shownPos: [10, 0]},
 		{ distance: 4000, shown: 40 },
 	]);
 
@@ -67,12 +70,12 @@ let init = ({
 	sight.lines.addComment("Gun center");
 	sight.add(new Line({
 		from: [
-			(useNarrowCentralElements ? 0.002 : 0.0055),
-			(useNarrowCentralElements ? 0.00025 : 0)
+			(useNarrowCentralElements ? 0.0025 : 0.0055),
+			(useNarrowCentralElements ? 0.0001 : 0)
 		],
 		to: [
 			(useNarrowCentralElements ? 0.004 : 0.0085),
-			(useNarrowCentralElements ? 0.00025 : 0)
+			(useNarrowCentralElements ? 0.0001 : 0)
 		],
 		move: true, thousandth: false
 	}).withMirrored("xy"));  // y for bold
@@ -126,6 +129,27 @@ let init = ({
 		diameter: getLdn(assumedMoveSpeed, promptCurveAA) * 2,
 		size: 1.2
 	}));
+
+
+	if (drawBinoCali) {
+		sight.addComment("Binocular reference", ["lines", "texts"]);
+		let binoCaliEles = binoCali.getBinoCaliSimplified({
+			pos: [0, 23],
+			drawCenterCross: false,
+			drawHoriLine: true,
+			binoMainTickHeight: 1.2,
+			binoSubTickPer: 1,
+			binoHalfTickLength: 0.4,
+
+			binoTextSizeMain: 0.6,
+			binoTextYMain: 0.95,
+			binoTextYSub: 0.7,
+			distTextSize: 0.5,
+			distTextY: -0.9,
+		})
+		sight.add(binoCaliEles);
+		sight.add(binoCaliEles.filter((ele) => (ele instanceof Line)));
+	}
 
 
 	sight.addComment(`Leading values for shooting while moving - ${assumedMoveSpeed}kph`, ["texts", "lines"]);

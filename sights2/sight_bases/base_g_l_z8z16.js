@@ -4,6 +4,7 @@ import Sight from "../../_lib2/sight_main.js";
 import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
+import binoCali from "../sight_components/binocular_calibration_2.js"
 
 
 let sight = new Sight();
@@ -25,6 +26,8 @@ let init = ({
 
 	// cross at display borders for quickly finding the center of sight.
 	drawPromptCross = true,
+	// binocular estimation for 3.3m target
+	drawBinoCali = false,
 	// Use arrows for leading ticks
 	leadingDivisionsUseArrowType = false,
 	// leading divisions use apporiximate speed instead of denominators;
@@ -141,6 +144,27 @@ let init = ({
 		size: 1.2
 	}));
 
+
+	if (drawBinoCali) {
+		sight.addComment("Binocular reference", ["lines", "texts"]);
+		let binoCaliEles = binoCali.getBinoCaliSimplified({
+			pos: [0, 13],
+			drawCenterCross: false,
+			// drawHoriLine: true,
+			binoMainTickHeight: 0.8,
+			binoSubTickPer: 1,
+			binoHalfTickLength: 0.3,
+
+			binoTextSizeMain: 0.6,
+			binoTextYMain: 0.55,
+			binoTextSizeSub: 0.42,
+			binoTextYSub: 0.4,
+
+			distTextY: -0.52,
+		});
+		sight.add(binoCaliEles);
+		sight.add(binoCaliEles.filter((ele) => (ele instanceof Line)));
+	}
 
 	sight.addComment(`Leading values for shooting while moving - ${assumedMoveSpeed}kph`, ["texts", "lines"]);
 	if (leadingDivisionsUseArrowType) {
