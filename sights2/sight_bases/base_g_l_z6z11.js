@@ -101,13 +101,20 @@ let init = ({
 
 
 	sight.lines.addComment("Sight center arrow and bold");
-	for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
+	for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.16, 0.04)) {
 		sight.add(new Line({
-			from: [0, CenterBoldPadY], to: [0.6, 1.5]
+			from: [0, CenterBoldPadY], to: [0.9, 2.25]
 		}).move([0, 0.02]).withMirrored("x"));
 		// ^ Moving down a little bit to let the arrow vertex stays the center
 		//   with being less effected by line widths
 	}
+	// for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
+	// 	sight.add(new Line({
+	// 		from: [0, CenterBoldPadY], to: [0.6, 1.5]
+	// 	}).move([0, 0.02]).withMirrored("x"));
+	// 	// ^ Moving down a little bit to let the arrow vertex stays the center
+	// 	//   with being less effected by line widths
+	// }
 
 
 	if (drawPromptCross) {
@@ -136,7 +143,14 @@ let init = ({
 	}
 	sight.lines.addComment("Vertical lower and bold");
 	for (let posDef of [
-		{startingY: 2, lnShifts: [0]},
+		{
+			startingY:  // old: 2
+				leadingDivisionsType === "arrow" ? 2.5 :
+				leadingDivisionsType === "line" ? 4 :
+				leadingDivisionsType === "values_only" ? 3.5 :
+				0,
+			lnShifts: [0]
+		},
 		{startingY: 23, lnShifts: [0.03]},
 		{startingY: 42, lnShifts: Toolbox.rangeIE(0.08, 0.12, 0.04)},
 	]) {
