@@ -58,7 +58,7 @@ sight.matchVehicle(Sight.commonVehicleTypes.spaas);
 //// SHELL DISTANCES ////
 let shellDists = [];
 for (let d of Toolbox.range(0, 6000, 400, {includeStart: false, includeEnd: true})) {
-	let evenMainTickTextX = 0.045;  // two-side ticks
+	let evenMainTickTextX = 0.047;  // two-side ticks
 	// let evenMainTickTextX = 0;
 	let mainTickExtension = 0.005;
 	shellDists.push({
