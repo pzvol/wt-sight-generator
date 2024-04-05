@@ -4,6 +4,7 @@ import Sight from "../_lib2/sight_main.js";
 base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 	"it_of_40_mk_1",
 	"it_of_40_mk_2a",
+	"it_of_40_mtca",
 ])
 
 base.init({

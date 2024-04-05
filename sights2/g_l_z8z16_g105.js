@@ -6,7 +6,6 @@ base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 	"germ_th_800_bismark",
 	"it_b1_centauro",
 	"it_b1_centauro_romor",
-	"it_of_40_mtca",
 ])
 
 base.init({
