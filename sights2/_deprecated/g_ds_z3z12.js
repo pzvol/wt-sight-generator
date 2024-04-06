@@ -11,7 +11,7 @@ let sight = new Sight();
 // Introduction comment
 sight.addDescription(`
 Sight for 2.7X~12X optics with simplified target distance ticks. Also can be
-usable on 2.5X~12X optics.
+used on 2.5X~12X optics.
 `.trim());
 
 
@@ -111,7 +111,7 @@ for (let l of [
 ]) {
 	sight.add(new Line({
 		from: [l.biasX, -450], to: [l.biasX, l.toY]
-	}).withMirrored(l.biasY == 0 ? null : "x"));
+	}).withMirrored(l.biasX == 0 ? null : "x"));
 }
 
 

@@ -93,11 +93,7 @@ let init = ({
 	sight.lines.addComment("Gun center");
 	sight.add(new Line({
 		from: [0.005, 0], to: [0.0075, 0], move: true, thousandth: false
-	}).withMirrored("x"));
-	sight.lines.addComment("bold");
-	sight.add(new Line({
-		from: [0.005, 0], to: [0.0075, 0], move: true, thousandth: false
-	}).withMirrored("xy"));
+	}).withMirrored("x"));  //.repeatLastAdd()
 	sight.add(new Line({
 		from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
 	}));  // center dot
@@ -155,7 +151,7 @@ let init = ({
 		let binoCaliEles = binoCali.getBinoCaliSimplified({
 			pos: [0, 14.5],
 			drawCenterCross: false,
-			// drawHoriLine: true,
+			horiLineType: "broken",
 			binoMainTickHeight: 1.2,
 			binoSubTickPer: 1,
 		})

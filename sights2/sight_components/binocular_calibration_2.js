@@ -184,7 +184,7 @@ export default {
 		drawTwoTicks = true,
 
 		drawCenterCross = true,
-		drawHoriLine = false,
+		horiLineType = "none",  // "full"|"broken"|"none"
 		centerCrossRadius = 0.5,
 
 		milWidthScale = 1,
@@ -232,17 +232,45 @@ export default {
 				to: [centerCrossRadius, 0]
 			}).move([0, binoMainTickHeight]));
 		}
-		if (drawHoriLine) {
-			elements.push(new Line({
-				from: [
-					(drawCenterCross ? centerCrossRadius : 0),
-					binoMainTickHeight
-				],
-				to: [
-					(drawTwoTicks ? 10 : 5) * MUL_U2R * milWidthScale,
-					binoMainTickHeight
-				]
-			}));
+		switch (horiLineType) {
+			case "full":
+				elements.push(new Line({
+					from: [
+						(drawCenterCross ? centerCrossRadius : 0),
+						binoMainTickHeight
+					],
+					to: [
+						(drawTwoTicks ? 10 : 5) * MUL_U2R * milWidthScale,
+						binoMainTickHeight
+					]
+				}));
+				break;
+
+			case "broken":
+				let dashHalfWidth = 0.1 * MUL_U2R;
+				for (let ussrMil of [2.5, 5, 7.5, 10]) {
+					let dash = new Line({
+						from: [
+							ussrMil * MUL_U2R - dashHalfWidth,
+							binoMainTickHeight
+						],
+						to: [
+							ussrMil * MUL_U2R + (ussrMil === 10 ? 0 : dashHalfWidth),
+							binoMainTickHeight
+						]
+					});
+					elements.push(dash);
+					// // Add additional upper dash for bino ticks
+					// if (ussrMil % 5 === 0) {
+					// 	elements.push(
+					// 		dash.copy().move([0, -binoMainTickHeight])
+					// 	);
+					// }
+				}
+				break;
+
+			default:
+				break;
 		}
 		if (drawTwoTicks) {
 			elements.push(

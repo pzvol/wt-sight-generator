@@ -87,8 +87,8 @@ let init = ({
 
 	sight.lines.addComment("Gun center");
 	sight.add(new Line({
-		from: [0.005, 0.0], to: [0.0085, 0.0], move: true, thousandth: false
-	}).withMirrored("xy"));  // y for bold
+		from: [0.005, 0.0], to: [0.008, 0.0], move: true, thousandth: false
+	}).withMirrored("x"));
 	sight.add(new Line({
 		from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
 	}));  // center dot

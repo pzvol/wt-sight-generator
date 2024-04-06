@@ -60,11 +60,7 @@ let init = ({
 	// Gun center
 	sight.add(new Line({
 		from: [0.002, 0], to: [0.004, 0], move: true, thousandth: false
-	}).withMirrored("x"));
-	// bold
-	sight.add(new Line({
-		from: [0.002, 0], to: [0.004, 0], move: true, thousandth: false
-	}).withMirrored("xy"));
+	}).withMirrored("x")).repeatLastAdd();
 	// sight.add(new Line({
 	// 	from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
 	// }));  // center dot

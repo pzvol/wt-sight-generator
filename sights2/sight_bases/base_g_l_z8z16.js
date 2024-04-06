@@ -150,7 +150,7 @@ let init = ({
 		let binoCaliEles = binoCali.getBinoCaliSimplified({
 			pos: [0, 13],
 			drawCenterCross: false,
-			// drawHoriLine: true,
+			horiLineType: "broken",
 			binoMainTickHeight: 0.8,
 			binoSubTickPer: 1,
 			binoHalfTickLength: 0.3,

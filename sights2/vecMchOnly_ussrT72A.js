@@ -5,7 +5,7 @@ base.sightObj.matchVehicle([
 	"germ_kpz_t72m1",
 	"sw_t_72m1",
 	"ussr_t_72a",
-	// As T1 ammo:
+	// With T1 ammo:
 	"ussr_t_72b",
 	"ussr_t_72b_1989",
 ]);
