@@ -77,20 +77,20 @@ let drawArrow = () => {  // CALLED AT THE END TO DRAW AFTER DEFINING
 
 
 // Center prompt crossline starting from screen sides
-// horizontal and bold
-sight.add(new Line({ from: [450, 0], to: [66, 0] }).withMirrored("x"));
-for (let posYBias of [0.1]) {
-	sight.add(new Line({
-		from: [450, posYBias], to: [66, posYBias]
-	}).withMirrored("xy"));
-}
-// vertical upper and bold
-sight.add(new Line({ from: [0, -450], to: [0, -24.75] }));
-for (let posXBias of [0.1]) {
-	sight.add(new Line({
-		from: [posXBias, -450], to: [posXBias, -40]
-	}).withMirrored("x"));
-}
+// // horizontal and bold
+// sight.add(new Line({ from: [450, 0], to: [66, 0] }).withMirrored("x"));
+// for (let posYBias of [0.1]) {
+// 	sight.add(new Line({
+// 		from: [450, posYBias], to: [66, posYBias]
+// 	}).withMirrored("xy"));
+// }
+// // vertical upper and bold
+// sight.add(new Line({ from: [0, -450], to: [0, -24.75] }));
+// for (let posXBias of [0.1]) {
+// 	sight.add(new Line({
+// 		from: [posXBias, -450], to: [posXBias, -40]
+// 	}).withMirrored("x"));
+// }
 // vertical lower and bold
 sight.add(new Line({ from: [0, 450], to: [0, getMilHalf(promptCurveDistMil)] }));
 sight.add(new Line({ from: [0.03, 450], to: [0.03, getMilHalf(promptCurveDistMil)] }).withMirrored("x"));

@@ -189,7 +189,7 @@ let init = ({
 			widthOnSight: 3.5,
 			assumedTargetLength: assumedTgtLength,
 			assumedTargetHeight: 0.8,
-			textRowInterval: 2,
+			textRowInterval: 1.5,
 			widthIndicationArrowHeight: 0.5,
 
 			textColumnWidth: 3.5,
