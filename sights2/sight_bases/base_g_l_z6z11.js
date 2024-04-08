@@ -281,11 +281,11 @@ let init = ({
 	} else {
 		sight.add(new TextSnippet({
 			text: `${assumedMoveSpeed} kph`,
-			align: "left", pos: [105.5, -1.2], size: 0.8
+			align: "left", pos: [0.9708, -0.011], size: 0.8, thousandth: false
 		}));
 		sight.add(new TextSnippet({
 			text: `${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "left", pos: [105.5, 0.8], size: 0.8
+			align: "left", pos: [0.9708, 0.0075], size: 0.8, thousandth: false
 		}));
 	}
 };

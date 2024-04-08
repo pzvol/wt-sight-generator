@@ -241,29 +241,34 @@ let init = ({
 			align: "right", pos: [67, 0.9], size: 0.5
 		}));
 	} else {
-		let space = (normalSpaceNum, enSpaceNum) => {
-			let out = "";
-			Toolbox.repeat(normalSpaceNum, () => (out += " "));
-			Toolbox.repeat(enSpaceNum, () => (out += " "));
-			return out;
-		}
-		sight.add(new TextSnippet({
-			text: `ASM MOVE${space(2, 4)}${assumedMoveSpeed.toFixed()} kph`,
-			align: "right", pos: [66, -0.9], size: 0.5
-		}));
-		sight.add(new TextSnippet({
-			text: `ASM SHELL${space(3, 1)}${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "right", pos: [66, 0.7], size: 0.5
-		}));
+		// let space = (normalSpaceNum, enSpaceNum) => {
+		// 	let out = "";
+		// 	Toolbox.repeat(normalSpaceNum, () => (out += " "));
+		// 	Toolbox.repeat(enSpaceNum, () => (out += " "));
+		// 	return out;
+		// }
+		// sight.add(new TextSnippet({
+		// 	text: `ASM MOVE${space(2, 4)}${assumedMoveSpeed.toFixed()} kph`,
+		// 	align: "right", pos: [66, -0.9], size: 0.5
+		// }));
+		// sight.add(new TextSnippet({
+		// 	text: `ASM SHELL${space(3, 1)}${(shellSpeed / 3.6).toFixed()} m/s`,
+		// 	align: "right", pos: [66, 0.7], size: 0.5
+		// }));
+		//
+		// Positions w/o thousandths (not ideal for zoomed in positions):
+		// [0.439, -0.0059]
+		// [0.439, 0.005]
+
 		// Alternatively, values only:
-		// sight.add(new TextSnippet({
-		// 	text: `${assumedMoveSpeed.toFixed()} kph`,
-		// 	align: "left", pos: [79, -0.9], size: 0.5
-		// }));
-		// sight.add(new TextSnippet({
-		// 	text: `${(shellSpeed / 3.6).toFixed()} m/s`,
-		// 	align: "left", pos: [79, 0.7], size: 0.5
-		// }));
+		sight.add(new TextSnippet({
+			text: `${assumedMoveSpeed.toFixed()} kph`,
+			align: "left", pos: [0.584, -0.0059], size: 0.5, thousandth: false
+		}));
+		sight.add(new TextSnippet({
+			text: `${(shellSpeed / 3.6).toFixed()} m/s`,
+			align: "left", pos: [0.584, 0.005], size: 0.5, thousandth: false
+		}));
 	}
 
 };

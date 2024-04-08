@@ -268,20 +268,20 @@ let init = ({
 		}
 		sight.add(new TextSnippet({
 			text: `ASM MOVE${space(2, 3)}${assumedMoveSpeed.toFixed()} kph`,
-			align: "right", pos: [135, -1.9], size: 1.6
+			align: "right", pos: [1.487, -0.021], size: 1.6, thousandth: false
 		}));
 		sight.add(new TextSnippet({
 			text: `ASM SHELL${space(1, 1)}${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "right", pos: [135, 1.5], size: 1.6
+			align: "right", pos: [1.487, 0.0165], size: 1.6, thousandth: false
 		}));
 		// Alternatively, values only:
 		// sight.add(new TextSnippet({
 		// 	text: `${assumedMoveSpeed.toFixed()} kph`,
-		// 	align: "left", pos: [159, -1.9], size: 1.6
+		// 	align: "left", pos: [1.75, -0.021], size: 1.6, thousandth: false
 		// }));
 		// sight.add(new TextSnippet({
 		// 	text: `${(shellSpeed / 3.6).toFixed()} m/s`,
-		// 	align: "left", pos: [159, 1.5], size: 1.6
+		// 	align: "left", pos: [1.75, 0.0165], size: 1.6, thousandth: false
 		// }));
 	}
 
