@@ -48,11 +48,34 @@ export default class Circle {
 		thousandth = true,
 		moveRadial, radialCenter, radialMoveSpeed, radialAngle
 	} = {}, extraDrawn = { mirrorSegmentX: false, mirrorSegmentY: false }) {
+		// Apply segment limitation
+		//   using sorted values
+		let segmentLimited = segment[0] <= segment[1] ?
+			[segment[0], segment[1]] :
+			[segment[1], segment[0]];
+		//   not exceeding 360 deg
+		if (segmentLimited[1] - segmentLimited[0] > 360) {
+			segmentLimited[0] = 0;
+			segmentLimited[1] = 360;
+		}
+		//   and within +-360
+		//     (range <= 360 guranteed by prev check)
+		if (segmentLimited[1] > 360) {
+			let reducedRound = Math.floor(segmentLimited[1] / 360);
+			segmentLimited[0] -= 360 * reducedRound;
+			segmentLimited[1] -= 360 * reducedRound;
+		} else if (segmentLimited[0] < -360) {
+			let reducedRound = Math.ceil(segmentLimited[0] / 360);  // minus val
+			segmentLimited[0] -= 360 * reducedRound;
+			segmentLimited[1] -= 360 * reducedRound;
+		}
+
 		/**
 		 * Circle specification parameters which will be output directly
 		 */
 		this.spec = DefTool.copyValue({
-			segment, pos, diameter, size, move, thousandth,
+			segment: segmentLimited,
+			pos, diameter, size, move, thousandth,
 			moveRadial, radialCenter, radialMoveSpeed, radialAngle
 		});
 
