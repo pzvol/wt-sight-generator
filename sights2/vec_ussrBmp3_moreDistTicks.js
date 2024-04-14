@@ -24,7 +24,7 @@ sight.updateOrAddSettings(
 
 // Re-define shell distances
 sight.components.shellDistances.clear();
-for (let d of Toolbox.range(0, 4000, 50, {includeStart: false, includeEnd: true})) {
+for (let d of Toolbox.range(0, 4000, 100, {includeStart: false, includeEnd: true})) {
 	// main ticks
 	if ([400, 800, 2000, 4000].find(v => v === d)) {
 		sight.addShellDistance({

@@ -5,7 +5,7 @@ import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
 import * as pd from "../_lib2/predefined.js";
 
-import base from "./g_d_z3z8.js";
+import base from "./g_d_z3z8_alt.js";
 let sight = base.sightObj;
 
 
@@ -31,7 +31,7 @@ let mgDropMils = [
 ];
 let mgDropPosX = 5.5;
 // additional small tick on 0
-sight.add(new Line({ from: [mgDropPosX, 0], to: [mgDropPosX + 0.5, 0], move: true })).repeatLastAdd();
+sight.add(new Line({ from: [mgDropPosX, 0], to: [mgDropPosX + 0.25, 0], move: true })).repeatLastAdd();
 // draw all ticks
 Toolbox.repeat(2, () => {
 	for (let t of mgDropMils) {

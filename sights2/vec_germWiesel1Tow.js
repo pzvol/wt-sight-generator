@@ -21,7 +21,9 @@ sight.updateOrAddSettings(pd.basic.colors.getLightGreenRed());
 //// ADDITIONAL ELEMENTS (IF ANY) ////
 let mslInfo = {
 	name: "TOW-2/2A",
-	spd: 329/1.4,  // m/s. division applied for recitifying since the missile won't keep the max speed all the time
+	spd: 329/1.4,  // m/s
+	// ^ division applied for recitifying since the missile won't keep
+	//   the max speed all the time. Based on test result: 1700m -> 7.2s
 	rangeMax: 3.75,  // km
 };
 let tthTable = [
@@ -44,11 +46,11 @@ let tthInfo = {
 	rowHeight: 2,
 	topLeftCellPos: [0, 0],
 	texts: [
-		["Dist", "4", "8", "12", "20"],
+		["X00m", "4", "8", "12", "20"],
 		["Sec",
 			"2",  // Tested Value
 			"3.5",  // Tested Value
-			"5",  // Tested Value, 5.1 actually
+			"5",  // Tested Value, actually around 5.1
 			(2000 / mslInfo.spd).toFixed(tthSecPrec)  // 8.5 from test
 		],
 	]
@@ -89,12 +91,8 @@ sight.add(new TextSnippet({
 
 
 // Missile drop indication
-let mslDropMil = { d10: -13, d100: 2.9, };
+let mslDropMil = { d10: -13, d50: 0.8, d100: 2.9, };
 //   10m
-// sight.add(new Line({
-// 	from: [-1, dropMil.d10], to: [1, dropMil.d10],
-// 	move: true,
-// }));
 sight.add(new Circle({
 	pos: [0, mslDropMil.d10], segment: [90-70, 90+70],
 	diameter: 2, size: 1.2, move: true
@@ -104,12 +102,21 @@ sight.add(new TextSnippet({
 	pos: [2.5, mslDropMil.d10 - 0.08],
 	size: 0.6, move: true
 }));
+// //   50m
+// sight.add(new Line({
+// 	from: [1.2, mslDropMil.d50], to: [1.7, mslDropMil.d50], move: true
+// }));
+// sight.add(new TextSnippet({
+// 	text: "50m", align: "right",
+// 	pos: [2, mslDropMil.d50 - 0.08],
+// 	size: 0.55, move: true
+// }));
 //   100m
 sight.add(new Line({
 	from: [-0.5, mslDropMil.d100], to: [0.5, mslDropMil.d100], move: true
 }));
 // sight.add(new Circle({
-// 	pos: [0, dropMil.d100], segment: [-100, 100],
+// 	pos: [0, mslDropMil.d100], segment: [-100, 100],
 // 	diameter: 1.5, size: 1.4, move: true
 // }));
 sight.add(new TextSnippet({

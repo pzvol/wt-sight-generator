@@ -35,8 +35,6 @@ sight.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 	"ussr_object_120",
 	"ussr_object_906",
 	"ussr_su_122_54",
-	"ussr_t_54_1947",
-	"ussr_t_54_1949",
 	"ussr_t_54_1951",
 	"ussr_t_55a",
 	"ussr_t_62",

@@ -8,6 +8,8 @@ import base from "./sight_bases/base_g_d_z5.js";
 
 //// VEHICLE TYPES ////
 base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
+	"ussr_t_54_1947",
+	"ussr_t_54_1949",
 ]);
 
 
