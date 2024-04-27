@@ -4,6 +4,7 @@ import Sight from "../_lib2/sight_main.js";
 import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
 import * as pd from "../_lib2/predefined.js";
+import templateComp from "./sight_bases/template_components/all.js"
 
 
 let sight = new Sight();
@@ -59,9 +60,9 @@ let assumedGndTgtSpd = 45;  // kph
 let getAirLdn = (aa) => Toolbox.calcLeadingMil(
 	airShell.spd, assumedAirTgtSpd, aa
 );
-let getGndLdn = (aa) => Toolbox.calcLeadingMil(
-	gndShell.spd, assumedGndTgtSpd, aa
-);
+// let getGndLdn = (aa) => Toolbox.calcLeadingMil(
+// 	gndShell.spd, assumedGndTgtSpd, aa
+// );
 
 
 // Gun center
@@ -185,65 +186,35 @@ sight.add(new TextSnippet({
 
 
 // Ground moving offsets
-(() => {
-	let arrowDegree = 60;
-	let getArrowElements = (xPos, yLen) => {
-		let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
-		let halfElements = [
-			new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
-			new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
-		]
-		let elements = [];
-		halfElements.forEach((ele) => {
-			elements.push(ele);
-			elements.push(ele.copy().mirrorX());
-		});
-		elements.forEach((ele) => {
-			ele.move([xPos, 0]).withMirrored("x");
-		});
-		return elements;
-	}
-	let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
-		let elements = [];
-		for (let biasX of drawnXBiases) {
-			elements.push(new Line({
-				from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
-			}).withMirrored("x"));
-		}
-		return elements;
-	}
+sight.add(templateComp.leadingReticleArrowType({
+	assumedMoveSpeed: assumedGndTgtSpd,
+	shellSpeed: gndShell.spd,
 
-	// 4/4 AA
-	sight.add(getArrowElements(getGndLdn(1), 0.4));
-	sight.add(new TextSnippet({
-		text: assumedGndTgtSpd.toFixed(),
-		pos: [getGndLdn(1), 1-0.03],
-		size: 0.55
-	}).withMirrored("x"));
-	// 3/4
-	sight.add(getTickElements(
-		getGndLdn(0.75), 0.2, [-0.02, 0.02]
-	));
-	// 2/4
-	sight.add(getArrowElements(getGndLdn(0.5), 0.4));
-	// 1/4
-	sight.add(getTickElements(
-		getGndLdn(0.25), 0.2, [-0.02, 0.02]
-	));
-	// Additional speed numbers
-	sight.add(new TextSnippet({
-		text: Toolbox.roundToHalf(0.75*assumedGndTgtSpd, -1).toString(),
-		pos: [getGndLdn(0.75), 1-0.03], size: 0.5
-	}).withMirrored("x"));
-	sight.add(new TextSnippet({
-		text: Toolbox.roundToHalf(0.5*assumedGndTgtSpd, -1).toString(),
-		pos: [getGndLdn(0.5), 1-0.03], size: 0.5
-	}).withMirrored("x"));
-	// sight.add(new TextSnippet({
-	// 	text: Toolbox.roundToHalf(0.25*assumedGndTgtSpd, -1).toString(),
-	// 	pos: [getGndLdn(0.25), 1-0.03], size: 0.5
-	// }).withMirrored("x"));
-})();
+	tickYLenDefault: 0.4,
+	textYPosDefault: 1 - 0.03,
+	textSizeDefault: 0.5,
+	lineTickXOffsetsDefault: [-0.02, 0.02],
+
+	tickParams: [
+		{
+			type: "arrow", aa: 1,
+			text: "_tick_speed_", textRepeated: false,
+			textSize: 0.55
+		},
+		{
+			type: "line", aa: 0.75, yLen: 0.2,
+			text: "_tick_speed_",
+		},
+		{
+			type: "arrow", aa: 0.5,
+			text: "_tick_speed_",
+		},
+		{
+			type: "line", aa: 0.25, yLen: 0.2,
+		},
+	],
+}));
+
 
 
 // Shell info table

@@ -2,6 +2,9 @@ import Sight from "../_lib2/sight_main.js";
 import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
 import * as pd from "../_lib2/predefined.js";
+import templateComp from "./sight_bases/template_components/all.js"
+
+import ENV_SET from "./sight_bases/_env_settings.js";
 
 
 let sight = new Sight();
@@ -145,52 +148,31 @@ sight.add(new TextSnippet({
 
 
 // Ground moving offsets
-(() => {
-	let arrowDegree = 60;
-	let getArrowElements = (xPos, yLen) => {
-		let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
-		let halfElements = [
-			new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
-			new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
-		]
-		let elements = [];
-		halfElements.forEach((ele) => {
-			elements.push(ele);
-			elements.push(ele.copy().mirrorX());
-		});
-		elements.forEach((ele) => {
-			ele.move([xPos, 0]).withMirrored("x");
-		});
-		return elements;
-	}
-	let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
-		let elements = [];
-		for (let biasX of drawnXBiases) {
-			elements.push(new Line({
-				from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
-			}).withMirrored("x"));
-		}
-		return elements;
-	}
+sight.add(templateComp.leadingReticleArrowType({
+	assumedMoveSpeed: assumedGndTgtSpd,
+	shellSpeed: gndShell.spd,
 
-	// 4/4 AA
-	sight.add(getArrowElements(getGndLdn(1), 1));
-	sight.add(new TextSnippet({
-		text: assumedGndTgtSpd.toFixed(),
-		pos: [getGndLdn(1), 2-0.03],
-		size: 0.45
-	}).withMirrored("x"));
-	// 3/4
-	sight.add(getTickElements(
-		getGndLdn(0.75), 0.4, [-0.02, 0.02]
-	));
-	// 2/4
-	sight.add(getArrowElements(getGndLdn(0.5), 0.4));
-	// 1/4
-	sight.add(getTickElements(
-		getGndLdn(0.25), 0.4, [-0.02, 0.02]
-	));
-})();
+	textYPosDefault: 2 - 0.03,
+	textSizeDefault: 0.45,
+	lineTickXOffsetsDefault: [-0.02, 0.02],
+	tickYLenDefault: 0.4,
+
+	tickParams: [
+		{
+			type: "arrow", aa: 1, yLen: 1,
+			text: "_tick_speed_", textRepeated: true
+		},
+		{
+			type: "line", aa: 0.75,
+		},
+		{
+			type: "arrow", aa: 0.5,
+		},
+		{
+			type: "line", aa: 0.25,
+		},
+	],
+}));
 
 
 // Shell info
@@ -229,7 +211,9 @@ for (let row = 0; row < shellTable.length; row++) {
 		}))
 	}
 }
-shellTableElements.forEach((ele) => {ele.move([130, 150])});
+shellTableElements.forEach((ele) => {ele.move([
+	130 * ENV_SET.DISPLAY_RATIO_MULT_HORI, 150
+])});
 sight.add(shellTableElements);
 
 

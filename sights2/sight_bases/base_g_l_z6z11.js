@@ -4,6 +4,9 @@ import Sight from "../../_lib2/sight_main.js";
 import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
+import templateComp from "./template_components/all.js"
+
+import ENV_SET from "./_env_settings.js"
 
 
 let sight = new Sight();
@@ -11,11 +14,7 @@ let sight = new Sight();
 
 // Introduction comments
 sight.addDescription(`
-Universal sight for 6X~11X ZTZ96/99 series
-with leading values for shooting APFSDS while moving
-
-Modified from "g_nrnc_hizoom_g_1AroCSmp2" but with less text information,
-making it easier to snapshoot.
+Sight for 6X~11X including leading offsets for shooting while moving.
 `.trim());
 
 
@@ -38,6 +37,11 @@ let init = ({
 	// for arrow type ticks, denominators will be hidden instead
 	leadingDivisionsDrawSpeed = false,
 
+	// Multiplier for adjusting elements for non-16:9 screen
+	// for 16:9 screen, the value should be 1;
+	// for 16:10 -> (16/10) / (16/9) = 0.9;
+	displayRatioMultHori = ENV_SET.DISPLAY_RATIO_MULT_HORI,
+
 } = {}) => {
 	let getLdn = (aa) => Toolbox.calcLeadingMil(shellSpeed, assumedMoveSpeed, aa);
 
@@ -46,14 +50,16 @@ let init = ({
 		pd.basic.scales.getHighZoom({ line: 1.6 }),
 		pd.basic.colors.getLightGreenRed(),
 		pd.basicBuild.rgfdPos([
-			110, (leadingDivisionsType === "arrow") ? -0.02225 : -0.01725
+			110 / displayRatioMultHori,
+			leadingDivisionsType === "arrow" ? -0.02225 : -0.01725
 		]),
 		pd.basicBuild.detectAllyPos([
-			110, (leadingDivisionsType === "arrow") ? -0.043 : -0.038
+			110 / displayRatioMultHori,
+			leadingDivisionsType === "arrow" ? -0.043 : -0.038
 		]),
 		pd.basicBuild.gunDistanceValuePos([
-			(leadingDivisionsType === "arrow") ? -0.168 : -0.165,
-			(leadingDivisionsType === "arrow") ? 0.037 : 0.030
+			(leadingDivisionsType === "arrow" ? -0.168 : -0.165) * displayRatioMultHori,
+			leadingDivisionsType === "arrow" ? 0.037 : 0.030
 		]),
 		pd.basicBuild.shellDistanceTickVars(
 			[-0.0100, -0.0100],
@@ -78,7 +84,7 @@ let init = ({
 
 
 	//// SIGHT DESIGNS ////
-	sight.lines.addComment("Gun center");
+	// Gun center
 	sight.add(new Line({
 		from: [0.0035, 0], to: [0.0055, 0], move: true, thousandth: false
 	}).withMirrored("x"));
@@ -86,11 +92,11 @@ let init = ({
 		from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
 	}));  // center dot
 
-	sight.lines.addComment("0m correction line");
+	// 0m correction line
 	sight.add(new Line({ from: [-0.203, 0.0], to: [-0.193, 0.0], move: true, thousandth: false }));
 
 
-	sight.lines.addComment("Gun correction value indicator");
+	// Gun correction value indicator
 	let corrValLine = [
 		new Line({ from: [0.006, 0.00045], to: [0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
 		new Line({ from: [-0.006, 0.00045], to: [-0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
@@ -100,7 +106,7 @@ let init = ({
 	sight.add(corrValLine);
 
 
-	sight.lines.addComment("Sight center arrow and bold");
+	// Sight center arrow and bold
 	for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.16, 0.04)) {
 		sight.add(new Line({
 			from: [0, CenterBoldPadY], to: [0.9, 2.25]
@@ -108,186 +114,149 @@ let init = ({
 		// ^ Moving down a little bit to let the arrow vertex stays the center
 		//   with being less effected by line widths
 	}
-	// for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.28, 0.04)) {
-	// 	sight.add(new Line({
-	// 		from: [0, CenterBoldPadY], to: [0.6, 1.5]
-	// 	}).move([0, 0.02]).withMirrored("x"));
-	// 	// ^ Moving down a little bit to let the arrow vertex stays the center
-	// 	//   with being less effected by line widths
-	// }
+
+	// Vertical lower line and bold
+	sight.add(templateComp.promptCross({
+		horiLines: [],
+		vertLines: [
+			{
+				to:
+					leadingDivisionsType === "arrow" ? 2.5 :
+					leadingDivisionsType === "line" ? 4 :
+					leadingDivisionsType === "values_only" ? 3.5 :
+					0,
+				offsets: [0] },
+			{ to: 23, offsets: [0.03] },
+			{ to: 42, offsets: Toolbox.rangeIE(0.08, 0.12, 0.04)},
+		],
+		drawLowerVert: true,
+		drawUpperVert: false,
+	}));
 
 
 	if (drawPromptCross) {
-		sight.lines.addComment("Horizontal lines near sight borders and bold");
-		for (let posDef of [
-			{startingX: 75, lnShifts: Toolbox.rangeIE(0, 0.02, 0.02)},
-			{startingX: 88, lnShifts: Toolbox.rangeIE(0.04, 0.12, 0.04)},
-		]) {
-			for (let lnShift of posDef.lnShifts) {
-				sight.add(new Line({
-					from: [posDef.startingX, lnShift], to: [450, lnShift]
-				}).withMirrored(lnShift == 0 ? "x" : "xy"));
-			}
-		}
-		sight.lines.addComment("Vertical upper and bold");
-		for (let posDef of [
-			{startingY: -40, lnShifts: Toolbox.rangeIE(0, 0.04, 0.04)},
-			{startingY: -45, lnShifts: Toolbox.rangeIE(0.08, 0.12, 0.04)},
-		]) {
-			for (let lnShift of posDef.lnShifts) {
-				sight.add(new Line({
-					from: [lnShift, posDef.startingY], to: [lnShift, -450]
-				}).withMirrored(lnShift == 0 ? null : "x"));
-			}
-		}
-	}
-	sight.lines.addComment("Vertical lower and bold");
-	for (let posDef of [
-		{
-			startingY:  // old: 2
-				leadingDivisionsType === "arrow" ? 2.5 :
-				leadingDivisionsType === "line" ? 4 :
-				leadingDivisionsType === "values_only" ? 3.5 :
-				0,
-			lnShifts: [0]
-		},
-		{startingY: 23, lnShifts: [0.03]},
-		{startingY: 42, lnShifts: Toolbox.rangeIE(0.08, 0.12, 0.04)},
-	]) {
-		for (let lnShift of posDef.lnShifts) {
-			sight.add(new Line({
-				from: [lnShift, posDef.startingY], to: [lnShift, 450]
-			}).withMirrored(lnShift == 0 ? null : "x"));
-		}
+		sight.add(templateComp.promptCross({
+			horiLines: [
+				{ to: 75 * displayRatioMultHori, offsets: Toolbox.rangeIE(0, 0.02, 0.02) },
+				{ to: 88 * displayRatioMultHori, offsets: Toolbox.rangeIE(0.04, 0.12, 0.04) },
+			],
+			vertLines: [
+				{ to: 40, offsets: Toolbox.rangeIE(0, 0.04, 0.04) },
+				{ to: 45, offsets: Toolbox.rangeIE(0.08, 0.12, 0.04) },
+			],
+		}));
 	}
 
 
-	sight.addComment("Horizontal leading for APFSDS", ["texts", "circles", "lines"]);
+	// Leading offsets
 	if (leadingDivisionsType === "arrow") {
 		// Arrow type
-		let arrowDegree = 60;
-		let getArrowElements = (xPos, yLen) => {
-			let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
-			let halfElements = [
-				new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
-				new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
-			]
-			let elements = [];
-			halfElements.forEach((ele) => {
-				elements.push(ele);
-				elements.push(ele.copy().mirrorX());
-			});
-			elements.forEach((ele) => {
-				ele.move([xPos, 0]).withMirrored("x");
-			});
-			return elements;
-		}
-		let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
-			let elements = [];
-			for (let biasX of drawnXBiases) {
-				elements.push(new Line({
-					from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
-				}).withMirrored("x"));
-			}
-			return elements;
-		}
+		let leadingParams = {
+			assumedMoveSpeed: assumedMoveSpeed,
+			shellSpeed: shellSpeed,
 
-		// 4/4 AA
-		sight.add(getArrowElements(getLdn(1), 0.5));
-		sight.add(new TextSnippet({
-			text: assumedMoveSpeed.toFixed(),
-			pos: [getLdn(1), 1.1-0.05],
-			size: 0.47
-		}).withMirrored("x")).repeatLastAdd();
-		// 3/4
-		sight.add(getTickElements(
-			getLdn(0.75), 0.15, [-0.04, 0.04]
-		));
-		// 2/4
-		sight.add(getArrowElements(getLdn(0.5), 0.45));
-		// 1/4
-		sight.add(getTickElements(
-			getLdn(0.25), 0.1, [-0.02, 0.02]
-		));
-		// Draw speed numbers if required
+			tickYLenDefault: 0.4,
+			textYPosDefault: 1.1 - 0.05,
+
+			tickParams: [
+				{
+					type: "arrow", aa: 1, yLen: 0.5,
+					text: "_tick_speed_", textSize: 0.47, textRepeated: true,
+				},
+				{
+					type: "line", aa: 0.75, yLen: 0.15,
+					lineTickXOffsets: [-0.04, 0.04],
+				},
+				{ type: "arrow", aa: 0.5, yLen: 0.45, },
+				{
+					type: "line", aa: 0.25, yLen: 0.1,
+					lineTickXOffsets: [-0.02, 0.02],
+				},
+			],
+		};
 		if (leadingDivisionsDrawSpeed) {
-			sight.texts.add(new TextSnippet({
-				text: Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString(),
-				pos: [getLdn(0.75), 1.1-0.05], size: 0.4
-			}).withMirrored("x"));
-			sight.texts.add(new TextSnippet({
-				text: Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString(),
-				pos: [getLdn(0.5), 1.1-0.05], size: 0.4
-			}).withMirrored("x"));
+			leadingParams.tickParams.forEach((t) => {
+				if (t.aa == 0.75 || t.aa == 0.5) {
+					t.text = "_tick_speed_";
+					t.textSize = 0.4
+				}
+			});
 		}
+		// draw
+		sight.add(templateComp.leadingReticleArrowType(leadingParams));
 
 	} else if (
 		leadingDivisionsType === "line" ||
 		leadingDivisionsType === "values_only"
 	) {
-		// Line type / Numbers only
+		// Line type or Numbers only
 		// Line elements
-		if (leadingDivisionsType === "line") {
-			// line between 4/4 and 3/4
-			let horiLineTickBreakMain = useWiderLeadLineBreak ? 1.4 : 1.2;
-			let horiLineTickBreakSub = useWiderLeadLineBreak ? 0.7 : 0.6;
-			if(leadingDivisionsDrawSpeed) {
-				horiLineTickBreakSub += 0.45;
-			}
-			sight.add(new Line({
-				from: [getLdn(useLongerLeadLine ? 0.5 : 0.75), 0],
-				to: [getLdn(1), 0]
-			}).withMirrored("x")
-				.addBreakAtX(getLdn(1), horiLineTickBreakMain)
-				.addBreakAtX(getLdn(0.75), horiLineTickBreakSub)
-				.addBreakAtX(getLdn(0.5), horiLineTickBreakSub));
-		}
-		// Number elements
-		// 4/4
-		sight.add(new TextSnippet({
-			text: assumedMoveSpeed.toFixed(), pos: [getLdn(1), -0.05], size: 0.5
-		}).withMirrored("x"));
-		// 3/4
-		sight.add(new TextSnippet({
-			text: leadingDivisionsDrawSpeed ?
-				Toolbox.roundToHalf(0.75*assumedMoveSpeed, -1).toString() :
-				"3",
-			pos: [getLdn(0.75), -0.05], size: 0.42
-		}).withMirrored("x"));
-		// 2/4
-		sight.add(new TextSnippet({
-			text: leadingDivisionsDrawSpeed ?
-				Toolbox.roundToHalf(0.5*assumedMoveSpeed, -1).toString() :
-				"2",
-			pos: [getLdn(0.5), -0.05], size: 0.42
-		}).withMirrored("x"));
-		// 1/4
+		sight.add(templateComp.leadingReticleLineType({
+			assumedMoveSpeed: assumedMoveSpeed,
+			shellSpeed: shellSpeed,
+
+			horiLineAARange: leadingDivisionsType === "line" ?
+				[1, (useLongerLeadLine ? 0.5 : 0.75)] :
+				null,
+			horiLineRepeated: false,
+
+			tickParams: [
+				{
+					aa: 1, type: "text", text: "_tick_speed_",
+					textSize: 0.5, textYPos: -0.05,
+					horiLineBreakWidth: useWiderLeadLineBreak ? 1.4 : 1.2
+				},
+				{
+					aa: 0.75, type: "text",
+					text: leadingDivisionsDrawSpeed ? "_tick_speed_" : "3",
+					textSize: 0.42, textYPos: -0.035,
+					horiLineBreakWidth: (useWiderLeadLineBreak ? 0.7 : 0.6) +
+						(leadingDivisionsDrawSpeed ? 0.45 : 0),
+				},
+				{
+					aa: 0.5, type: "text",
+					text: leadingDivisionsDrawSpeed ? "_tick_speed_" : "2",
+					textSize: 0.42, textYPos: -0.035,
+					horiLineBreakWidth: (useWiderLeadLineBreak ? 0.7 : 0.6) +
+						(leadingDivisionsDrawSpeed ? 0.45 : 0),
+				},
+				// {
+				// 	aa: 0.25, type: "line",
+				// 	lineTickXOffsets: [0], lineTickYLen: 0.095
+				// },
+				//
+				// 1/4 AA is drawn with circle manually to make it thinner
+			]
+		}));
+		// 1/4 AA
 		sight.add(new Circle({
 			segment: [87, 93], diameter: getLdn(0.25) * 2, size: 2
 		}).withMirroredSeg("x"));
 	}
 
 
-	// Sight tick info
+	let leadingPromptParams = {
+		assumedMoveSpeedParams: { value: assumedMoveSpeed, pos: [0, 0] },
+		shellSpeedParams: { value: shellSpeed, pos: [0, 0] },
+	};
 	if (drawPromptCross) {
-		sight.add(new TextSnippet({
-			text: `ASM MOVE - ${assumedMoveSpeed} kph`,
-			align: "right", pos: [90, -1.4], size: 0.9
-		}));
-		sight.add(new TextSnippet({
-			text: `ASM SHELL - ${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "right", pos: [90, 1], size: 0.9
-		}));
+		leadingPromptParams.formatType = "full_with_dash";
+		leadingPromptParams.assumedMoveSpeedParams.pos = [90 * displayRatioMultHori, -1.4];
+		leadingPromptParams.shellSpeedParams.pos = [90 * displayRatioMultHori, 1];
+		leadingPromptParams.textAlign = "right";
+		leadingPromptParams.useThousandth = true;
+		leadingPromptParams.textSize = 0.9;
+
 	} else {
-		sight.add(new TextSnippet({
-			text: `${assumedMoveSpeed} kph`,
-			align: "left", pos: [0.9708, -0.011], size: 0.8, thousandth: false
-		}));
-		sight.add(new TextSnippet({
-			text: `${(shellSpeed / 3.6).toFixed()} m/s`,
-			align: "left", pos: [0.9708, 0.0075], size: 0.8, thousandth: false
-		}));
+		leadingPromptParams.formatType = "values_only";
+		leadingPromptParams.assumedMoveSpeedParams.pos = [0.9708 * displayRatioMultHori, -0.011];
+		leadingPromptParams.shellSpeedParams.pos = [0.9708 * displayRatioMultHori, 0.0075];
+		leadingPromptParams.textAlign = "left";
+		leadingPromptParams.useThousandth = false;
+		leadingPromptParams.textSize = 0.8;
 	}
+	sight.add(templateComp.leadingParamText(leadingPromptParams));
+
 };
 
 

@@ -4,6 +4,9 @@ import Sight from "../_lib2/sight_main.js";
 import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
 import * as pd from "../_lib2/predefined.js";
+import templateComp from "./sight_bases/template_components/all.js"
+
+import ENV_SET from "./sight_bases/_env_settings.js";
 
 
 let sight = new Sight();
@@ -119,57 +122,32 @@ sight.add(new TextSnippet({
 
 
 // Ground moving offsets
-(() => {
-	let arrowDegree = 60;
-	let getArrowElements = (xPos, yLen) => {
-		let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
-		let halfElements = [
-			new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
-			new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
-		]
-		let elements = [];
-		halfElements.forEach((ele) => {
-			elements.push(ele);
-			elements.push(ele.copy().mirrorX());
-		});
-		elements.forEach((ele) => {
-			ele.move([xPos, 0]).withMirrored("x");
-		});
-		return elements;
-	}
-	let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
-		let elements = [];
-		for (let biasX of drawnXBiases) {
-			elements.push(new Line({
-				from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
-			}).withMirrored("x"));
-		}
-		return elements;
-	}
+sight.add(templateComp.leadingReticleArrowType({
+	assumedMoveSpeed: gndTgting.tgtSpd,
+	shellSpeed: gndTgting.shell.spd,
 
-	// 4/4 AA
-	sight.add(getArrowElements(getGndLdn(1), 0.8));
-	sight.add(new TextSnippet({
-		text: gndTgting.tgtSpd.toFixed(),
-		pos: [getGndLdn(1), 1.7-0.03],
-		size: 0.5
-	}).withMirrored("x"));
-	// 3/4
-	sight.add(getTickElements(getGndLdn(0.75), 0.4, [-0.02, 0.02]));
-	// 2/4
-	sight.add(getArrowElements(getGndLdn(0.5), 0.7));
-	// 1/4
-	sight.add(getTickElements(getGndLdn(0.25), 0.4, [-0.02, 0.02]));
-	// Additional speed numbers
-	sight.add(new TextSnippet({
-		text: Toolbox.roundToHalf(0.75*gndTgting.tgtSpd, -1).toString(),
-		pos: [getGndLdn(0.75), 1.7-0.03], size: 0.45
-	}).withMirrored("x"));
-	sight.add(new TextSnippet({
-		text: Toolbox.roundToHalf(0.5*gndTgting.tgtSpd, -1).toString(),
-		pos: [getGndLdn(0.5), 1.7-0.03], size: 0.45
-	}).withMirrored("x"));
-})();
+	textYPosDefault: 1.7 - 0.03,
+	textSizeDefault: 0.5,
+	lineTickXOffsetsDefault: [-0.02, 0.02],
+
+	tickParams: [
+		{
+			type: "arrow", aa: 1, yLen: 0.8,
+			text: "_tick_speed_", textRepeated: false
+		},
+		{
+			type: "line", aa: 0.75, yLen: 0.4,
+			text: "_tick_speed_", textSize: 0.45,
+		},
+		{
+			type: "arrow", aa: 0.5, yLen: 0.7,
+			text: "_tick_speed_", textSize: 0.45,
+		},
+		{
+			type: "line", aa: 0.25, yLen: 0.4,
+		},
+	],
+}));
 
 
 //// OUTPUT ////

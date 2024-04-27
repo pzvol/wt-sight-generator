@@ -4,6 +4,7 @@ import Sight from "../../_lib2/sight_main.js";
 import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
+import templateComp from "../sight_bases/template_components/all.js"
 
 
 let sight = new Sight();
@@ -141,33 +142,37 @@ sight.add(new Line({
 }));  // center dot
 
 
+// Sight center arrow
 let centerArrowDeg = 40;
-let centerArrowDegTan = Math.tan(Toolbox.degToRad(centerArrowDeg));
+let centerArrowYMoveDown = 0.02;
+let arrowLines = templateComp.centerArrowFullscreen({
+	lineSlopeDegree: centerArrowDeg,
+	overallYPadding: centerArrowYMoveDown,
+	boldYOffests: Toolbox.rangeIE(0, 0.08, 0.02),
+	promptCurveRadius: getGndLdn(0.5),
+	promptCurveSize: 1.2,
+});
+sight.add(arrowLines);
+// cut central part for arrow bold lines
+arrowLines.forEach((ele) => {
+	if (ele instanceof Line) {
+		let lineEnds = ele.getLineEnds();
+		if (Math.abs(lineEnds.from[0] - lineEnds.to[0]) === 0) {
+			return;  // vertical line
+		}
 
-// Center arrow
-let arrowLineBasis = new Line({
-	from: [0, 0], to: [centerArrowDegTan * 450, 450]
-}).withMirrored("x").move([0, 0.02]);
-// ^ Moving down a little bit to let the arrow vertex stays the center
-//   with being less effected by line widths
-for (let posYBias of Toolbox.rangeIE(0, 0.08, 0.02)) {
-	let addedLine = arrowLineBasis.copy().move([0, posYBias]);
-	// bold lines avoid center area for better vision of missiles
-	if (posYBias > 0) {
-		addedLine.addBreakAtX(0, 2);
+		for (let dot of [lineEnds.from, lineEnds.to]) {
+			if (dot[0] === 0 && dot[1] === centerArrowYMoveDown) {
+				// Not extra bold line
+				return;
+			}
+		}
+
+		// for bold arrow lines
+		ele.addBreakAtX(0, 2);
 	}
-	sight.add(addedLine);
-}
-
-
-// Center arrow position prompt curve
-sight.add(new Circle({
-	segment: [-centerArrowDeg, centerArrowDeg],
-	diameter: getGndLdn(0.5) * 2,
-	size: 1.2
-}));
-// Center position prompt vertical lower line
-sight.add(new Line({ from: [0, 450], to: [0, getGndLdn(0.5)] }));
+});
+// vertical lower bold
 sight.add(new Line({
 	from: [0.03, 450], to: [0.03, getGndLdn(0.75)]
 }).withMirrored("x"));
@@ -190,59 +195,32 @@ sight.add(new Circle({
 
 
 // Leading offset arrows
-let arrowDegree = 60;
-let getArrowElements = (xPos, yLen) => {
-	let xHalfWidth = Math.tan(Toolbox.degToRad(arrowDegree / 2)) * yLen;
-	let halfElements = [
-		new Line({ from: [0, 0], to: [xHalfWidth, yLen] }),
-		new Line({ from: [xHalfWidth, yLen], to: [xHalfWidth/2, yLen] }),
-	]
-	let elements = [];
-	halfElements.forEach((ele) => {
-		elements.push(ele);
-		elements.push(ele.copy().mirrorX());
-	});
-	elements.forEach((ele) => {
-		ele.move([xPos, 0]).withMirrored("x");
-	});
-	return elements;
-}
-let getTickElements = (xPos, yLen, drawnXBiases = [0]) => {
-	let elements = [];
-	for (let biasX of drawnXBiases) {
-		elements.push(new Line({
-			from: [xPos + biasX, 0], to: [xPos + biasX, yLen]
-		}).withMirrored("x"));
-	}
-	return elements;
-}
+sight.add(templateComp.leadingReticleArrowType({
+	assumedMoveSpeed: assumedGndTgtSpd,
+	shellSpeed: gndShell.spd,
 
-// 4/4 AA
-sight.add(getArrowElements(getGndLdn(1), 0.5));
-sight.add(new TextSnippet({
-	text: assumedGndTgtSpd.toFixed(),
-	pos: [getGndLdn(1), 1.1-0.05],
-	size: 0.47
-}).withMirrored("x")).repeatLastAdd();
-// 3/4
-sight.add(getTickElements(
-	getGndLdn(0.75), 0.15, [-0.04, 0.04]
-));
-// 2/4
-sight.add(getArrowElements(getGndLdn(0.5), 0.45));
-// 1/4
-sight.add(getTickElements(
-	getGndLdn(0.25), 0.2, [-0.02, 0.02]
-));
-// Draw additional speed numbers
-sight.texts.add(new TextSnippet({
-	text: Toolbox.roundToHalf(0.75*assumedGndTgtSpd, -1).toString(),
-	pos: [getGndLdn(0.75), 1.1-0.05], size: 0.45
-}).withMirrored("x"));
-sight.texts.add(new TextSnippet({
-	text: Toolbox.roundToHalf(0.5*assumedGndTgtSpd, -1).toString(),
-	pos: [getGndLdn(0.5), 1.1-0.05], size: 0.45
-}).withMirrored("x"));
+	textYPosDefault: 1.1 - 0.05,
+	textSizeDefault: 0.47,
+	lineTickXOffsetsDefault: [-0.02, 0.02],
+
+	tickParams: [
+		{
+			type: "arrow", aa: 1, yLen: 0.5,
+			text: "_tick_speed_", textRepeated: true
+		},
+		{
+			type: "line", aa: 0.75, yLen: 0.15,
+			text: "_tick_speed_", textSize: 0.45,
+		},
+		{
+			type: "arrow", aa: 0.5, yLen: 0.45,
+			text: "_tick_speed_", textSize: 0.45,
+		},
+		{
+			type: "line", aa: 0.25, yLen: 0.2,
+		},
+	],
+}));
 
 
 // Shell info table

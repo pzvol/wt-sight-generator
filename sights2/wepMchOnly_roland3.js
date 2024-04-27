@@ -5,6 +5,8 @@ import * as pd from "../_lib2/predefined.js";
 
 import * as rdr from "./sight_components/radar_prompt.js"
 
+import ENV_SET from "./sight_bases/_env_settings.js"
+
 import base from "./aa_msl_z6z12.js";
 let sight = base.sightObj;
 
@@ -31,7 +33,7 @@ let mslInfo = {
 
 // Radar prompt
 sight.add(rdr.buildRadarPrompt({
-	pos: [-76, -10],
+	pos: [-76 * ENV_SET.DISPLAY_RATIO_MULT_HORI, -10],
 	curveDegree: 30,
 	curveRadius: 17,
 	pieDivisionCurveSizeMain: 3,
@@ -104,7 +106,7 @@ for (let row = 0; row < tthInfo.texts.length; row++) {
 	}
 }
 // Move to correct pos and append elements
-tthTable.forEach((ele) => { ele.move([-76, -1]); });
+tthTable.forEach((ele) => { ele.move([-76 * ENV_SET.DISPLAY_RATIO_MULT_HORI, -1]); });
 sight.add(tthTable);
 
 
