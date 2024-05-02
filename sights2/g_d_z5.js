@@ -17,6 +17,7 @@ base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 base.init({
 	useLooseShellDistTicks: true,
 	useTwoSideShellDistTicks: false,
+	useTwoTickBinocularRef: true,
 	crossLineBold: 0.1,
 });
 

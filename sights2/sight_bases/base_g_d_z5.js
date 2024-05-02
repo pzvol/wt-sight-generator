@@ -65,31 +65,31 @@ let init = ({
 
 
 	// Dot Center
-	sight.addComment("Sight center", "circles");
-	sight.add(new Circle({ diameter: 0.4, size: 4 }));
-	sight.add(new Circle({ diameter: 0.8, size: 2 }));
-	sight.addComment("Gun center", "circles");
-	for (let padding of Toolbox.rangeIE(-0.05, 0.05, 0.05)) {
-		sight.add(new Line({ from: [-0.45, padding], to: [0.45, padding], move: true }));
-		sight.add(new Line({ from: [padding, -0.45], to: [padding, 0.45], move: true }));
-	}
+	// sight.addComment("Sight center", "circles");
+	// sight.add(new Circle({ diameter: 0.4, size: 4 }));
+	// sight.add(new Circle({ diameter: 0.8, size: 2 }));
+	// sight.addComment("Gun center", "circles");
+	// for (let padding of Toolbox.rangeIE(-0.05, 0.05, 0.05)) {
+	// 	sight.add(new Line({ from: [-0.45, padding], to: [0.45, padding], move: true }));
+	// 	sight.add(new Line({ from: [padding, -0.45], to: [padding, 0.45], move: true }));
+	// }
 
 	// OR, Arrow Center
-	// sight.addComment("Sight center arrow and bold", "lines");
-	// for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.8, 0.1)) {
-	// 	sight.add(new Line({
-	// 		from: [0, CenterBoldPadY], to: [0.6, 1.5]
-	// 	}).move([0, 0.05]).withMirrored("x"));
-	// 	// ^ Moving down a little bit to let the arrow vertex stays the center
-	// 	//   with being less effected by line widths
-	// }
-	// sight.addComment("Gun center", "lines");
-	// sight.add(new Line({
-	// 	from: [0.004, 0], to: [0.007, 0], move: true, thousandth: false
-	// }).withMirrored("xy"));  // y mirroring for bold
-	// sight.add(new Line({
-	// 	from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
-	// }));  // center dot
+	sight.addComment("Sight center arrow and bold", "lines");
+	for (let CenterBoldPadY of Toolbox.rangeIE(0, 0.8, 0.1)) {
+		sight.add(new Line({
+			from: [0, CenterBoldPadY], to: [0.6, 1.5]
+		}).move([0, 0.05]).withMirrored("x"));
+		// ^ Moving down a little bit to let the arrow vertex stays the center
+		//   with being less effected by line widths
+	}
+	sight.addComment("Gun center", "lines");
+	sight.add(new Line({
+		from: [0.004, 0], to: [0.007, 0], move: true, thousandth: false
+	}).withMirrored("xy"));  // y mirroring for bold
+	sight.add(new Line({
+		from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
+	}));  // center dot
 
 
 	sight.addComment("Sight cross", "lines");

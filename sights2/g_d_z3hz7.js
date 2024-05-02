@@ -3,6 +3,7 @@ import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
 import * as pd from "../_lib2/predefined.js";
 import rgfd from "./sight_components/rangefinder.js"
+import binoCali from "./sight_components/binocular_calibration_2.js"
 
 let sight = new Sight();
 
@@ -119,6 +120,22 @@ sight.add(new Circle({
 
 // Rangefinder
 sight.add(rgfd.getCircledMidHighZoom([4.125, -4], { mirrorY: true }));
+
+
+// Binocular reference
+let binoCaliEles = binoCali.getBinoCali({
+	pos: [getMil(800), 8],
+	drawTwoTicks: false,
+	milWidthScale: 1,
+	zeroLineExceeds: [-1.5, 0],
+	quadHeight: 1.5,
+	upperTextSize: 0.55,
+	lowerTextSize: 0.45,
+	upperTextY: -1.1,
+	lowerTextY: 0.7,
+});
+sight.add(binoCaliEles);
+// sight.add(binoCaliEles.filter((ele) => (ele instanceof Line)));
 
 
 
