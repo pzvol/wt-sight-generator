@@ -6,11 +6,14 @@
  */
 export default {
 	/**
-	 * Multiplier for horizontally adjusting some elements and keeping them
-	 * inside the screen.
-	 * - For 16:9, the value is 1;
-	 * - for 16:10, the value is considered to be 0.9, which equals to
-	 *   (16/10) / (16/9)
+	 * Ratio of display (width / height) as a number. Applied to sights with
+	 * elements requiring horizontal adjustments.
+	 *
+	 * For Development:
+	 * to have elements at the right border of a 16:9 display stay within
+	 * a 16:10 display, a multplier (16/10) / (16/9) = 0.9 should be applied.
+	 * In other words, the multplier should be
+	 * `DISPLAY_RATIO_NUM / sightOriginalRatio`
 	 */
-	DISPLAY_RATIO_MULT_HORI: 0.9
+	DISPLAY_RATIO_NUM: 16/9,
 };

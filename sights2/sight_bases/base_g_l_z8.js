@@ -35,19 +35,16 @@ let init = ({
 	// Use arrows for leading ticks
 	leadingDivisionsUseArrowType = false,
 
-	// Multiplier for adjusting elements for non-16:9 screen
-	// for 16:9 screen, the value should be 1;
-	// for 16:10 -> (16/10) / (16/9) = 0.9;
-	displayRatioMultHori = ENV_SET.DISPLAY_RATIO_MULT_HORI,
 } = {}) => {
+	let displayRatioHoriMult = ENV_SET.DISPLAY_RATIO_NUM / (16/9);
 
 	//// BASIC SETTINGS ////
 	sight.addSettings(pd.concatAllBasics(
 		pd.basic.scales.getHighZoomLargeFont(),
 		pd.basic.colors.getGreenRed(),
-		pd.basicBuild.rgfdPos([135 / displayRatioMultHori, -0.01425]),
-		pd.basicBuild.detectAllyPos([135 / displayRatioMultHori, -0.036]),
-		pd.basicBuild.gunDistanceValuePos([-0.195 * displayRatioMultHori, 0.03]),
+		pd.basicBuild.rgfdPos([135 / displayRatioHoriMult, -0.01425]),
+		pd.basicBuild.detectAllyPos([135 / displayRatioHoriMult, -0.036]),
+		pd.basicBuild.gunDistanceValuePos([-0.195 * displayRatioHoriMult, 0.03]),
 		pd.basicBuild.shellDistanceTickVars(
 			[0, 0],
 			[0.0060, 0.001],
@@ -107,7 +104,7 @@ let init = ({
 	if (drawPromptCross) {
 		sight.add(templateComp.promptCross({
 			horiLines: [
-				{ to: 66 * displayRatioMultHori, offsets: [0, 0.1] },
+				{ to: 66 * displayRatioHoriMult, offsets: [0, 0.1] },
 			],
 			vertLines: [
 				{ to: 24.75, offsets: [0] },
@@ -216,14 +213,14 @@ let init = ({
 	};
 	if (drawPromptCross) {
 		leadingPromptParams.formatType = "full_with_dash";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [67 * displayRatioMultHori, -1.1];
-		leadingPromptParams.shellSpeedParams.pos = [67 * displayRatioMultHori, 0.9];
+		leadingPromptParams.assumedMoveSpeedParams.pos = [67 * displayRatioHoriMult, -1.1];
+		leadingPromptParams.shellSpeedParams.pos = [67 * displayRatioHoriMult, 0.9];
 		leadingPromptParams.textAlign = "right";
 		leadingPromptParams.useThousandth = true;
 	} else {
 		// leadingPromptParams.formatType = "full_with_space";
-		// leadingPromptParams.assumedMoveSpeedParams.pos = [66 * displayRatioMultHori, -0.9];
-		// leadingPromptParams.shellSpeedParams.pos = [66 * displayRatioMultHori, 0.7];
+		// leadingPromptParams.assumedMoveSpeedParams.pos = [66 * displayRatioHoriMult, -0.9];
+		// leadingPromptParams.shellSpeedParams.pos = [66 * displayRatioHoriMult, 0.7];
 		// leadingPromptParams.textAlign = "right"
 		// leadingPromptParams.useThousandth = true;
 		//
@@ -232,8 +229,8 @@ let init = ({
 		// [0.439, 0.005]
 		// Alternatively, values only:
 		leadingPromptParams.formatType = "values_only";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [0.584 * displayRatioMultHori, -0.0059];
-		leadingPromptParams.shellSpeedParams.pos = [0.584 * displayRatioMultHori, 0.005];
+		leadingPromptParams.assumedMoveSpeedParams.pos = [0.584 * displayRatioHoriMult, -0.0059];
+		leadingPromptParams.shellSpeedParams.pos = [0.584 * displayRatioHoriMult, 0.005];
 		leadingPromptParams.textAlign = "left";
 		leadingPromptParams.useThousandth = false;
 	}

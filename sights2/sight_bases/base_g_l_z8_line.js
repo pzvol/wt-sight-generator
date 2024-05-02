@@ -25,19 +25,16 @@ let init = ({
 	useHollowCenterDot = false,
 	useShortHorizontalLine = false,
 
-	// Multiplier for adjusting elements for non-16:9 screen
-	// for 16:9 screen, the value should be 1;
-	// for 16:10 -> (16/10) / (16/9) = 0.9;
-	displayRatioMultHori = ENV_SET.DISPLAY_RATIO_MULT_HORI,
 } = {}) => {
+	let displayRatioHoriMult = ENV_SET.DISPLAY_RATIO_NUM / (16/9);
 
 	//// BASIC SETTINGS ////
 	sight.addSettings(pd.concatAllBasics(
 		pd.basic.scales.getHighZoomLargeFont(),
 		pd.basic.colors.getGreenRed(),
-		pd.basicBuild.rgfdPos([130 / displayRatioMultHori, -0.01425]),
-		pd.basicBuild.detectAllyPos([130 / displayRatioMultHori, -0.036]),
-		pd.basicBuild.gunDistanceValuePos([-0.165 * displayRatioMultHori, 0.0275]),
+		pd.basicBuild.rgfdPos([130 / displayRatioHoriMult, -0.01425]),
+		pd.basicBuild.detectAllyPos([130 / displayRatioHoriMult, -0.036]),
+		pd.basicBuild.gunDistanceValuePos([-0.165 * displayRatioHoriMult, 0.0275]),
 		pd.basicBuild.shellDistanceTickVars(
 			[0, 0],
 			[0.0070, 0.0025],
@@ -125,10 +122,10 @@ let init = ({
 				// will not be drawn if using short horizontal line
 			},
 			{
-				to: useShortHorizontalLine ? 50 * displayRatioMultHori : 33,
+				to: useShortHorizontalLine ? 50 * displayRatioHoriMult : 33,
 				offsets: [0, 0.05]
 			},
-			{ to: 66 * displayRatioMultHori, offsets: [0.1, 0.15] },
+			{ to: 66 * displayRatioHoriMult, offsets: [0.1, 0.15] },
 		],
 		vertLines: [
 			{ to: 6, offsets: [0] },
@@ -148,8 +145,8 @@ let init = ({
 		textSize: 0.55
 	};
 	leadingPromptParams.formatType = "full_with_dash";
-	leadingPromptParams.assumedMoveSpeedParams.pos = [67 * displayRatioMultHori, -1.2];
-	leadingPromptParams.shellSpeedParams.pos = [67 * displayRatioMultHori, 1];
+	leadingPromptParams.assumedMoveSpeedParams.pos = [67 * displayRatioHoriMult, -1.2];
+	leadingPromptParams.shellSpeedParams.pos = [67 * displayRatioHoriMult, 1];
 	leadingPromptParams.textAlign = "right";
 	leadingPromptParams.useThousandth = true;
 	sight.add(templateComp.leadingParamText(leadingPromptParams));

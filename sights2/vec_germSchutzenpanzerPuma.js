@@ -15,13 +15,13 @@ let sight = new Sight();
 //// SETTINGS ////
 let assumedMoveSpd = 50;  // kph
 let shellSpd = 1405 * 3.6;  // m/s
+// leading divisions use apporiximate speed instead of denominators
+let leadingDivisionsDrawSpeed = true;
 
 let getLeadingMil = (aa) => Toolbox.calcLeadingMil(
 	shellSpd, assumedMoveSpd, aa
 );
-
-// leading divisions use apporiximate speed instead of denominators
-let leadingDivisionsDrawSpeed = true;
+let displayRatioHoriMult = ENV_SET.DISPLAY_RATIO_NUM / (16/9);
 
 
 //// BASIC SETTINGS ////
@@ -120,11 +120,11 @@ sight.add(templateComp.leadingReticleArrowType(leadingParams));
 sight.add(templateComp.leadingParamText({
 	assumedMoveSpeedParams: {
 		value: assumedMoveSpd,
-		pos: [323 * ENV_SET.DISPLAY_RATIO_MULT_HORI, -3.0]
+		pos: [323 * displayRatioHoriMult, -3.0]
 	},
 	shellSpeedParams: {
 		value: shellSpd,
-		pos: [323 * ENV_SET.DISPLAY_RATIO_MULT_HORI, 2.2]
+		pos: [323 * displayRatioHoriMult, 2.2]
 	},
 	formatType: "values_only",
 	textSize: 2.8,

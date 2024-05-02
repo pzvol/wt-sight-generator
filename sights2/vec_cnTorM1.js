@@ -19,6 +19,8 @@ sight.components.matchVehicleClasses.clear();
 
 
 //// ADDITIONAL ELEMENTS (IF ANY) ////
+let displayRatioHoriMult = ENV_SET.DISPLAY_RATIO_NUM / (16/9);
+
 // Weapon info
 let mslInfo = {
 	name: "9M331",
@@ -31,7 +33,7 @@ let mslInfo = {
 
 // Radar prompt
 sight.add(rdr.buildRadarPrompt({
-	pos: [-56.8 * ENV_SET.DISPLAY_RATIO_MULT_HORI, -8],
+	pos: [-56.8 * displayRatioHoriMult, -8],
 	curveDegree: 30,
 	curveRadius: 12,
 	pieDivisionCurveSizeMain: 3,
@@ -104,7 +106,7 @@ for (let row = 0; row < tthInfo.texts.length; row++) {
 	}
 }
 // Move to correct pos and append elements
-tthTable.forEach((ele) => { ele.move([-56.8 * ENV_SET.DISPLAY_RATIO_MULT_HORI - 0.6, -2]); });
+tthTable.forEach((ele) => { ele.move([-56.8 * displayRatioHoriMult - 0.6, -2]); });
 sight.add(tthTable);
 
 

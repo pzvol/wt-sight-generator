@@ -36,39 +36,37 @@ let init = ({
 	// for arrow type ticks, denominators will be hidden instead
 	leadingDivisionsDrawSpeed = false,
 
-	// Multiplier for adjusting some elements horizontally for non-16:9 screen
-	// for 16:9 screen, the value should be 1;
-	// for 16:10 -> (16/10) / (16/9) = 0.9;
-	displayRatioMultHori = ENV_SET.DISPLAY_RATIO_MULT_HORI,
 } = {}) => {
+	let displayRatioHoriMult = ENV_SET.DISPLAY_RATIO_NUM / (16/9);
+
 	//// BASIC SETTINGS ////
 	sight.addSettings(pd.concatAllBasics(
 		pd.basic.scales.getHighZoomSmallFont({ line: 1.6 }),
 		pd.basic.colors.getGreenRed(),
 		pd.basicBuild.rgfdPos([
-			135 / displayRatioMultHori,
+			135 / displayRatioHoriMult,
 			useLowerGunDistTexts ? -0.03225 : -0.02225
 		]),
 		pd.basicBuild.detectAllyPos([
-			135 / displayRatioMultHori,
+			135 / displayRatioHoriMult,
 			useLowerGunDistTexts ? -0.06 : -0.05
 		]),
 		pd.basicBuild.gunDistanceValuePos([
-			(useLowerGunDistTexts ? -0.190 : -0.177) * displayRatioMultHori,
+			(useLowerGunDistTexts ? -0.190 : -0.177) * displayRatioHoriMult,
 			useLowerGunDistTexts ? 0.045 : 0.035
 		]),
 		// Backup of old setup:
 		//
 		// pd.basicBuild.rgfdPos([
-		// 	135 / displayRatioMultHori,
+		// 	135 / displayRatioHoriMult,
 		// 	useLowerGunDistTexts ? -0.03225 : -0.01725
 		// ]),
 		// pd.basicBuild.detectAllyPos([
-		// 	135 / displayRatioMultHori,
+		// 	135 / displayRatioHoriMult,
 		// 	useLowerGunDistTexts ? -0.06 : -0.045
 		// ]),
 		// pd.basicBuild.gunDistanceValuePos([
-		// 	(useLowerGunDistTexts ? -0.190 : -0.177) * displayRatioMultHori,
+		// 	(useLowerGunDistTexts ? -0.190 : -0.177) * displayRatioHoriMult,
 		// 	useLowerGunDistTexts ? 0.045 : 0.035
 		// ]),
 		pd.basicBuild.shellDistanceTickVars(
@@ -133,8 +131,8 @@ let init = ({
 	if (drawPromptCross) {
 		sight.add(templateComp.promptCross({
 			horiLines: [
-				{ to: 100 * displayRatioMultHori, offsets: [0] },
-				{ to: 132 * displayRatioMultHori, offsets: [0.1, 0.2] },
+				{ to: 100 * displayRatioHoriMult, offsets: [0] },
+				{ to: 132 * displayRatioHoriMult, offsets: [0.1, 0.2] },
 			],
 			vertLines: [
 				{ to: 45, offsets: [0] },
@@ -238,20 +236,20 @@ let init = ({
 	};
 	if (drawPromptCross) {
 		leadingPromptParams.formatType = "full_with_dash";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [134 * displayRatioMultHori, -1.9];
-		leadingPromptParams.shellSpeedParams.pos = [134 * displayRatioMultHori, 1.5];
+		leadingPromptParams.assumedMoveSpeedParams.pos = [134 * displayRatioHoriMult, -1.9];
+		leadingPromptParams.shellSpeedParams.pos = [134 * displayRatioHoriMult, 1.5];
 		leadingPromptParams.textAlign = "right";
 		leadingPromptParams.useThousandth = true;
 	} else {
 		leadingPromptParams.formatType = "full_with_space";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [1.487 * displayRatioMultHori, -0.021];
-		leadingPromptParams.shellSpeedParams.pos = [1.487 * displayRatioMultHori, 0.0165];
+		leadingPromptParams.assumedMoveSpeedParams.pos = [1.487 * displayRatioHoriMult, -0.021];
+		leadingPromptParams.shellSpeedParams.pos = [1.487 * displayRatioHoriMult, 0.0165];
 		leadingPromptParams.textAlign = "right";
 		leadingPromptParams.useThousandth = false;
 		// Alternatively, values only:
 		// leadingPromptParams.formatType = "values_only";
-		// leadingPromptParams.assumedMoveSpeedParams.pos = [1.75 * displayRatioMultHori, -0.021];
-		// leadingPromptParams.shellSpeedParams.pos = [1.75 * displayRatioMultHori, 0.0165];
+		// leadingPromptParams.assumedMoveSpeedParams.pos = [1.75 * displayRatioHoriMult, -0.021];
+		// leadingPromptParams.shellSpeedParams.pos = [1.75 * displayRatioHoriMult, 0.0165];
 		// leadingPromptParams.textAlign = "left";
 		// leadingPromptParams.useThousandth = false;
 	}

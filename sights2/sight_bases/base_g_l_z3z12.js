@@ -30,26 +30,23 @@ let init = ({
 	// for arrow type ticks, denominators will be hidden instead
 	leadingDivisionsDrawSpeed = false,
 
-	// Multiplier for adjusting elements for non-16:9 screen
-	// for 16:9 screen, the value should be 1;
-	// for 16:10 -> (16/10) / (16/9) = 0.9;
-	displayRatioMultHori = ENV_SET.DISPLAY_RATIO_MULT_HORI,
 } = {}) => {
+	let displayRatioHoriMult = ENV_SET.DISPLAY_RATIO_NUM / (16/9);
 
 	//// BASIC SETTINGS ////
 	sight.addSettings(pd.concatAllBasics(
 		pd.basic.scales.getHighZoomSmall2Font(),
 		pd.basic.colors.getGreenRed(),
 		pd.basicBuild.rgfdPos([
-			(leadingDivisionsUseArrowType ? 120 : 110) / displayRatioMultHori,
+			(leadingDivisionsUseArrowType ? 120 : 110) / displayRatioHoriMult,
 			-0.02225
 		]),
 		pd.basicBuild.detectAllyPos([
-			(leadingDivisionsUseArrowType ? 120 : 110) / displayRatioMultHori,
+			(leadingDivisionsUseArrowType ? 120 : 110) / displayRatioHoriMult,
 			-0.050
 		]),
 		pd.basicBuild.gunDistanceValuePos([
-			(leadingDivisionsUseArrowType ? -0.173 : -0.167) * displayRatioMultHori,
+			(leadingDivisionsUseArrowType ? -0.173 : -0.167) * displayRatioHoriMult,
 			leadingDivisionsUseArrowType ? 0.038 : 0.035
 		]),
 		pd.basicBuild.shellDistanceTickVars(
@@ -117,7 +114,7 @@ let init = ({
 	if (drawPromptCross) {
 		sight.add(templateComp.promptCross({
 			horiLines: [
-				{ to: 200 * displayRatioMultHori, offsets: [0, 0.2, 0.4] },
+				{ to: 200 * displayRatioHoriMult, offsets: [0, 0.2, 0.4] },
 			],
 			vertLines: [
 				{ to: 105, offsets: [0, 0.2, 0.3] },
@@ -204,21 +201,21 @@ let init = ({
 	};
 	if (drawPromptCross) {
 		leadingPromptParams.formatType = "full_with_dash";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [203 * displayRatioMultHori, -2.7];
-		leadingPromptParams.shellSpeedParams.pos = [203 * displayRatioMultHori, 2.3];
+		leadingPromptParams.assumedMoveSpeedParams.pos = [203 * displayRatioHoriMult, -2.7];
+		leadingPromptParams.shellSpeedParams.pos = [203 * displayRatioHoriMult, 2.3];
 		leadingPromptParams.textAlign = "right";
 		leadingPromptParams.useThousandth = true;
 	} else {
 		leadingPromptParams.formatType = "full_with_space";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [2.166 * displayRatioMultHori, -0.024];
-		leadingPromptParams.shellSpeedParams.pos = [2.166 * displayRatioMultHori, 0.0205];
+		leadingPromptParams.assumedMoveSpeedParams.pos = [2.166 * displayRatioHoriMult, -0.024];
+		leadingPromptParams.shellSpeedParams.pos = [2.166 * displayRatioHoriMult, 0.0205];
 		leadingPromptParams.textAlign = "right";
 		leadingPromptParams.useThousandth = false;
 		leadingPromptParams.extraNormalSpaceNum = 1;
 		// Alternatively, values only:
 		// leadingPromptParams.formatType = "values_only";
-		// leadingPromptParams.assumedMoveSpeedParams.pos = [2.505 * displayRatioMultHori, -0.024];
-		// leadingPromptParams.shellSpeedParams.pos = [2.505 * displayRatioMultHori, 0.0205];
+		// leadingPromptParams.assumedMoveSpeedParams.pos = [2.505 * displayRatioHoriMult, -0.024];
+		// leadingPromptParams.shellSpeedParams.pos = [2.505 * displayRatioHoriMult, 0.0205];
 		// leadingPromptParams.textAlign = "left";
 		// leadingPromptParams.useThousandth = false;
 	}

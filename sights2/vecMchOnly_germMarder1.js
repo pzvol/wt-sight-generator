@@ -58,6 +58,7 @@ let getAirLdn = (aa) => Toolbox.calcLeadingMil(
 let getGndLdn = (aa) => Toolbox.calcLeadingMil(
 	gndShell.spd, assumedGndTgtSpd, aa
 );
+let displayRatioHoriMult = ENV_SET.DISPLAY_RATIO_NUM / (16/9);
 
 
 // Gun center & Sight center
@@ -212,7 +213,7 @@ for (let row = 0; row < shellTable.length; row++) {
 	}
 }
 shellTableElements.forEach((ele) => {ele.move([
-	130 * ENV_SET.DISPLAY_RATIO_MULT_HORI, 150
+	130 * displayRatioHoriMult, 150
 ])});
 sight.add(shellTableElements);
 
