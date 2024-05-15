@@ -8,6 +8,8 @@ import * as pd from "../../_lib2/predefined.js";
 import rgfd from "../sight_components/rangefinder.js";
 import binoCali from "../sight_components/binocular_calibration_2.js";
 
+import ENV_SET from "./_env_settings.js"
+
 
 let sight = new Sight();
 

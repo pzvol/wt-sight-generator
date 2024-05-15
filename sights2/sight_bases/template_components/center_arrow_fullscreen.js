@@ -19,7 +19,7 @@ import Toolbox from "../../../_lib2/sight_toolbox.js";
  * @param {number=} params.lowerVertLineEndY - The Y of the position of
  *                 the lower vertical line end
  */
-export default ({
+const drawArrow = ({
 	lineSlopeDegree = 40,
 	overallYPadding = 0.02,
 
@@ -61,3 +61,38 @@ export default ({
 
 	return elements;
 }
+
+
+/** Presets with potentially some field(s) undefined */
+drawArrow.presetPartial = {};
+
+drawArrow.presetPartial["z2z15"] = {
+	overallYPadding: 0.02,
+	boldYOffests: Toolbox.rangeIE(0, 0.10, 0.02),
+	promptCurveRadius: undefined,
+	promptCurveSize: 1.2,
+};
+drawArrow.presetPartial["z4z9"] =
+drawArrow.presetPartial["z3z12"] =
+drawArrow.presetPartial["z4z12"] =
+drawArrow.presetPartial["z6z11"] = {
+	overallYPadding: 0.02,
+	boldYOffests: Toolbox.rangeIE(0, 0.08, 0.02),
+	promptCurveRadius: undefined,
+	promptCurveSize: 1.2,
+};
+drawArrow.presetPartial["z8"] = {
+	overallYPadding: 0.02,
+	boldYOffests: Toolbox.rangeIE(0, 0.12, 0.03),
+	promptCurveRadius: undefined,
+	promptCurveSize: 1.2,
+};
+drawArrow.presetPartial["z8z16"] = {
+	overallYPadding: 0.02,
+	boldYOffests: Toolbox.rangeIE(0, 0.06, 0.03),
+	promptCurveRadius: undefined,
+	promptCurveSize: 1.2,
+};
+
+
+export default drawArrow;

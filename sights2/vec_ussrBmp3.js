@@ -155,11 +155,10 @@ sight.add(new Line({
 let centerArrowDeg = 40;
 let centerArrowYMoveDown = 0.02;
 let arrowLines = templateComp.centerArrowFullscreen({
+	...templateComp.centerArrowFullscreen.presetPartial["z3z12"],
 	lineSlopeDegree: centerArrowDeg,
 	overallYPadding: centerArrowYMoveDown,
-	boldYOffests: Toolbox.rangeIE(0, 0.08, 0.02),
 	promptCurveRadius: getGndLdn(0.5),
-	promptCurveSize: 1.2,
 });
 sight.add(arrowLines);
 // cut central part for arrow bold lines

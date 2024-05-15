@@ -74,8 +74,12 @@ let init = ({
 	sight.addShellDistance([
 		{ distance: 400 },
 		{ distance: 800 },
-		{ distance: 2000, shown: 20, shownPos: [0.0035, 0.007] },
-		{ distance: 4000, shown: 40, shownPos: [0.0035, 0.007] },
+		{ distance: 2000, shown: 20, shownPos: [
+			0.0035 - (1-displayRatioHoriMult) * 0.012, 0.007
+		] },
+		{ distance: 4000, shown: 40, shownPos: [
+			0.0035 - (1-displayRatioHoriMult) * 0.012, 0.007
+		] },
 	]);
 
 

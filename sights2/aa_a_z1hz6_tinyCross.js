@@ -49,8 +49,10 @@ sight.addShellDistance([
 //// SIGHT DESIGNS ////
 
 // Gun center
-sight.add(new Line({ from: [-0.00125, 0], to: [0.00125, 0], move: true, thousandth: false }))
-sight.add(new Line({ from: [0, -0.00125], to: [0, 0.00125], move: true, thousandth: false }))
+// sight.add(new Line({ from: [-0.00125, 0], to: [0.00125, 0], move: true, thousandth: false }));
+// sight.add(new Line({ from: [0, -0.00125], to: [0, 0.00125], move: true, thousandth: false }));
+sight.add(new Line({ from: [-0.25, 0], to: [0.25, 0], move: true }));
+sight.add(new Line({ from: [0, -0.25], to: [0, 0.25], move: true }));
 
 // Center dot
 sight.add(new Circle({ diameter: 0.1, size: 4 }));

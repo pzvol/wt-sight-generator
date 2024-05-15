@@ -6,6 +6,8 @@ import * as pd from "../_lib2/predefined.js";
 import rgfd from "./sight_components/rangefinder.js"
 import binoCali from "./sight_components/binocular_calibration_2.js"
 
+import ENV_SET from "./sight_bases/_env_settings.js";
+
 
 let sight = new Sight();
 
@@ -47,7 +49,9 @@ sight.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 
 //// SHELL DISTANCES ////
 sight.addShellDistance(pd.shellDists.getFullLoose());
-
+sight.components.shellDistances.distLines.forEach((el) => {
+	el.shownPos[0] -= (1 - (ENV_SET.DISPLAY_RATIO_NUM / (16/9))) * 0.015
+});
 
 //// SIGHT DESIGNS ////
 let assumedTgtWidth = 3.3;

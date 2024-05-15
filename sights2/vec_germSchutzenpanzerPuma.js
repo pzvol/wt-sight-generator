@@ -71,10 +71,8 @@ sight.add(new Line({
 
 // Center arrow
 sight.add(templateComp.centerArrowFullscreen({
-	overallYPadding: 0.02,
-	boldYOffests: Toolbox.rangeIE(0, 0.10, 0.02),
+	...templateComp.centerArrowFullscreen.presetPartial["z2z15"],
 	promptCurveRadius: getLeadingMil(0.25),
-	promptCurveSize: 1.2,
 }))
 // vertical lower bold
 for (let bias of Toolbox.range(0, 0.06, 0.03, {includeStart: false, includeEnd: true})) {

@@ -89,11 +89,9 @@ let init = ({
 
 	// Sight center arrow
 	sight.add(templateComp.centerArrowFullscreen({
-		overallYPadding: 0.02,
-		boldYOffests: Toolbox.rangeIE(0, 0.12, 0.03),
+		...templateComp.centerArrowFullscreen.presetPartial["z8"],
 		promptCurveRadius: getLdn(assumedMoveSpeed, promptCurveAA),
-		promptCurveSize: 1.2,
-	}))
+	}));
 	// vertical lower bold
 	sight.add(new Line({
 		from: [0.03, 450], to: [0.03, getLdn(assumedMoveSpeed, promptCurveAA)]

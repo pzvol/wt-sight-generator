@@ -69,8 +69,12 @@ let init = ({
 	sight.addShellDistance([
 		{ distance: 400 },
 		{ distance: 800 },
-		{ distance: 2000, shown: 20, shownPos: [0.01, 0.0065] },
-		{ distance: 4000, shown: 40, shownPos: [0.01, 0.0065] },
+		{ distance: 2000, shown: 20, shownPos: [
+			0.01 - (1-displayRatioHoriMult) * 0.02, 0.0065
+		] },
+		{ distance: 4000, shown: 40, shownPos: [
+			0.01 - (1-displayRatioHoriMult) * 0.02, 0.0065
+		] },
 	]);
 
 
@@ -102,11 +106,9 @@ let init = ({
 
 	// Sight center arrow
 	sight.add(templateComp.centerArrowFullscreen({
-		overallYPadding: 0.02,
-		boldYOffests: Toolbox.rangeIE(0, 0.06, 0.03),
+		...templateComp.centerArrowFullscreen.presetPartial["z8z16"],
 		promptCurveRadius: getLdn(assumedMoveSpeed, 0.4),
-		promptCurveSize: 1.2,
-	}))
+	}));
 	// vertical lower bold
 	sight.add(new Line({
 		from: [0.03, 450],

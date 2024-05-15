@@ -52,8 +52,10 @@ let drawX = (fromRadius, toRadius) => (new Line({ from: [fromRadius * sin45, fro
 
 
 // Gun center
-sight.add(new Line({ from: [-0.0012, 0], to: [0.0012, 0], move: true, thousandth: false }))
-sight.add(new Line({ from: [0, -0.0012], to: [0, 0.0012], move: true, thousandth: false }))
+// sight.add(new Line({ from: [-0.0012, 0], to: [0.0012, 0], move: true, thousandth: false }));
+// sight.add(new Line({ from: [0, -0.0012], to: [0, 0.0012], move: true, thousandth: false }));
+sight.add(new Line({ from: [-0.2, 0], to: [0.2, 0], move: true }));
+sight.add(new Line({ from: [0, -0.2], to: [0, 0.2], move: true }));
 
 // Center dot
 sight.add(new Circle({ diameter: 0.1, size: 4 }));
