@@ -31,11 +31,12 @@ import { Quad, Circle, Line, TextSnippet } from "./sight_elements.js";
 
 /** An all-in-one entrance for creating a user sight */
 export default class Sight {
-	static libVersion = "20240414";
+	static libVersion = "20240602";
 
 	static commonVehicleTypes = block.MatchVehicleClassBlock.commonTypes;
 
 	constructor() {
+		/** All blocks inside a sight */
 		this.components = {
 			/** @type {string[]} */
 			description: [],
@@ -57,11 +58,33 @@ export default class Sight {
 			extra: [],
 		};
 
-		// Shorthands
+		/** Shorthand for accessing the quad component block */
 		this.quads = this.components.quads;
+		/** Shorthand for accessing the circle component block */
 		this.circles = this.components.circles;
+		/** Shorthand for accessing the line component block */
 		this.lines = this.components.lines;
+		/** Shorthand for accessing the text component block */
 		this.texts = this.components.texts;
+
+		/**
+		 * A set of collection of sight-designer-defined element collections
+		 * to enable further-modifications after creating a sight.
+		 *
+		 * This object of collections should be organized like:
+		 * ```
+		 * {
+		 *   "userDefinedCollectionName": [
+		 *     myQuad, myCircle, myLine, myTextSnippet,
+		 *     ...
+		 *   ]
+		 * }
+		 *
+		 * It is recommended to create/manage them with `add` method's parameters
+		 * ```
+		 * @type {object.<string, (Quad|Circle|Line|TextSnippet)[]>}
+		 */
+		this.collections = {};
 
 		/**
 		 * The very recently added elements by calling `add` method. Be noted
@@ -71,6 +94,8 @@ export default class Sight {
 	}
 
 	getComponents() { return this.components; }
+
+	getCollections() { return this.collections; }
 
 	/**
 	 * Add text(s) into description
@@ -169,10 +194,13 @@ export default class Sight {
 	/**
 	 * Draw one/multiple circles/lines/texts
 	 * @param {Quad|Circle|Line|TextSnippet|(Quad|Circle|Line|TextSnippet)[]} input
+	 * @param {string|null} customCollectionName - the name of user-defined
+	 *                                             collection elements will be
+	 *                                             added to
 	 * @param {boolean} updateLastAddedElements - if update recorded recently
 	 *                                            added elements
 	 */
-	add(input, updateLastAddedElements = true) {
+	add(input, customCollectionName = null, updateLastAddedElements = true) {
 		let arr;
 		if (Array.isArray(input)) { arr = input; }
 		else { arr = [input]; }
@@ -186,6 +214,20 @@ export default class Sight {
 				this.components.lines.add(element);
 			} else if (element instanceof TextSnippet) {
 				this.components.texts.add(element);
+			} else {
+				continue;
+			}
+
+			// Add to indicated custom collection if required to do so
+			if (customCollectionName !== null && customCollectionName !== "") {
+				// Collection does not exist - create it first
+				if (!this.collections.hasOwnProperty(customCollectionName)) {
+					this.collections[customCollectionName] = [];
+				}
+				// Append the element if yet to be there
+				if (!this.collections[customCollectionName].includes(element)) {
+					this.collections[customCollectionName].push(element);
+				}
 			}
 		}
 
