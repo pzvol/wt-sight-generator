@@ -145,7 +145,7 @@
 			"import * as calc from \"${2:.}/helper/calculators.js\";",
 			"import comp from \"${2:.}/components/all.js\";",
 			"",
-			"import base from \"./sight_bases/${0:SIGHT_BASE}.js\";",
+			"import base from \"./${0:SIGHT_BASE}.js\";",
 			"let sight = base.sightObj;",
 			"// let horiRatioMult = new calc.HoriRatioMultCalculator(",
 			"// \t16 / 9, ENV_SET.DISPLAY_RATIO_NUM",

@@ -31,7 +31,7 @@ import { Quad, Circle, Line, TextSnippet } from "./sight_elements.js";
 
 /** An all-in-one entrance for creating a user sight */
 export default class Sight {
-	static libVersion = "20240602";
+	static libVersion = "20240603";
 
 	static commonVehicleTypes = block.MatchVehicleClassBlock.commonTypes;
 
@@ -309,6 +309,44 @@ export default class Sight {
 			this.add(this.lastAddedElements, false);
 		}
 		return this;
+	}
+
+	/**
+	 * Remove all occurences of one/multiple circles/lines/texts
+	 * @param {Quad|Circle|Line|TextSnippet|(Quad|Circle|Line|TextSnippet)[]} input
+	 * @param {boolean} tryRemoveFromCollections
+	 */
+	remove(input, tryRemoveFromCollections = true) {
+		let arr;
+		// Do a shallow copy for array input to avoid the situation when
+		// this.collections["someColl"] is used as input
+		if (Array.isArray(input)) { arr = [...input]; }
+		else { arr = [input]; }
+
+		for (let element of arr) {
+			if (element instanceof Quad) {
+				this.components.quads.remove(element);
+			} else if (element instanceof Circle) {
+				this.components.circles.remove(element);
+			} else if (element instanceof Line) {
+				this.components.lines.remove(element);
+			} else if (element instanceof TextSnippet) {
+				this.components.texts.remove(element);
+			} else {
+				continue;
+			}
+
+			if (tryRemoveFromCollections) {
+				for (let collName in this.collections) {
+					while(true) {
+						let eIndex = this.collections[collName].
+							findIndex((ele) => (ele === element));
+						if (eIndex < 0) { break; }
+						this.collections[collName].splice(eIndex, 1);
+					}
+				}
+			}
+		}
 	}
 
 

@@ -72,6 +72,24 @@ export default class ElementsBlock extends SightBlock {
 		return this;
 	}
 
+	/**
+	 * Remove one or multiple elements/strings. All occurences
+	 * of elements/strings will be removed. Be noted element instances with
+	 * same setup will not be removed
+	 */
+	remove(removed) {
+		// Do a shallow copy for array input to avoid the situation when
+		// this.blockLines is used as input, which is not recommended ofc
+		let arr = Array.isArray(removed) ? [...removed] : [removed];
+		for (let element of arr) {
+			while(true) {
+				let eIndex = this.blockLines.findIndex((ele) => (ele === element));
+				if (eIndex < 0) { break; }
+				this.blockLines.splice(eIndex, 1);
+			}
+		}
+	}
+
 
 	//// OUTPUT METHOD ////
 	getCode() {
