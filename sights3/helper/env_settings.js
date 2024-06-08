@@ -1,5 +1,8 @@
 // SCRIPT_DO_NOT_DIRECTLY_COMPILE
 
+'use strict';
+
+
 /**
  * Values for controlling some behaviors with environment (e.g., the ratio
  * of display) invloved
@@ -16,4 +19,9 @@ export default {
 	 * `DISPLAY_RATIO_NUM / sightOriginalRatio`
 	 */
 	DISPLAY_RATIO_NUM: 16/9,
+
+	/**
+	 * Default value of assumed target width
+	 */
+	DEFAULT_ASSUMED_TARGET_WIDTH: 3.3,
 };
