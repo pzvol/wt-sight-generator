@@ -15,5 +15,5 @@ export default {
 	 * In other words, the multplier should be
 	 * `DISPLAY_RATIO_NUM / sightOriginalRatio`
 	 */
-	DISPLAY_RATIO_NUM: 16/9,
+	DISPLAY_RATIO_NUM: 16/10,
 };
