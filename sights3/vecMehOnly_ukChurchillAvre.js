@@ -9,6 +9,7 @@ import comp from "./components/all.js";
 
 import rgfd from "./extra_modules/rangefinder.js"
 import binoCali from "./extra_modules/binocular_calibration_2.js"
+import tgtLegend from "./extra_modules/target_legend.js"
 
 
 let sight = new Sight();
@@ -16,12 +17,15 @@ let sight = new Sight();
 // 	16 / 9, ENV_SET.DISPLAY_RATIO_NUM
 // ).getMult();
 let assumedTargetWidth = ENV_SET.DEFAULT_ASSUMED_TARGET_WIDTH;
-// let assumedTargetLength = assumedTargetWidth * 2;
+let assumedTargetLength = assumedTargetWidth * 2;
 let distMil = new calc.DistMilCalculator(assumedTargetWidth);
 
 
 // Introduction comment
-sight.addDescription(`Sight for Churchill AVRE`.trim());
+sight.addDescription(`
+Sight for Churchill AVRE. Assumes enemies to be ${assumedTargetWidth} wide and
+${assumedTargetLength} long.
+`.trim());
 
 
 //// BASIC SETTINGS ////
@@ -114,16 +118,16 @@ sight.add(new Line({
 
 
 // Vertical line for 0-10m
-sight.add(new Line({
-	from: [distMil.halfFor(10) + lWCorr, 0],
-	to: [distMil.halfFor(10) + lWCorr, getDropMil(10)],
-	move: true
-}).withMirrored("x").addBreakAtY(getDropMil(10), 5));
-sight.add(new Line({
-	from: [distMil.halfFor(10) - 1 + lWCorr, 0],
-	to: [distMil.halfFor(10) + 1 + lWCorr, 0],
-	move: true,
-}).withMirrored("x"));
+// sight.add(new Line({
+// 	from: [distMil.halfFor(10) + lWCorr, 0],
+// 	to: [distMil.halfFor(10) + lWCorr, getDropMil(10)],
+// 	move: true
+// }).withMirrored("x").addBreakAtY(getDropMil(10), 5));
+// sight.add(new Line({
+// 	from: [distMil.halfFor(10) - 1 + lWCorr, 0],
+// 	to: [distMil.halfFor(10) + 1 + lWCorr, 0],
+// 	move: true,
+// }).withMirrored("x"));
 
 
 // Funnel line
@@ -190,12 +194,62 @@ for (let tick of shellParams.dropMils) {
 	}
 }
 
+(() => {
+	let anchorAngles = [];
+	// OR, Use average of prev and next
+	for (let i = 1; i < (shellParams.dropMils.length - 1); i++) {
+		let prevAnchor = shellParams.dropMils[i - 1];
+		let currAnchor = shellParams.dropMils[i];
+		let nextAnchor = shellParams.dropMils[i + 1];
+		let distDiff = nextAnchor.d - prevAnchor.d;
+		let heightDiff = Toolbox.calcSizeFromMil(nextAnchor.mil, nextAnchor.d) - Toolbox.calcSizeFromMil(prevAnchor.mil, prevAnchor.d);
+		let angleTan = heightDiff / distDiff;
+		let angle = Toolbox.radToDeg(Math.atan(angleTan));
+		anchorAngles.push({
+			d: currAnchor.d, mil: currAnchor.mil,
+			angle: angle, tan: angleTan
+		});
+	}
+	// Draw wanted ticks
+	let drawn = anchorAngles
+	for (let a of drawn) {
+		sight.add(new TextSnippet({
+			text: `${a.angle.toFixed()}°`, align: "center",
+			pos:
+				a.d <= 90 ? [-distMil.halfFor(a.d) - 3, a.mil + 4] :
+				[-distMil.halfFor(a.d) - 10 - 3, a.mil + 4],
+			size: 0.5, move: true
+		}));
+	}
+})();
+
 // Assumed width prompt
-sight.add(new TextSnippet({
-	text: `Width  ${assumedTargetWidth}m`, align: "right",
-	pos: [distMil.halfFor(10) + 15, 4], thousandth: true,
-	size: 1.2
-}));
+// sight.add(new TextSnippet({
+// 	text: `Width  ${assumedTargetWidth}m`, align: "right",
+// 	pos: [distMil.halfFor(10) + 15, 4], thousandth: true,
+// 	size: 1.2
+// }));
+
+// Target angle estimation
+let tgtAngleLegend = tgtLegend.getAngleLegendGround({
+	pos: [distMil.halfFor(20), 80],
+	assumedTargetWidth: assumedTargetWidth,
+	widthOnSight: assumedTargetWidth * 4,
+	assumedTargetLength: assumedTargetLength,
+	assumedTargetHeight: 0.6,
+	textRowInterval: 5,
+	widthIndicationArrowHeight: 0.5,
+
+	textColumnWidth: 10,
+	textSize: 0.9,
+	textPaddingY: -0.6,
+
+	widthIndicationArrowHeight: 1.5
+});
+sight.add([
+	...tgtAngleLegend,
+	...tgtAngleLegend.filter((ele) => (ele instanceof Line)),
+]);
 
 
 
