@@ -23,8 +23,8 @@ let distMil = new calc.DistMilCalculator(assumedTargetWidth);
 
 // Introduction comment
 sight.addDescription(`
-Sight for Churchill AVRE. Assumes enemies to be ${assumedTargetWidth} wide and
-${assumedTargetLength} long.
+Sight for Churchill AVRE. Assumes enemies to be ${assumedTargetWidth}m wide and
+${assumedTargetLength}m long.
 `.trim());
 
 
@@ -32,10 +32,10 @@ ${assumedTargetLength} long.
 sight.addSettings(pd.concatSettings(
 	pd.sScale.build({ font: 0.9, line: 1.2 }),
 	pd.sColor.getLightGreenRed(),
-	pd.sRgfd.build([450, -1], {
+	pd.sRgfd.build([300, -5], {
 		useThousandthPos: true,
 	}),
-	pd.sDetectAlly.build([450, 0.015]),
+	pd.sDetectAlly.build([300, 0.015]),
 	pd.sGunDistValue.build([-0.22, 0.02]),
 	pd.sShellDistTick.build(
 		[0, 0],
