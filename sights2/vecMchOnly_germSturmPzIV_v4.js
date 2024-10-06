@@ -7,10 +7,11 @@ import * as pd from "../_lib2/predefined.js";
 
 import bino from "./sight_components/binocular_calibration_2.js"
 import tgtLgd from "./sight_components/target_legend.js"
+import ENV_SET from "./sight_bases/_env_settings.js"
 
 
 let sight = new Sight();
-
+let displayRatioHoriMult = ENV_SET.DISPLAY_RATIO_NUM / (16/9);
 
 // Introduction comment
 sight.addDescription(`
@@ -22,8 +23,8 @@ Sight for SturmPz.IV and other 150mm-gun-armed tanks
 sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.scale({ font: 0.9, line: 1.2 }),
 	pd.basic.colors.getLightGreenRed(),
-	pd.basicBuild.rgfdPos([160, -5]),  // [170, -10]
-	pd.basicBuild.detectAllyPos([160, 0.015]),  // [170, -0.055]
+	pd.basicBuild.rgfdPos([160 / displayRatioHoriMult + (1-displayRatioHoriMult) * 600, -5]),  // [170, -10]
+	pd.basicBuild.detectAllyPos([160 / displayRatioHoriMult + (1-displayRatioHoriMult) * 600, 0.015]),  // [170, -0.055]
 	pd.basicBuild.gunDistanceValuePos([-0.22, 0.02]),
 	pd.basicBuild.shellDistanceTickVars(
 		[0, 0],

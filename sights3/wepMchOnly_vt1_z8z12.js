@@ -1,22 +1,27 @@
 import Sight from "../_lib2/sight_main.js";
 import Toolbox from "../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
-import * as pd from "../_lib2/predefined.js";
 
-import * as rdr from "./sight_components/radar_prompt.js"
+import ENV_SET from "./helper/env_settings.js";
+import * as pd from "./helper/predefined.js";
+import * as calc from "./helper/calculators.js";
+import comp from "./components/all.js";
 
-import ENV_SET from "./sight_bases/_env_settings.js"
+import rgfd from "./extra_modules/rangefinder.js"
+import binoCali from "./extra_modules/binocular_calibration_2.js"
+import * as rdr from "./extra_modules/radar_prompt.js"
 
-
-import base from "./aa_msl_z6z12.js";
+import base from "./aa_msl_z8z12.js";
 let sight = base.sightObj;
+let horiRatioMult = new calc.HoriRatioMultCalculator(
+	16 / 9, ENV_SET.DISPLAY_RATIO_NUM
+).getMult();
 
 
 //// VEHICLE TYPES ////
 sight.components.matchVehicleClasses.clear();
 sight.matchVehicle([
-	"fr_crotale_ng",  // France ItO 90M
-	"sw_crotale_ng",  // Sweden ItO 90M
+	"germ_flarakrad",
 ]);
 
 
@@ -34,33 +39,33 @@ let mslInfo = {
 
 // Radar prompt
 sight.add(rdr.buildRadarPrompt({
-	pos: [-76 * displayRatioHoriMult, -10],
+	pos: [-58 * horiRatioMult, -5],
 	curveDegree: 30,
-	curveRadius: 17,
-	pieDivisionCurveSizeMain: 3,
-	pieDivisionCurveSizeSub: 2,
+	curveRadius: 14,
+	pieDivisionCurveSizeMain: 8,
+	pieDivisionCurveSizeSub: 6,
 
 	radarLongRange: 20,
 	radarShortRange: 10,
-	textSizeLongRange: 0.85,
-	textSizeShortRange: 0.65,
-	textSizeLegend: 0.5,
-	textPosPaddingLongRange: [0, 1.8],
-	textPosPaddingShortRange: [-0.5, -1.75],
-	textPosPaddingLegendLong: [0.5, -1],
-	textPosPaddingLegendShort: [1.25, 0.5],
+	textSizeLongRange: 1.3,
+	textSizeShortRange: 1.0,
+	textSizeLegend: 0.65,
+	textPosPaddingLongRange: [0, 1.1],
+	textPosPaddingShortRange: [-0.6, -1],
+	textPosPaddingLegendLong: [0.4, -0.6],
+	textPosPaddingLegendShort: [0.7, 0.3],
 	weaponRanges: [
 		{
 			range: mslInfo.rangeMax,
 			curveDegreeOnLong: 13,
 			curveDegreeOnShort: 10,
-			curveSize: 1.5
+			curveSize: 4
 		},
 		{
 			range: mslInfo.rangeRecom,
 			curveDegreeOnLong: 7,
 			curveDegreeOnShort: 5,
-			curveSize: 1.5
+			curveSize: 3.5
 		},
 	],
 }));
@@ -71,20 +76,20 @@ let tthTable = [
 	// Title line
 	new TextSnippet({
 		text: mslInfo.name, align: "right",
-		pos: [-1.5, 0], size: 0.65
+		pos: [-1.5, 0], size: 1.2
 	}),
 	new TextSnippet({
 		text: `Avg ${(mslInfo.spd).toFixed()} m/s`, align: "left",
-		pos: [19, 0], size: 0.65
+		pos: [15.5, 0], size: 1.2
 	}),
 	// Table row separation
-	new Line({from: [-2, 4.125], to: [19, 4.125]})
+	new Line({from: [-1.5, 3.5], to: [15.5, 3.5]})
 ];
 let tthSecPrec = 0;
 let tthInfo = {
-	colWidth: 4.25,
-	rowHeight: 2.2,
-	topLeftCellPos: [0, 2.8],
+	colWidth: 3.5,
+	rowHeight: 1.8,
+	topLeftCellPos: [0, 2.5],
 	texts: [
 		["KM", "4", "8", "10", "12"],
 		["Sec",
@@ -103,12 +108,12 @@ for (let row = 0; row < tthInfo.texts.length; row++) {
 				tthInfo.colWidth * col + tthInfo.topLeftCellPos[0],
 				tthInfo.rowHeight * row + tthInfo.topLeftCellPos[1],
 			],
-			size: 0.6
+			size: 1.1
 		}));
 	}
 }
 // Move to correct pos and append elements
-tthTable.forEach((ele) => { ele.move([-76 * displayRatioHoriMult, -1]); });
+tthTable.forEach((ele) => { ele.move([-58 * horiRatioMult, 1]); });
 sight.add(tthTable);
 
 

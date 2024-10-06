@@ -13,12 +13,12 @@ let sight = base.sightObj;
 
 //// VEHICLE TYPES ////
 sight.components.matchVehicleClasses.clear();
-sight.matchVehicle([
-	"fr_amx_30_roland",
-	"germ_flarakpz_1",
-	"germ_flarakrad",
-	"us_xm_975_roland",
-]);
+// sight.matchVehicle([
+// 	"fr_amx_30_roland",
+// 	"germ_flarakpz_1",
+// 	"germ_flarakrad",
+// 	"us_xm_975_roland",
+// ]);
 
 
 

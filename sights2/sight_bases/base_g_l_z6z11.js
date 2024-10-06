@@ -5,6 +5,7 @@ import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
 import templateComp from "./template_components/all.js"
+import turretAngleLegend from "../../sights3/extra_modules/turret_angle_legend.js";
 
 import ENV_SET from "./_env_settings.js"
 
@@ -257,6 +258,23 @@ let init = ({
 	}
 	sight.add(templateComp.leadingParamText(leadingPromptParams));
 
+
+	// Angle indicator from V3. TODO REWRITE THIS SIGHT
+	sight.add(turretAngleLegend.getTurretAngleLegend({
+		pos: [20.66, 15.45],
+		turretCircleDiameter: 2.3,
+		textSizeMain: 0.55,
+		textSizeSub: 0.4,
+		circleSize: 1.5
+	}));
+	let zoomMult  = 1.837;
+	sight.add(turretAngleLegend.getTurretAngleLegend({
+		pos: [20.66 * zoomMult, 15.45 * zoomMult],
+		turretCircleDiameter: 2.3 * zoomMult,
+		textSizeMain: 0.55 * zoomMult,
+		textSizeSub: 0.4 * zoomMult,
+		circleSize: 1.5 * zoomMult
+	}));
 };
 
 

@@ -4,8 +4,10 @@ import { BlkVariable } from "../_lib2/sight_code_basis.js";
 import { Circle, Line, TextSnippet } from "../_lib2/sight_elements.js";
 import * as pd from "../_lib2/predefined.js";
 
-let sight = base.sightObj;
+import ENV_SET from "./sight_bases/_env_settings.js"
 
+let sight = base.sightObj;
+let displayRatioHoriMult = ENV_SET.DISPLAY_RATIO_NUM / (16/9);
 
 sight.matchVehicle([
 	"ussr_t_55_am",
@@ -22,9 +24,9 @@ base.init({
 
 // Re-configure shell corrections
 sight.updateOrAddSettings(pd.basicBuild.shellDistanceTickVars(
-	[-0.005, -0.005],
-	[0.005, 0],
-	[0.08, 0]
+	[-0.005 / displayRatioHoriMult, -0.005 / displayRatioHoriMult],
+	[0.005 * displayRatioHoriMult, 0],
+	[0.08 * displayRatioHoriMult - 0.005 * (1-displayRatioHoriMult), 0]
 ));
 sight.components.shellDistances.clear();
 sight.addShellDistance([
@@ -36,15 +38,18 @@ sight.addShellDistance([
 
 sight.addComment("0m line", "lines");
 sight.add(new Line({
-	from: [-0.085, 0], to: [-0.08 + 0.001, 0], thousandth: false, move: true
-}));
+	from: [-0.085, 0],
+	to: [-0.08 + (0.001 * displayRatioHoriMult), 0], thousandth: false, move: true
+}).move([(1 - displayRatioHoriMult) * 0.08, 0]));
 sight.addComment("Correction indicator", "lines");
 sight.add(new Line({
 	from: [0, 0], to: [-0.005, 0.002], thousandth: false
-}).withMirrored("y").move([-0.086, 0]));
+}).withMirrored("y").move([
+	-0.086 * displayRatioHoriMult - 0.005 * (1 - displayRatioHoriMult), 0]));
 sight.add(new Line({
 	from: [-0.005, 0.0009], to: [-0.005, 0.002], thousandth: false
-}).withMirrored("y").move([-0.086, 0]));
+}).withMirrored("y").move([
+	-0.086 * displayRatioHoriMult - 0.005 * (1 - displayRatioHoriMult), 0]));
 
 
 sight.addComment("Missile drop indication", ["circles", "texts"]);

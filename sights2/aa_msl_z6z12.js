@@ -30,10 +30,7 @@ sight.addSettings(pd.concatAllBasics(
 
 
 //// VEHICLE TYPES ////
-sight.matchVehicle(Sight.commonVehicleTypes.spaas).matchVehicle([
-	"germ_flarakpz_1",
-	"germ_flarakrad",
-]);
+sight.matchVehicle(Sight.commonVehicleTypes.spaas);
 
 
 //// SHELL DISTANCES ////

@@ -6,6 +6,7 @@ import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
 import templateComp from "./template_components/all.js"
 import binoCali from "../sight_components/binocular_calibration_2.js"
+import turretAngleLegend from "../../sights3/extra_modules/turret_angle_legend.js";
 
 import ENV_SET from "./_env_settings.js"
 
@@ -257,6 +258,21 @@ let init = ({
 	}
 	sight.add(templateComp.leadingParamText(leadingPromptParams));
 
+	// Angle indicator from V3. TODO REWRITE THIS SIGHT
+	sight.add(turretAngleLegend.getTurretAngleLegend({
+		pos: [18.94, 14.2],
+		turretCircleDiameter: 2.15,
+		textSizeMain: 0.55,
+		textSizeSub: 0.4,
+		circleSize: 2.2,
+	}));
+	sight.add(turretAngleLegend.getTurretAngleLegend({
+		pos: [57.14, 42.76],
+		turretCircleDiameter: 6.45,
+		textSizeMain: 1.65,
+		textSizeSub: 1.2,
+		circleSize: 6.05,
+	}));
 };
 
 

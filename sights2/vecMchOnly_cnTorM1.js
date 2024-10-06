@@ -7,17 +7,13 @@ import * as rdr from "./sight_components/radar_prompt.js"
 
 import ENV_SET from "./sight_bases/_env_settings.js"
 
-
 import base from "./aa_msl_z6z12.js";
 let sight = base.sightObj;
 
 
 //// VEHICLE TYPES ////
 sight.components.matchVehicleClasses.clear();
-sight.matchVehicle([
-	"fr_crotale_ng",  // France ItO 90M
-	"sw_crotale_ng",  // Sweden ItO 90M
-]);
+sight.matchVehicle("cn_tor_m1");
 
 
 
@@ -26,27 +22,29 @@ let displayRatioHoriMult = ENV_SET.DISPLAY_RATIO_NUM / (16/9);
 
 // Weapon info
 let mslInfo = {
-	name: "VT1",
-	spd: 1250/1.5,  // m/s. division applied for recitifying since the missile won't keep the max speed all the time
+	name: "9M331",
+	spd: 850/1.35,  // m/s
+		// ^ Division for rectifying since the missile won't keep the max speed all the time
+		//   Divider selected based on a 10km and a 9km hit record
 	rangeMax: 12,  // km
-	rangeRecom: 10.5,  // km
+	rangeRecom: 10,  // km
 };
 
 // Radar prompt
 sight.add(rdr.buildRadarPrompt({
-	pos: [-76 * displayRatioHoriMult, -10],
+	pos: [-56.8 * displayRatioHoriMult, -8],
 	curveDegree: 30,
-	curveRadius: 17,
+	curveRadius: 12,
 	pieDivisionCurveSizeMain: 3,
 	pieDivisionCurveSizeSub: 2,
 
-	radarLongRange: 20,
+	radarLongRange: 30,
 	radarShortRange: 10,
-	textSizeLongRange: 0.85,
-	textSizeShortRange: 0.65,
+	textSizeLongRange: 0.6,
+	textSizeShortRange: 0.55,
 	textSizeLegend: 0.5,
-	textPosPaddingLongRange: [0, 1.8],
-	textPosPaddingShortRange: [-0.5, -1.75],
+	textPosPaddingLongRange: [0, 1],
+	textPosPaddingShortRange: [-0.5, -1.0],
 	textPosPaddingLegendLong: [0.5, -1],
 	textPosPaddingLegendShort: [1.25, 0.5],
 	weaponRanges: [
@@ -60,7 +58,7 @@ sight.add(rdr.buildRadarPrompt({
 			range: mslInfo.rangeRecom,
 			curveDegreeOnLong: 7,
 			curveDegreeOnShort: 5,
-			curveSize: 1.5
+			curveSize: 1
 		},
 	],
 }));
@@ -75,23 +73,22 @@ let tthTable = [
 	}),
 	new TextSnippet({
 		text: `Avg ${(mslInfo.spd).toFixed()} m/s`, align: "left",
-		pos: [19, 0], size: 0.65
+		pos: [16, 0], size: 0.65
 	}),
 	// Table row separation
-	new Line({from: [-2, 4.125], to: [19, 4.125]})
+	new Line({from: [-2, 3.2], to: [16.1, 3.2]})
 ];
-let tthSecPrec = 0;
 let tthInfo = {
-	colWidth: 4.25,
-	rowHeight: 2.2,
-	topLeftCellPos: [0, 2.8],
+	colWidth: 3.5,
+	rowHeight: 1.8,
+	topLeftCellPos: [0, 2.2],
 	texts: [
 		["KM", "4", "8", "10", "12"],
 		["Sec",
-			(4000 / mslInfo.spd).toFixed(tthSecPrec),
-			(8000 / mslInfo.spd).toFixed(tthSecPrec),
-			(10000 / mslInfo.spd).toFixed(tthSecPrec),
-			(12000 / mslInfo.spd).toFixed(tthSecPrec)
+			Toolbox.roundToHalf(4000 / mslInfo.spd).toString(),
+			Toolbox.roundToHalf(8000 / mslInfo.spd).toString(),
+			Toolbox.roundToHalf(10000 / mslInfo.spd).toString(),
+			Toolbox.roundToHalf(12000 / mslInfo.spd).toString()
 		],
 	]
 }
@@ -108,7 +105,7 @@ for (let row = 0; row < tthInfo.texts.length; row++) {
 	}
 }
 // Move to correct pos and append elements
-tthTable.forEach((ele) => { ele.move([-76 * displayRatioHoriMult, -1]); });
+tthTable.forEach((ele) => { ele.move([-56.8 * displayRatioHoriMult - 0.6, -2]); });
 sight.add(tthTable);
 
 

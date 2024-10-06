@@ -16,7 +16,7 @@ let sight = new Sight();
 // let horiRatioMult = new calc.HoriRatioMultCalculator(
 // 	16 / 9, ENV_SET.DISPLAY_RATIO_NUM
 // ).getMult();
-let assumedTargetWidth = ENV_SET.DEFAULT_ASSUMED_TARGET_WIDTH;
+let assumedTargetWidth = 3; // ENV_SET.DEFAULT_ASSUMED_TARGET_WIDTH;
 let assumedTargetLength = assumedTargetWidth * 2;
 let distMil = new calc.DistMilCalculator(assumedTargetWidth);
 
