@@ -168,7 +168,7 @@ let init = ({
 		sight.addComment("Binocular calibration reference", ["lines", "texts"]);
 		let binoCaliEles = binoCali.getCommonRealMil({
 			pos: [getMil(400), 20],
-			drawTwoTicks: true,
+			drawTwoTicks: false,
 			zeroLineExceeds: [-2, 0],
 			quadHeight: 2,
 			textSizeLarge: 0.55,

@@ -47,7 +47,8 @@ export default ({
 		text:
 			formatType === "full_with_dash" ? `ASM SHELL - ${(shellSpeedParams.value / 3.6).toFixed()} m/s` :
 			formatType === "full_with_space" ? `ASM SHELL${
-				getSpaces(1 + extraNormalSpaceNum, 1)}${(shellSpeedParams.value / 3.6).toFixed()} m/s` :
+				getSpaces(1 + extraNormalSpaceNum, 1)}${
+				(shellSpeedParams.value / 3.6).toFixed().padStart(4, getSpaces(0, 1))} m/s` :
 			formatType === "values_only" ? `${(shellSpeedParams.value / 3.6).toFixed()} m/s` :
 			`Invalid prompt text type`,
 		align: textAlign, pos: shellSpeedParams.pos, size: textSize,

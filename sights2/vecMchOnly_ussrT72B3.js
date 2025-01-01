@@ -1,14 +1,16 @@
-import base from "./sight_bases/base_g_l_z8z16.js";
+import base from "./sight_bases/base_g_l_z4z12.js";
 import Sight from "../_lib2/sight_main.js";
 
-base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
-	"it_of_40_mk_1",
-])
+base.sightObj.matchVehicle([
+	"ussr_t_72b3_2011",
+]);
 
 base.init({
-	shellSpeed: 1455 * 3.6,  // m/s * 3.6
-	assumedMoveSpeed: 45,    // km/h
+	shellSpeed: 1660 * 3.6,  // m/s * 3.6
+	assumedMoveSpeed: 40,    // km/h
 	drawPromptCross: false,
+	drawBinoCali: true,
+	leadingDivisionsUseArrowType: true,
 });
 
 export default { sightObj: base.sightObj };

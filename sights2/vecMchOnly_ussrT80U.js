@@ -6,6 +6,7 @@ let sight = base.sightObj;
 sight.matchVehicle([
 	"sw_t_80u",
 	"ussr_t_80u",
+	"ussr_t_80ud",
 	"ussr_t_80um2",
 	"ussr_t_80uk",
 ])

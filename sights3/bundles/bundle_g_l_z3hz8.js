@@ -67,34 +67,34 @@ for (let yPos of [-5.5, -5]) {
 //// SELECTABLE SIGHT PARTS ////
 let parts = {
 	shellDistPatterns: {
-		applySimpleSided: () => {
+		applySimpleCenteredLabeled: () => {
 			sight.updateOrAddSettings(pd.sShellDistTick.build(
-				[-0.005 / horiRatioMult, -0.005 / horiRatioMult],
-				[0.005 * horiRatioMult, 0],
-				[0.08 * horiRatioMult - 0.005 * (1-horiRatioMult), 0]
+				[0, 0],
+				[0.005 * horiRatioMult, 0.0005],
+				[0.015 / horiRatioMult, 0]
 			));
 
 			sight.addShellDistance([
 				{ distance: 400 },
 				{ distance: 800 },
-				{ distance: 2000, shown: 20, shownPos: [0.017, -0.001] },
-				{ distance: 4000, shown: 40, shownPos: [0.017, -0.001] },
+				{ distance: 2000, shown: 20 },
+				{ distance: 4000, shown: 40 },
 			]);
 
-			// 0m line
-			sight.add(new Line({
-				from: [-0.085, 0],
-				to: [-0.08 + (0.001 * horiRatioMult), 0], thousandth: false, move: true
-			}).move([(1 - horiRatioMult) * 0.08, 0]));
-			// Correction indicator
-			sight.add(new Line({
-				from: [0, 0], to: [-0.005, 0.002], thousandth: false
-			}).withMirrored("y").move([
-				-0.086 * horiRatioMult - 0.005 * (1 - horiRatioMult), 0]));
-			sight.add(new Line({
-				from: [-0.005, 0.0009], to: [-0.005, 0.002], thousandth: false
-			}).withMirrored("y").move([
-				-0.086 * horiRatioMult - 0.005 * (1 - horiRatioMult), 0]));
+			// // 0m line
+			// sight.add(new Line({
+			// 	from: [-0.085, 0],
+			// 	to: [-0.08 + (0.001 * horiRatioMult), 0], thousandth: false, move: true
+			// }).move([(1 - horiRatioMult) * 0.08, 0]));
+			// // Correction indicator
+			// sight.add(new Line({
+			// 	from: [0, 0], to: [-0.005, 0.002], thousandth: false
+			// }).withMirrored("y").move([
+			// 	-0.086 * horiRatioMult - 0.005 * (1 - horiRatioMult), 0]));
+			// sight.add(new Line({
+			// 	from: [-0.005, 0.0009], to: [-0.005, 0.002], thousandth: false
+			// }).withMirrored("y").move([
+			// 	-0.086 * horiRatioMult - 0.005 * (1 - horiRatioMult), 0]));
 		},
 
 		applySimpleCentered: () => {
@@ -124,11 +124,22 @@ let parts = {
 			return elements;
 		})(),
 
+		dotLarger: (() => {
+			let elements = [];
+			// Gun center
+			elements.push(new Line({ from: [0.0001, -0.00175], to: [0.0001, 0.00175], move: true, thousandth: false }).withMirrored("x"));
+			elements.push(new Line({ from: [-0.00175, 0.0001], to: [0.00175, 0.0001], move: true, thousandth: false }).withMirrored("y"));
+			// Sight center circle
+			elements.push(new Circle({ diameter: 0.25, size: 4 }));
+			elements.push(new Circle({ diameter: 0.5, size: 2 }));
+			return elements;
+		})(),
+
 		hollowDot: (() => {
 			let elements = [];
 			// Gun center
-			elements.push(new Line({ from: [0, -0.55], to: [0, -0.35], move: true }));
-			elements.push(new Line({ from: [0.55, 0], to: [0.35, 0], move: true }).withMirrored("x"));
+			elements.push(new Line({ from: [0, -0.55], to: [0, -0.35], move: true }).withMirrored("x"));
+			elements.push(new Line({ from: [0.55, 0], to: [0.35, 0], move: true }).withMirrored("xy"));
 			// Sight center circle
 			elements.push(new Circle({ diameter: 0.6, size: 2 }));
 			elements.push(new Circle({ diameter: 0.8, size: 1 }));
@@ -157,11 +168,11 @@ let parts = {
 				},
 				// 2/2 AA are drawn separately later since we use a curve for it
 				// 1/2 AA:
-				// {
-				// 	aa: 0.25, type: "line",
-				// 	lineTickXOffsets: [-0.01, 0.01],
-				// 	lineTickYLen: 0.1,
-				// },
+				{
+					aa: 0.25, type: "line",
+					lineTickXOffsets: [-0.01, 0.01],
+					lineTickYLen: 0.1,
+				},
 			],
 
 			horiLineAARange: [1, 0.5],

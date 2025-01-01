@@ -59,7 +59,8 @@ let init = ({
 			leadingDivisionsType === "arrow" ? 0.037 : 0.030
 		]),
 		pd.basicBuild.shellDistanceTickVars(
-			[-0.0100, -0.0100],
+			// [-0.0100, -0.0100],
+			[0, 0],
 			[0, 0.00015],
 			[0.193, 0]
 		),
@@ -75,10 +76,10 @@ let init = ({
 	sight.addShellDistance([
 		{ distance: 400 },
 		{ distance: 800 },
-		{ distance: 2000, shown: 20, shownPos: [
+		{ distance: 2000, shown: 0, shownPos: [
 			0.0035 - (1-displayRatioHoriMult) * 0.012, 0.007
 		] },
-		{ distance: 4000, shown: 40, shownPos: [
+		{ distance: 4000, shown: 0, shownPos: [
 			0.0035 - (1-displayRatioHoriMult) * 0.012, 0.007
 		] },
 	]);
@@ -93,18 +94,18 @@ let init = ({
 		from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
 	}));  // center dot
 
-	// 0m correction line
-	sight.add(new Line({ from: [-0.203, 0.0], to: [-0.193, 0.0], move: true, thousandth: false }));
+	// // 0m correction line
+	// sight.add(new Line({ from: [-0.203, 0.0], to: [-0.193, 0.0], move: true, thousandth: false }));
 
 
-	// Gun correction value indicator
-	let corrValLine = [
-		new Line({ from: [0.006, 0.00045], to: [0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
-		new Line({ from: [-0.006, 0.00045], to: [-0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
-	];
-	// move arrow to apporiate place
-	corrValLine.forEach((l) => { l.move([-0.198, 0]); });  //
-	sight.add(corrValLine);
+	// // Gun correction value indicator
+	// let corrValLine = [
+	// 	new Line({ from: [0.006, 0.00045], to: [0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	// 	new Line({ from: [-0.006, 0.00045], to: [-0.0175, 0.00045], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	// ];
+	// // move arrow to apporiate place
+	// corrValLine.forEach((l) => { l.move([-0.198, 0]); });  //
+	// sight.add(corrValLine);
 
 
 	// Sight center arrow and bold
@@ -236,27 +237,27 @@ let init = ({
 	}
 
 
-	let leadingPromptParams = {
-		assumedMoveSpeedParams: { value: assumedMoveSpeed, pos: [0, 0] },
-		shellSpeedParams: { value: shellSpeed, pos: [0, 0] },
-	};
-	if (drawPromptCross) {
-		leadingPromptParams.formatType = "full_with_dash";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [90 * displayRatioHoriMult, -1.4];
-		leadingPromptParams.shellSpeedParams.pos = [90 * displayRatioHoriMult, 1];
-		leadingPromptParams.textAlign = "right";
-		leadingPromptParams.useThousandth = true;
-		leadingPromptParams.textSize = 0.9;
+	// let leadingPromptParams = {
+	// 	assumedMoveSpeedParams: { value: assumedMoveSpeed, pos: [0, 0] },
+	// 	shellSpeedParams: { value: shellSpeed, pos: [0, 0] },
+	// };
+	// if (drawPromptCross) {
+	// 	leadingPromptParams.formatType = "full_with_dash";
+	// 	leadingPromptParams.assumedMoveSpeedParams.pos = [90 * displayRatioHoriMult, -1.4];
+	// 	leadingPromptParams.shellSpeedParams.pos = [90 * displayRatioHoriMult, 1];
+	// 	leadingPromptParams.textAlign = "right";
+	// 	leadingPromptParams.useThousandth = true;
+	// 	leadingPromptParams.textSize = 0.9;
 
-	} else {
-		leadingPromptParams.formatType = "values_only";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [0.9708 * displayRatioHoriMult, -0.011];
-		leadingPromptParams.shellSpeedParams.pos = [0.9708 * displayRatioHoriMult, 0.0075];
-		leadingPromptParams.textAlign = "left";
-		leadingPromptParams.useThousandth = false;
-		leadingPromptParams.textSize = 0.8;
-	}
-	sight.add(templateComp.leadingParamText(leadingPromptParams));
+	// } else {
+	// 	leadingPromptParams.formatType = "values_only";
+	// 	leadingPromptParams.assumedMoveSpeedParams.pos = [0.9708 * displayRatioHoriMult, -0.011];
+	// 	leadingPromptParams.shellSpeedParams.pos = [0.9708 * displayRatioHoriMult, 0.0075];
+	// 	leadingPromptParams.textAlign = "left";
+	// 	leadingPromptParams.useThousandth = false;
+	// 	leadingPromptParams.textSize = 0.8;
+	// }
+	// sight.add(templateComp.leadingParamText(leadingPromptParams));
 
 
 	// Angle indicator from V3. TODO REWRITE THIS SIGHT
@@ -265,7 +266,8 @@ let init = ({
 		turretCircleDiameter: 2.3,
 		textSizeMain: 0.55,
 		textSizeSub: 0.4,
-		circleSize: 1.5
+		circleSize: 1.5,
+		showSideIndicator: false,
 	}));
 	let zoomMult  = 1.837;
 	sight.add(turretAngleLegend.getTurretAngleLegend({
@@ -273,7 +275,9 @@ let init = ({
 		turretCircleDiameter: 2.3 * zoomMult,
 		textSizeMain: 0.55 * zoomMult,
 		textSizeSub: 0.4 * zoomMult,
-		circleSize: 1.5 * zoomMult
+		circleSize: 1.5 * zoomMult,
+		showSideIndicator: false,
+		shellSpeedShown: shellSpeed / 3.6,
 	}));
 };
 

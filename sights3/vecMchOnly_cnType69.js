@@ -22,38 +22,21 @@ let parts = base.parts;
 
 //// VEHICLE TYPES ////
 sight.matchVehicle([
-	"ussr_t_55_am",
-	"ussr_t_55_amd_1",
+	"cn_type_69",
 ]);
 
 
 //// COMBINE SELECTIVE PARTS ////
-sight.add(parts.sightAndGunCenter.hollowDot);
+sight.add(parts.sightAndGunCenter.dotLarger);
 sight.add(parts.createLeadingReticle(
-	35,          // km/h
-	1430 * 3.6,  // m/s * 3.6  (3BM25)
+	30,          // km/h
+	955 * 3.6,  // m/s * 3.6
 ));
 sight.add(parts.binoCali.twoTick);
 parts.shellDistPatterns.applySimpleCenteredLabeled();
 
 
 //// ADDITIONAL ELEMENTS (IF ANY) ////
-// Missile drop indication
-// 100m
-sight.add(new Circle({pos: [0, 2.5], size: 1, diameter: 1})).repeatLastAdd();
-sight.add(new TextSnippet({
-	text: "100",
-	align: "center",
-	pos: [4.0, 2.5 - 0.1], size: 0.5
-}));
-// 200m
-sight.add(new Circle({pos: [0, 1.1], size: 1, diameter: 0.5})).repeatLastAdd();
-sight.add(new TextSnippet({
-	text: "200",
-	align: "center",
-	pos: [4.5, 1.1 - 0.1], size: 0.45
-}));
-
 
 
 

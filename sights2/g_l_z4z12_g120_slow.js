@@ -16,6 +16,7 @@ base.init({
 	drawPromptCross: false,
 	drawBinoCali: true,
 	leadingDivisionsUseArrowType: true,
+	turretLimitAngles: [-(180 - 75), (180 - 75)],
 });
 
 export default { sightObj: base.sightObj };

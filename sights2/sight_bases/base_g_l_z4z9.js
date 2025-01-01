@@ -5,6 +5,8 @@ import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import templateComp from "./template_components/all.js"
 import * as pd from "../../_lib2/predefined.js";
+import binoCali from "../sight_components/binocular_calibration_2.js"
+import turretAngleLegend from "../../sights3/extra_modules/turret_angle_legend.js";
 
 import ENV_SET from "./_env_settings.js"
 
@@ -40,7 +42,8 @@ let init = ({
 		pd.basicBuild.detectAllyPos([90 / displayRatioHoriMult, -0.067]),
 		pd.basicBuild.gunDistanceValuePos([-0.13 * displayRatioHoriMult, 0.06]),
 		pd.basicBuild.shellDistanceTickVars(
-			[-0.01, -0.01],
+			// [-0.01, -0.01],
+			[0, 0],
 			[0, 0.0002],
 			[0.15, 0]
 		),
@@ -56,10 +59,10 @@ let init = ({
 	sight.addShellDistance([
 		{ distance: 400 },
 		{ distance: 800 },
-		{ distance: 2000, shown: 20, shownPos: [
+		{ distance: 2000, shown: 0, shownPos: [
 			0.0035 - (1-displayRatioHoriMult) * 0.012, 0.0065
 		] },
-		{ distance: 4000, shown: 40, shownPos: [
+		{ distance: 4000, shown: 0, shownPos: [
 			0.0035 - (1-displayRatioHoriMult) * 0.012, 0.0065
 		] },
 	]);
@@ -74,17 +77,17 @@ let init = ({
 	// 	from: [0.0001, 0], to: [-0.0001, 0], move: true, thousandth: false
 	// }));  // center dot
 
-	// 0m correction on left
-	sight.add(new Line({ from: [-0.16, 0.0], to: [-0.15, 0.0], move: true, thousandth: false }));
+	// // 0m correction on left
+	// sight.add(new Line({ from: [-0.16, 0.0], to: [-0.15, 0.0], move: true, thousandth: false }));
 
-	// correction value indication
-	let corrValLine = [
-		new Line({ from: [0.0055, 0.00035], to: [0.016, 0.00035], thousandth: false }).withMirrored("y"),  // mirrored for bold
-		new Line({ from: [-0.0055, 0.00035], to: [-0.016, 0.00035], thousandth: false }).withMirrored("y"),  // mirrored for bold
-	];
-	// move arrow to apporiate place
-	corrValLine.forEach((l) => { l.move([-0.155, 0]); });
-	sight.add(corrValLine);
+	// // correction value indication
+	// let corrValLine = [
+	// 	new Line({ from: [0.0055, 0.00035], to: [0.016, 0.00035], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	// 	new Line({ from: [-0.0055, 0.00035], to: [-0.016, 0.00035], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	// ];
+	// // move arrow to apporiate place
+	// corrValLine.forEach((l) => { l.move([-0.155, 0]); });
+	// sight.add(corrValLine);
 
 
 	let getLdn = (aa) => Toolbox.calcLeadingMil(shellSpeed, assumedMoveSpeed, aa);
@@ -175,35 +178,53 @@ let init = ({
 	}
 
 
-	let leadingPromptParams = {
-		assumedMoveSpeedParams: { value: assumedMoveSpeed, pos: [0, 0] },
-		shellSpeedParams: { value: shellSpeed, pos: [0, 0] },
-		textSize: 1
-	};
-	if (drawPromptCross) {
-		leadingPromptParams.formatType = "full_with_dash";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [139 * displayRatioHoriMult, -2.2];
-		leadingPromptParams.shellSpeedParams.pos = [139 * displayRatioHoriMult, 1.8];
-		leadingPromptParams.textAlign = "right";
-		leadingPromptParams.useThousandth = true;
+	// let leadingPromptParams = {
+	// 	assumedMoveSpeedParams: { value: assumedMoveSpeed, pos: [0, 0] },
+	// 	shellSpeedParams: { value: shellSpeed, pos: [0, 0] },
+	// 	textSize: 1
+	// };
+	// if (drawPromptCross) {
+	// 	leadingPromptParams.formatType = "full_with_dash";
+	// 	leadingPromptParams.assumedMoveSpeedParams.pos = [139 * displayRatioHoriMult, -2.2];
+	// 	leadingPromptParams.shellSpeedParams.pos = [139 * displayRatioHoriMult, 1.8];
+	// 	leadingPromptParams.textAlign = "right";
+	// 	leadingPromptParams.useThousandth = true;
 
-	} else {
-		leadingPromptParams.formatType = "full_with_space";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [0.925 * displayRatioHoriMult, -0.011];
-		leadingPromptParams.shellSpeedParams.pos = [0.925 * displayRatioHoriMult, 0.008];
-		leadingPromptParams.textAlign = "right"
-		leadingPromptParams.useThousandth = false;
-		leadingPromptParams.extraNormalSpaceNum = 1;
+	// } else {
+	// 	leadingPromptParams.formatType = "full_with_space";
+	// 	leadingPromptParams.assumedMoveSpeedParams.pos = [0.925 * displayRatioHoriMult, -0.011];
+	// 	leadingPromptParams.shellSpeedParams.pos = [0.925 * displayRatioHoriMult, 0.008];
+	// 	leadingPromptParams.textAlign = "right"
+	// 	leadingPromptParams.useThousandth = false;
+	// 	leadingPromptParams.extraNormalSpaceNum = 1;
 
-		// Alternatively, values only:
-		// leadingPromptParams.formatType = "values_only";
-		// leadingPromptParams.assumedMoveSpeedParams.pos = [1.0935 * displayRatioHoriMult, -0.011];
-		// leadingPromptParams.shellSpeedParams.pos = [1.0935 * displayRatioHoriMult, 0.008];
-		// leadingPromptParams.textAlign = "left";
-		// leadingPromptParams.useThousandth = false;
-	}
-	sight.add(templateComp.leadingParamText(leadingPromptParams));
+	// 	// Alternatively, values only:
+	// 	// leadingPromptParams.formatType = "values_only";
+	// 	// leadingPromptParams.assumedMoveSpeedParams.pos = [1.0935 * displayRatioHoriMult, -0.011];
+	// 	// leadingPromptParams.shellSpeedParams.pos = [1.0935 * displayRatioHoriMult, 0.008];
+	// 	// leadingPromptParams.textAlign = "left";
+	// 	// leadingPromptParams.useThousandth = false;
+	// }
+	// sight.add(templateComp.leadingParamText(leadingPromptParams));
 
+	// Angle indicator from V3. TODO REWRITE THIS SIGHT
+	let zoomMult = 0.4425;
+	sight.add(turretAngleLegend.getTurretAngleLegend({
+		pos: [57.14 * zoomMult, 42.76 * zoomMult],
+		turretCircleDiameter: 6.45 * zoomMult,
+		textSizeMain: 1.65 * 0.62 * zoomMult,
+		textSizeSub: 1.2 * 0.62 * zoomMult,
+		circleSize: 6.05 * zoomMult,
+	}));
+	zoomMult = 1.026;
+	sight.add(turretAngleLegend.getTurretAngleLegend({
+		pos: [57.14 * zoomMult, 42.76 * zoomMult],
+		turretCircleDiameter: 6.45 * zoomMult,
+		textSizeMain: 1.65 * 0.62 * zoomMult,
+		textSizeSub: 1.2 * 0.62 * zoomMult,
+		circleSize: 6.05 * zoomMult,
+		shellSpeedShown: shellSpeed / 3.6,
+	}));
 };
 
 

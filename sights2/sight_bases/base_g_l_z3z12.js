@@ -5,6 +5,7 @@ import Toolbox from "../../_lib2/sight_toolbox.js";
 import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
 import templateComp from "./template_components/all.js"
+import turretAngleLegend from "../../sights3/extra_modules/turret_angle_legend.js";
 
 import ENV_SET from "./_env_settings.js"
 
@@ -50,7 +51,8 @@ let init = ({
 			leadingDivisionsUseArrowType ? 0.038 : 0.035
 		]),
 		pd.basicBuild.shellDistanceTickVars(
-			[-0.01, -0.01],
+			// [-0.01, -0.01],
+			[0, 0],
 			[0, 0.0005],
 			[0.2, 0]
 		),
@@ -66,10 +68,10 @@ let init = ({
 	sight.addShellDistance([
 		{ distance: 400 },
 		{ distance: 800 },
-		{ distance: 2000, shown: 20, shownPos: [
+		{ distance: 2000, shown: 0, shownPos: [
 			0.0035 - (1-displayRatioHoriMult) * 0.012, 0.0065
 		] },
-		{ distance: 4000, shown: 40, shownPos: [
+		{ distance: 4000, shown: 0, shownPos: [
 			0.0035 - (1-displayRatioHoriMult) * 0.012, 0.0065
 		] },
 	]);
@@ -79,19 +81,19 @@ let init = ({
 	let getLdn = (speed, aa) => Toolbox.calcLeadingMil(shellSpeed, speed, aa);
 
 
-	// 0m correction line
-	sight.add(new Line({ from: [-0.20, 0.0], to: [-0.21, 0.0], move: true, thousandth: false }));
+	// // 0m correction line
+	// sight.add(new Line({ from: [-0.20, 0.0], to: [-0.21, 0.0], move: true, thousandth: false }));
 
-	// Reticle for correction value check
-	let corrValLine = [
-		new Line({ from: [0.006, 0], to: [0.016, 0], thousandth: false }),
-		new Line({ from: [-0.006, 0], to: [-0.016, 0], thousandth: false }),
-		new Line({ from: [0.006, 0.0006], to: [0.016, 0.0006], thousandth: false }).withMirrored("y"),  // mirrored for bold
-		new Line({ from: [-0.006, 0.0006], to: [-0.016, 0.0006], thousandth: false }).withMirrored("y"),  // mirrored for bold
-	];
-	// move reticle to apporiate place
-	corrValLine.forEach((l) => { l.move([-0.205, 0]); });
-	sight.add(corrValLine);
+	// // Reticle for correction value check
+	// let corrValLine = [
+	// 	new Line({ from: [0.006, 0], to: [0.016, 0], thousandth: false }),
+	// 	new Line({ from: [-0.006, 0], to: [-0.016, 0], thousandth: false }),
+	// 	new Line({ from: [0.006, 0.0006], to: [0.016, 0.0006], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	// 	new Line({ from: [-0.006, 0.0006], to: [-0.016, 0.0006], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	// ];
+	// // move reticle to apporiate place
+	// corrValLine.forEach((l) => { l.move([-0.205, 0]); });
+	// sight.add(corrValLine);
 
 
 	// Gun center
@@ -196,33 +198,50 @@ let init = ({
 	}
 
 
-	let leadingPromptParams = {
-		assumedMoveSpeedParams: { value: assumedMoveSpeed, pos: [0, 0] },
-		shellSpeedParams: { value: shellSpeed, pos: [0, 0] },
-		textSize: 2
-	};
-	if (drawPromptCross) {
-		leadingPromptParams.formatType = "full_with_dash";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [203 * displayRatioHoriMult, -2.7];
-		leadingPromptParams.shellSpeedParams.pos = [203 * displayRatioHoriMult, 2.3];
-		leadingPromptParams.textAlign = "right";
-		leadingPromptParams.useThousandth = true;
-	} else {
-		leadingPromptParams.formatType = "full_with_space";
-		leadingPromptParams.assumedMoveSpeedParams.pos = [2.166 * displayRatioHoriMult, -0.024];
-		leadingPromptParams.shellSpeedParams.pos = [2.166 * displayRatioHoriMult, 0.0205];
-		leadingPromptParams.textAlign = "right";
-		leadingPromptParams.useThousandth = false;
-		leadingPromptParams.extraNormalSpaceNum = 1;
-		// Alternatively, values only:
-		// leadingPromptParams.formatType = "values_only";
-		// leadingPromptParams.assumedMoveSpeedParams.pos = [2.505 * displayRatioHoriMult, -0.024];
-		// leadingPromptParams.shellSpeedParams.pos = [2.505 * displayRatioHoriMult, 0.0205];
-		// leadingPromptParams.textAlign = "left";
-		// leadingPromptParams.useThousandth = false;
-	}
-	sight.add(templateComp.leadingParamText(leadingPromptParams));
+	// let leadingPromptParams = {
+	// 	assumedMoveSpeedParams: { value: assumedMoveSpeed, pos: [0, 0] },
+	// 	shellSpeedParams: { value: shellSpeed, pos: [0, 0] },
+	// 	textSize: 2
+	// };
+	// if (drawPromptCross) {
+	// 	leadingPromptParams.formatType = "full_with_dash";
+	// 	leadingPromptParams.assumedMoveSpeedParams.pos = [203 * displayRatioHoriMult, -2.7];
+	// 	leadingPromptParams.shellSpeedParams.pos = [203 * displayRatioHoriMult, 2.3];
+	// 	leadingPromptParams.textAlign = "right";
+	// 	leadingPromptParams.useThousandth = true;
+	// } else {
+	// 	leadingPromptParams.formatType = "full_with_space";
+	// 	leadingPromptParams.assumedMoveSpeedParams.pos = [2.166 * displayRatioHoriMult, -0.024];
+	// 	leadingPromptParams.shellSpeedParams.pos = [2.166 * displayRatioHoriMult, 0.0205];
+	// 	leadingPromptParams.textAlign = "right";
+	// 	leadingPromptParams.useThousandth = false;
+	// 	leadingPromptParams.extraNormalSpaceNum = 1;
+	// 	// Alternatively, values only:
+	// 	// leadingPromptParams.formatType = "values_only";
+	// 	// leadingPromptParams.assumedMoveSpeedParams.pos = [2.505 * displayRatioHoriMult, -0.024];
+	// 	// leadingPromptParams.shellSpeedParams.pos = [2.505 * displayRatioHoriMult, 0.0205];
+	// 	// leadingPromptParams.textAlign = "left";
+	// 	// leadingPromptParams.useThousandth = false;
+	// }
+	// sight.add(templateComp.leadingParamText(leadingPromptParams));
 
+	// Angle indicator from V3. TODO REWRITE THIS SIGHT
+	sight.add(turretAngleLegend.getTurretAngleLegend({
+		pos: [18.94, 14.2],
+		turretCircleDiameter: 2.15,
+		textSizeMain: 0.55,
+		textSizeSub: 0.4,
+		circleSize: 2.2,
+	}));
+	let mult = 1.492;
+	sight.add(turretAngleLegend.getTurretAngleLegend({
+		pos: [57.14 * mult, 42.76 * mult],
+		turretCircleDiameter: 6.45 * mult,
+		textSizeMain: 1.65 * mult,
+		textSizeSub: 1.2 * mult,
+		circleSize: 6.05 * mult,
+		shellSpeedShown: shellSpeed / 3.6,
+	}));
 };
 
 

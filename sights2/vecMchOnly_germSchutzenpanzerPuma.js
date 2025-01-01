@@ -5,10 +5,14 @@ import * as pd from "../_lib2/predefined.js";
 import templateComp from "./sight_bases/template_components/all.js"
 
 import ENV_SET from "./sight_bases/_env_settings.js";
+import turretAngleLegend from "../sights3/extra_modules/turret_angle_legend.js";
 
 
 let sight = new Sight();
-sight.matchVehicle("germ_schutzenpanzer_puma");
+sight.matchVehicle([
+	"germ_schutzenpanzer_puma",
+	"germ_schutzenpanzer_puma_vjtf",
+]);
 
 
 //// SETTINGS ////
@@ -114,22 +118,37 @@ if (leadingDivisionsDrawSpeed) {
 sight.add(templateComp.leadingReticleArrowType(leadingParams));
 
 
-sight.add(templateComp.leadingParamText({
-	assumedMoveSpeedParams: {
-		value: assumedMoveSpd,
-		pos: [323 * displayRatioHoriMult, -3.0]
-	},
-	shellSpeedParams: {
-		value: shellSpd,
-		pos: [323 * displayRatioHoriMult, 2.2]
-	},
-	formatType: "values_only",
-	textSize: 2.8,
-	textAlign: "left",
+// sight.add(templateComp.leadingParamText({
+// 	assumedMoveSpeedParams: {
+// 		value: assumedMoveSpd,
+// 		pos: [323 * displayRatioHoriMult, -3.0]
+// 	},
+// 	shellSpeedParams: {
+// 		value: shellSpd,
+// 		pos: [323 * displayRatioHoriMult, 2.2]
+// 	},
+// 	formatType: "values_only",
+// 	textSize: 2.8,
+// 	textAlign: "left",
+// }));
+
+let outerMult = Toolbox.calcMultForZooms(4, 2);
+sight.add(turretAngleLegend.getTurretAngleLegend({
+	pos: [57.27 * outerMult, 42.85 * outerMult],
+	turretCircleDiameter: 6.45 * outerMult,
+	textSizeMain: 1.65 * outerMult,
+	textSizeSub: 1.2 * outerMult,
+	circleSize: 6.05 * outerMult,
+	shellSpeedShown: shellSpd / 3.6,
 }));
-
-
-
+let innerMult = Toolbox.calcMultForZooms(4, 14.8);
+sight.add(turretAngleLegend.getTurretAngleLegend({
+	pos: [57.27 * innerMult, 42.85 * innerMult],
+	turretCircleDiameter: 6.45 * innerMult,
+	textSizeMain: 1.65 * innerMult,
+	textSizeSub: 1.2 * innerMult,
+	circleSize: 6.05 * innerMult,
+}));
 
 
 //// OUTPUT ////

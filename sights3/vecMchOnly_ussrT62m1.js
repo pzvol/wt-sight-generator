@@ -21,7 +21,7 @@ let parts = base.parts;
 
 
 //// VEHICLE TYPES ////
-sight.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
+sight.matchVehicle([
 	"ussr_t_62m1",
 ]);
 

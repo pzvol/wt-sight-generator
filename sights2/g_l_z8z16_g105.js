@@ -4,14 +4,12 @@ import Sight from "../_lib2/sight_main.js";
 base.sightObj.matchVehicle(Sight.commonVehicleTypes.grounds).matchVehicle([
 	"germ_radpanzer_90",
 	"germ_th_800_bismark",
-	"it_b1_centauro",
-	"it_b1_centauro_romor",
 ])
 
 base.init({
 	shellSpeed: 1455 * 3.6,  // m/s * 3.6
 	assumedMoveSpeed: 55,    // km/h
-	drawPromptCross: true,
+	drawPromptCross: false,
 	leadingDivisionsDrawSpeed: true,
 });
 

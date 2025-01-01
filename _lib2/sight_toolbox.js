@@ -278,6 +278,25 @@ export default class Toolbox {
 	}
 
 	/**
+	 * Calculate the multiplier which needs to be applied to mils for keeping
+	 * things at same position of screen between zooms. Using a position like
+	 * (originalMil * multipler) does the job.
+	 *
+	 * Yes, the game devs are using sin, instead of tan, for calculating
+	 * magnifications...
+	 * @param {number} fromZoom
+	 * @param {number} toZoom
+	 */
+	static calcMultForZooms(fromZoom, toZoom) {
+		const fov = 80;
+		return (
+			1
+			/ Math.asin(Toolbox.degToRad(fov / fromZoom) / 2)
+			* Math.asin(Toolbox.degToRad(fov / toZoom) / 2)
+		);
+	}
+
+	/**
 	 * Calcuate length of a line, a.k.a the distance between two points
 	 * @param {[number, number]} fromPos
 	 * @param {[number, number]} toPos

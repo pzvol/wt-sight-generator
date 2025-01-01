@@ -6,6 +6,7 @@ import { Quad, Circle, Line, TextSnippet } from "../../_lib2/sight_elements.js";
 import * as pd from "../../_lib2/predefined.js";
 import templateComp from "./template_components/all.js"
 import binoCali from "../sight_components/binocular_calibration_2.js"
+import turretAngleLegend from "../../sights3/extra_modules/turret_angle_legend.js";
 
 import ENV_SET from "./_env_settings.js"
 
@@ -53,7 +54,8 @@ let init = ({
 			leadingDivisionsUseArrowType ? 0.053 : 0.03
 		]),
 		pd.basicBuild.shellDistanceTickVars(
-			[-0.0050, -0.0050],
+			// [-0.0050, -0.0050],
+			[0, 0],
 			[0, 0.0005],
 			[0.193, 0]
 		),
@@ -69,10 +71,10 @@ let init = ({
 	sight.addShellDistance([
 		{ distance: 400 },
 		{ distance: 800 },
-		{ distance: 2000, shown: 20, shownPos: [
+		{ distance: 2000, shown: 0, shownPos: [
 			0.01 - (1-displayRatioHoriMult) * 0.02, 0.0065
 		] },
-		{ distance: 4000, shown: 40, shownPos: [
+		{ distance: 4000, shown: 0, shownPos: [
 			0.01 - (1-displayRatioHoriMult) * 0.02, 0.0065
 		] },
 	]);
@@ -82,17 +84,17 @@ let init = ({
 	let getLdn = (speed, aa) => Toolbox.calcLeadingMil(shellSpeed, speed, aa);
 
 
-	// 0m correction line
-	sight.add(new Line({ from: [-0.198, 0.0], to: [-0.193, 0.0], move: true, thousandth: false }));
+	// // 0m correction line
+	// sight.add(new Line({ from: [-0.198, 0.0], to: [-0.193, 0.0], move: true, thousandth: false }));
 
-	// Reticle for correction value check
-	let corrValLine = [
-		new Line({ from: [0.003, 0.0003], to: [0.014, 0.0003], thousandth: false }).withMirrored("y"),  // mirrored for bold
-		new Line({ from: [-0.003, 0.0003], to: [-0.014, 0.0003], thousandth: false }).withMirrored("y"),  // mirrored for bold
-	];
-	// move reticle to apporiate place
-	corrValLine.forEach((l) => { l.move([-0.1955, 0]); });  //
-	sight.add(corrValLine);
+	// // Reticle for correction value check
+	// let corrValLine = [
+	// 	new Line({ from: [0.003, 0.0003], to: [0.014, 0.0003], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	// 	new Line({ from: [-0.003, 0.0003], to: [-0.014, 0.0003], thousandth: false }).withMirrored("y"),  // mirrored for bold
+	// ];
+	// // move reticle to apporiate place
+	// corrValLine.forEach((l) => { l.move([-0.1955, 0]); });  //
+	// sight.add(corrValLine);
 
 
 	// Gun center
@@ -249,6 +251,27 @@ let init = ({
 	}
 	sight.add(templateComp.leadingParamText(leadingPromptParams));
 
+	// Angle indicator from V3. TODO REWRITE THIS SIGHT
+	sight.collections["turretAngleLegends"] = [];
+	sight.add(turretAngleLegend.getTurretAngleLegend({
+		pos: [18.94 * 0.753, 14.2 * 0.753],
+		turretCircleDiameter: 2.15 * 0.753,
+		textSizeMain: 0.55 * 0.753,
+		textSizeSub: 0.4 * 0.753,
+		circleSize: 2.2 * 0.753,
+		showSideIndicator: false,
+	}));
+	sight.collections["turretAngleLegends"].push(...sight.lastAddedElements);
+
+	sight.add(turretAngleLegend.getTurretAngleLegend({
+		pos: [57.14 * 0.496, 42.76 * 0.496],
+		turretCircleDiameter: 6.45 * 0.496,
+		textSizeMain: 1.65 * 0.496,
+		textSizeSub: 1.2 * 0.496,
+		circleSize: 6.05 * 0.496,
+		showSideIndicator: false,
+	}));
+	sight.collections["turretAngleLegends"].push(...sight.lastAddedElements);
 };
 
 

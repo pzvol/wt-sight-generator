@@ -1,7 +1,7 @@
 import Toolbox from "../_lib2/sight_toolbox.js";
 import * as pd from "../_lib2/predefined.js";
 
-import base from "./vec_ussrBmp3.js";
+import base from "./vecMchOnly_ussrBmp3.js";
 let sight = base.sightObj;
 
 sight.components.matchVehicleClasses.clear();

@@ -11,14 +11,22 @@ export default {
 		textSizeMain = 0.55,
 		textSizeSub = 0.4,
 
-		circleSize = 1.5
+		circleSize = 1.5,
+
+		showSideIndicator = true,
+
+		withRgfdPrompt = true,
+		shellSpeedShown = 0,
+
+		turretLimitAngles = [],
 	} = {}) => {
 		let elements = [];
 
 		let createRadElements = (
 			center = [0, 0], angle = 0,
 			startRadius = 1, length = 1,
-			text = "+", textRadiusOffset = 1, textSize = 1) => {
+			text = "+", textRadiusOffset = 1, textSize = 1
+		) => {
 			return [
 				new Line({
 					from: [
@@ -60,23 +68,25 @@ export default {
 		);
 
 
-		let aimSideIndicator = [];
-		aimSideIndicator.push(
-			new Line({from: [0, 0.75 * zoomMult], to: [0, 0]}).move([0, -0.05 * zoomMult]),
-			new Line({from: [0, 0.75 * zoomMult], to: [0, 0]}).move([0, -0.05 * zoomMult]),
-			// new Line({from: [0, 0], to: [0.3 * zoomMult, 0]}).move([0, -0.05 * zoomMult]),
-			// new Line({from: [0.9 * zoomMult, 0], to: [1.0 * zoomMult, 0]}).move([0, -0.05 * zoomMult]),
+		if (showSideIndicator) {
+			let aimSideIndicator = [];
+			aimSideIndicator.push(
+				new Line({from: [0, 0.75 * zoomMult], to: [0, 0]}).move([0, -0.05 * zoomMult]),
+				new Line({from: [0, 0.75 * zoomMult], to: [0, 0]}).move([0, -0.05 * zoomMult]),
+				// new Line({from: [0, 0], to: [0.3 * zoomMult, 0]}).move([0, -0.05 * zoomMult]),
+				// new Line({from: [0.9 * zoomMult, 0], to: [1.0 * zoomMult, 0]}).move([0, -0.05 * zoomMult]),
 
-			new Line({from: [-0.2 * zoomMult, 0.4 * zoomMult], to: [0, 0]}).move([0.6 * zoomMult, 0]),
-			new Line({from: [0.2 * zoomMult, 0.4 * zoomMult], to: [0, 0]}).move([0.6 * zoomMult, 0]),
-			new Line({from: [0.2 * zoomMult, 0.4 * zoomMult], to: [0.1 * zoomMult, 0.3 * zoomMult]}).move([0.6 * zoomMult, 0]),
-			new Line({from: [-0.2 * zoomMult, 0.4 * zoomMult], to: [-0.1 * zoomMult, 0.3 * zoomMult]}).move([0.6 * zoomMult, 0]),
-		);
-		for (let ele of aimSideIndicator) {
-			elements.push(
-				ele.copy().move([-5 * zoomMult, -4.7 * zoomMult]),
-				ele.mirrorX().move([5 * zoomMult, -4.7 * zoomMult]),
-			)
+				new Line({from: [-0.2 * zoomMult, 0.4 * zoomMult], to: [0, 0]}).move([0.6 * zoomMult, 0]),
+				new Line({from: [0.2 * zoomMult, 0.4 * zoomMult], to: [0, 0]}).move([0.6 * zoomMult, 0]),
+				new Line({from: [0.2 * zoomMult, 0.4 * zoomMult], to: [0.1 * zoomMult, 0.3 * zoomMult]}).move([0.6 * zoomMult, 0]),
+				new Line({from: [-0.2 * zoomMult, 0.4 * zoomMult], to: [-0.1 * zoomMult, 0.3 * zoomMult]}).move([0.6 * zoomMult, 0]),
+			);
+			for (let ele of aimSideIndicator) {
+				elements.push(
+					ele.copy().move([-5 * zoomMult, -4.7 * zoomMult]),
+					ele.mirrorX().move([5 * zoomMult, -4.7 * zoomMult]),
+				)
+			}
 		}
 
 
@@ -108,6 +118,35 @@ export default {
 				drawInfo.text,
 				(drawInfo.isMain ? 0.6 : 0.55) * zoomMult,
 				textSize
+			));
+		}
+
+		if (withRgfdPrompt) {
+			elements.push(new TextSnippet({
+				text: "DIST",
+				pos: [0, -8.76 * zoomMult],
+				size: textSizeSub
+			}));
+		}
+
+		if (shellSpeedShown !== 0){
+			elements.push(new TextSnippet({
+				text: `SHL  -  ${shellSpeedShown.toFixed()} m/s`,
+				pos: [0, 4.8 * zoomMult],
+				size: textSizeSub
+			}));
+		}
+
+		for (let angle of turretLimitAngles) {
+			for (let offset of Toolbox.rangeIE(-0.75, 0.75, 0.25))
+			elements.push(...createRadElements(
+				[0, 0],
+				180 - (angle + offset),
+				7.8/2 * zoomMult,
+				-0.15 * zoomMult,
+				(Math.abs(offset) <= 0 ? "X" : ""),
+				(0.15 + 0.55) * zoomMult,
+				textSizeSub
 			));
 		}
 

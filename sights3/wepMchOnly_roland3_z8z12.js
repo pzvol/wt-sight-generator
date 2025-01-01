@@ -23,7 +23,7 @@ sight.components.matchVehicleClasses.clear();
 sight.matchVehicle([
 	"fr_amx_30_roland",
 	"germ_flarakpz_1",
-	"germ_flarakrad",
+	// "germ_flarakrad",
 	"us_xm_975_roland",
 ]);
 

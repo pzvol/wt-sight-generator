@@ -10,6 +10,7 @@ let sight = base.sightObj;
 sight.components.matchVehicleClasses.clear();
 sight.matchVehicle([
 	"ussr_t_10a",
+	"ussr_is_4m",
 ]);
 
 

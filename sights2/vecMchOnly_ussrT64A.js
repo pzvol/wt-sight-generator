@@ -29,7 +29,7 @@ sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.shellDistanceTickVars(
 		[0.003, 0.001],
 		[0, 0],  // [0.0008, 0.0001],
-		[0.215, 0]
+		[0.356, 0]
 	),
 	pd.basic.miscVars.getCommon(),
 ));
@@ -46,8 +46,10 @@ shellDists.forEach((ele) => {
 		ele.tickExtension = 0.002;
 	}
 	if (ele.distance % 800 === 0 && ele.distance % 1600 !== 0) {
-		ele.shownPos[0] -= 0.015;
-		ele.tickExtension += 0.015;
+		ele.shownPos[0] -= 0.0125 + 0.002;
+		ele.tickExtension += 0.0125;
+	} else if (ele.distance % 1600 === 0) {
+		ele.shownPos[0] -= 0.00175;
 	}
 });
 sight.addShellDistance(shellDists);
@@ -94,14 +96,26 @@ sight.add(new Line({
 		new Line({ from: [0, 0], to: [-0.005, 0.003], thousandth: false }).withMirrored("y"),
 		new Line({ from: [-0.005, 0.0009], to: [-0.005, 0.003], thousandth: false }).withMirrored("y"),
 	];
-	arrowElements.forEach((ele) => { ele.move([0.211, 0]).withMirrored("xy"); })
+	arrowElements.forEach((ele) => { ele.move([0.211, 0]).withMirrored("xy"); });
 	sight.add(arrowElements);
+
+	// Additional indicators
+	let tinyArrowElements = [
+		new Line({ from: [0, 0.0001], to: [-0.0005, 0.0001], thousandth: false }).withMirrored("y"),
+		new Line({ from: [0, 0.0002], to: [-0.0005, 0.0002], thousandth: false }).withMirrored("y"),
+		new Line({ from: [0, 0.0003], to: [-0.0005, 0.0003], thousandth: false }).withMirrored("y"),
+	];
+	tinyArrowElements.forEach((ele) => {
+		// ele.move([-0.211 - 0.0477, 0])
+		ele.move([-0.211 - 0.022, 0])
+	});
+	sight.add(tinyArrowElements);
 })();
 // 0m line
-sight.add(new Line({from: [-0.212, 0], to: [(-0.215 - 0.001 - 0.002), 0], move: true, thousandth: false}));
+sight.add(new Line({from: [-0.212, 0], to: [(-0.2453 - 0.001 - 0.002 + 0.00075), 0], move: true, thousandth: false}));
 sight.add(new TextSnippet({
-	text: "00", align: "left",
-	pos: [(-0.215 - 0.001 - 0.003), -0.0008], size: 0.7,
+	text: "0", align: "left",
+	pos: [(-0.2453 - 0.001 - 0.003), -0.0004], size: 0.45,
 	move: true, thousandth: false
 }));
 

@@ -169,7 +169,7 @@ let parts = {
 		twoTick: (() => {
 			let binoCaliEles = binoCali.getCommonRealMil({
 				pos: [distMil.halfFor(200), 15],
-				drawTwoTicks: true,
+				drawTwoTicks: false,
 				zeroLineExceeds: [-2.5, 0],
 				quadHeight: 2.5,
 				textSizeLarge: 0.55,

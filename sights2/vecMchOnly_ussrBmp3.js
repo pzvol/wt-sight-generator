@@ -18,10 +18,21 @@ sight.addSettings(pd.concatAllBasics(
 	pd.basicBuild.shellDistanceTickVars(
 		[-0.01, -0.01],
 		[0, 0.0005],
-		[0.2, 0]
+		[0.4, 0]
 	),
 	pd.basic.miscVars.getCommon(),
 ));
+
+// Additionally for more dist ticks
+//   Manual length adjustment for main and sub ticks having same length set
+let shellDistTickAdj = 0.0027;
+sight.updateOrAddSettings(
+	pd.basicBuild.shellDistanceTickVars(
+		[-0.016 + shellDistTickAdj, shellDistTickAdj],
+		[0.0005, 0],
+		[0.348 + shellDistTickAdj, 0]
+	),
+)
 
 
 //// VEHICLE TYPES ////
@@ -29,19 +40,32 @@ sight.matchVehicle("ussr_bmp_3");
 
 
 //// SHELL DISTANCES ////
-sight.addShellDistance([
-	{ distance: 400 },
-	{ distance: 800 },
-	{ distance: 2000, shown: 20, shownPos: [0.0035, 0.0065] },
-	{ distance: 4000, shown: 40, shownPos: [0.0035, 0.0065] },
-]);
+// sight.addShellDistance([
+// 	{ distance: 400 },
+// 	{ distance: 800 },
+// 	{ distance: 2000, shown: 20, shownPos: [0.0035, 0.0065] },
+// 	{ distance: 4000, shown: 40, shownPos: [0.0035, 0.0065] },
+// ]);
+// Or, more dist ticks
+for (let d of Toolbox.range(0, 4000, 100, {includeStart: false, includeEnd: true})) {
+	// main ticks
+	if ([400, 800, 2000, 4000].find(v => v === d)) {
+		sight.addShellDistance({
+			distance: d, shown: d/100,
+			shownPos: [(d < 1000 ? 10 : -0.022), -0.0009]
+		});
 
+	// sub ticks
+	} else if (d > 400) {
+		sight.addShellDistance({ distance: d });
+	}
+}
 
 //// SIGHT DESIGNS ////
 let shells = {
 	apds: { name: "30mm APDS", spd: 1120 * 3.6, d400NotMilY: 0.0165 },
 	ap: { name: "30mm AP", spd: 970 * 3.6, d400NotMilY: 0.0232 },
-	he: { name: "30mm HEF", spd: 960 * 3.6, d400NotMilY: 0.0240 },
+	he: { name: "30mm HEI", spd: 960 * 3.6, d400NotMilY: 0.0240 },
 };
 // let shellsGun100 = {
 // 	he: { name: "100mm 3OF70", spd: 355 * 3.6, d400NotMilY: 0.1559 }
@@ -63,6 +87,19 @@ let getGndLdn = (aa) => Toolbox.calcLeadingMil(
 sight.add(new Line({
 	from: [-0.0055, 0], to: [0.016, 0], move: true, thousandth: false
 }).move([-0.205, 0]));
+//   for unzoomed status
+(() => {
+	let zoomMult = Toolbox.calcMultForZooms(12, 2.5);
+	let oldFrom = -0.005 - 0.205;
+	let oldTo = 0.005 - 0.205;
+	let oldLength = oldTo - oldFrom;
+	sight.add(new Line({
+		from: [oldTo * zoomMult - oldLength * zoomMult - 0.019, 0],
+		to: [oldTo * zoomMult - 0.021, 0],
+		move: true, thousandth: false
+	}));
+})();
+
 
 // Pointer for correction value check
 let corrValLine = [
@@ -74,7 +111,27 @@ let corrValLine = [
 //   move pointer to apporiate place
 corrValLine.forEach((l) => { l.move([-0.205, 0]); });
 sight.add(corrValLine);
+//   for unzoomed status
+(() => {
+	let zoomMult = Toolbox.calcMultForZooms(12, 2.5) + 0.1;
+	corrValLine.forEach((l) => {
+		let ends = l.getLineEnds();
+		let extraDrawnStr = ends.from[1] === 0 ? "" : "y";
 
+		ends.from[0] *= zoomMult;
+		ends.from[1] *= zoomMult;
+		ends.to[0] *= zoomMult;
+		ends.to[1] *= zoomMult;
+
+		sight.add(
+			new Line({
+				from: ends.from,
+				to: ends.to,
+				thousandth: false,
+			}).withMirrored(extraDrawnStr)
+		);
+	});
+})();
 
 // Marks for identifying used gun
 (() => {
@@ -118,16 +175,16 @@ sight.add(corrValLine);
 		return outElements;
 	};
 
-	// 30mm gun
-	let gun30YRange = (() => {
-		let yValues = [
-			shells.apds, shells.ap, shells.he
-		].map((ele) => (ele.d400NotMilY));
-		return [yValues[0], yValues[yValues.length - 1]];
-	})();
-	sight.add(getRangeElements(
-		gun30YRange, marksTickLen, "MAIN 30MM ?"
-	)).repeatLastAdd();
+	// // 30mm gun
+	// let gun30YRange = (() => {
+	// 	let yValues = [
+	// 		shells.apds, shells.ap, shells.he
+	// 	].map((ele) => (ele.d400NotMilY));
+	// 	return [yValues[0], yValues[yValues.length - 1]];
+	// })();
+	// sight.add(getRangeElements(
+	// 	gun30YRange, marksTickLen, "MAIN 30MM ?"
+	// )).repeatLastAdd();
 
 	// // 100mm gun
 	// let gun100YRange = [
@@ -299,7 +356,7 @@ for (let shellKey in shells) {
 			currShell.spd == airShell.spd && currShell.spd == gndShell.spd ? '[ A/G ]' :
 			currShell.spd == airShell.spd ? '[ AIR ]' :
 			currShell.spd == gndShell.spd ? '[ GND ]' :
-			'[         ]'
+			'[          ]'
 		),
 		currShell.name,
 		`${(currShell.spd / 3.6).toFixed()}m/s`
@@ -320,8 +377,47 @@ for (let row = 0; row < shellTable.length; row++) {
 		}))
 	}
 }
-shellTableElements.forEach((ele) => {ele.move([98, 90])});
+shellTableElements.forEach((ele) => {ele.move([90, 90])});
 sight.add(shellTableElements);
+
+
+// Shell type indicator prompt
+let shellTypePromptPos = [113.5, 72.3];
+let shellTypePromptLineHalfLength = 14;
+let shellTypePromptLineOffsetY = 3;
+let shellTypePromptTextSize = 2;
+let drawShellTypePrompt = () => {
+	sight.add(new TextSnippet({
+		text: "MAIN",
+		pos: shellTypePromptPos,
+		align: "center",
+		size: shellTypePromptTextSize,
+	}));
+	sight.add(new Line({
+		from: [
+			shellTypePromptPos[0] + shellTypePromptLineHalfLength,
+			shellTypePromptPos[1] + shellTypePromptLineOffsetY
+		],
+		to: [
+			shellTypePromptPos[0] - shellTypePromptLineHalfLength,
+			shellTypePromptPos[1] + shellTypePromptLineOffsetY
+		]
+	}));
+};
+drawShellTypePrompt();
+
+//  zoomed in prompt elements
+(() => {
+	let zoomMult = Toolbox.calcMultForZooms(2.5, 12);
+	shellTypePromptPos[0] *= zoomMult;
+	shellTypePromptPos[1] *= zoomMult;
+	shellTypePromptPos[1] -= 0.2;
+	shellTypePromptLineHalfLength *= zoomMult;
+	shellTypePromptLineOffsetY *= zoomMult;
+	shellTypePromptLineOffsetY += 0.1;
+	shellTypePromptTextSize *= zoomMult;
+	drawShellTypePrompt();
+})();
 
 
 

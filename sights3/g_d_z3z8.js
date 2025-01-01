@@ -31,9 +31,9 @@ sight.addSettings(pd.concatSettings(
 	pd.sDetectAlly.build([115 / horiRatioMult, -0.04]),
 	pd.sGunDistValue.build([-0.18 * horiRatioMult, 0.027]),
 	pd.sShellDistTick.build(
-		[0.01, 0.01],
+		[0, 0],
 		[0.005, 0.002],
-		[0.2 - -(1 - horiRatioMult) * 0.015, 0]
+		[0.005, 0]
 	),
 ));
 
@@ -61,38 +61,51 @@ sight.add(new Circle({
 
 
 // Gun 0m
-sight.add(new Line({
-	from: [-0.202, 0], to: [-0.190, 0], move: true, thousandth: false
-})).repeatLastAdd();
-sight.add(new TextSnippet({
-	text: "0",
-	align: "left",
-	pos: [-0.205, -0.0009],
-	size: 0.7,
-	move: true,
-	thousandth: false
-}));
+// sight.add(new Line({
+// 	from: [-0.202, 0], to: [-0.190, 0], move: true, thousandth: false
+// })).repeatLastAdd();
+// sight.add(new TextSnippet({
+// 	text: "0",
+// 	align: "left",
+// 	pos: [-0.205, -0.0009],
+// 	size: 0.7,
+// 	move: true,
+// 	thousandth: false
+// }));
+
+// sight.add(new Line({
+// 	from: [-0.202 - 0.3095 - 0.0038, 0], to: [-0.190 - 0.3095, 0], move: true, thousandth: false
+// })).repeatLastAdd();
+// sight.add(new TextSnippet({
+// 	text: "0",
+// 	align: "left",
+// 	pos: [-0.205 - 0.3095 - 0.005, -0.0009],
+// 	size: 0.8,
+// 	move: true,
+// 	thousandth: false
+// }));
 
 
-// Gun distance indication
-let leftArrow = [
-	new Line({
-		from: [0, 0], to: [0.006, 0.002],
-		thousandth: false,
-	}).withMirrored("y"),
-	new Line({
-		from: [0, 0], to: [0.006, 0.0018],
-		thousandth: false,
-	}).withMirrored("y"),
-	new Line({
-		from: [0.006, 0.001], to: [0.006, 0.002],
-		thousandth: false,
-	}).withMirrored("y"),
-];
-for (let ele of leftArrow) {
-	sight.add(ele.copy().move([-0.188, 0])).repeatLastAdd();
-	sight.add(ele.copy().mirrorX().move([-0.220, 0])).repeatLastAdd();
-}
+// // Gun distance indication
+// let leftArrow = [
+// 	new Line({
+// 		from: [0, 0], to: [0.006, 0.002],
+// 		thousandth: false,
+// 	}).withMirrored("y"),
+// 	new Line({
+// 		from: [0, 0], to: [0.006, 0.0018],
+// 		thousandth: false,
+// 	}).withMirrored("y"),
+// 	new Line({
+// 		from: [0.006, 0.001], to: [0.006, 0.002],
+// 		thousandth: false,
+// 	}).withMirrored("y"),
+// ];
+// for (let ele of leftArrow) {
+// 	sight.add(ele.copy().move([-0.188, 0])).repeatLastAdd();
+// 	sight.add(ele.copy().mirrorX().move([-0.2045, 0])).repeatLastAdd();
+// 	// sight.add(ele.copy().move([-0.188 - 0.3095, 0])).repeatLastAdd();
+// }
 
 
 // Center arrow
@@ -114,6 +127,7 @@ for (let biasY of Toolbox.rangeIE(0, 0.24, 0.04)) {
 for (let biasX of Toolbox.rangeIE(-0.04, 0.04, 0.04)) {
 	sight.add(new Line({from: [biasX, 26], to: [biasX, 450]}));
 }
+// Full cross
 for (let b of Toolbox.rangeIE(0, 0.20, 0.04)) {
 	sight.add(new Line({
 		from: [b, 85], to: [b, 450]
@@ -122,6 +136,12 @@ for (let b of Toolbox.rangeIE(0, 0.20, 0.04)) {
 		from: [180 * horiRatioMult, b], to: [450, b]
 	}).withMirrored(b == 0 ? "x" : "xy"));
 }
+// Or, lower bold only
+// for (let b of Toolbox.rangeIE(0, 0.20, 0.04)) {
+// 	sight.add(new Line({
+// 		from: [b, 85], to: [b, 450]
+// 	}).withMirrored("x"));
+// }
 
 
 // Rangefinder on the horizon
@@ -158,9 +178,9 @@ sight.add(new Line({
 	from: [distMil.halfFor(800), 0],
 	to: [distMil.halfFor(800), smallTickLen(800)]
 }).withMirrored("x")).repeatLastAdd();
-sight.add(new TextSnippet({
-	text: "8", pos: [distMil.halfFor(800), 1.4], size: 0.33
-}).withMirrored("x"));
+// sight.add(new TextSnippet({
+// 	text: "8", pos: [distMil.halfFor(800), 1.4], size: 0.33
+// }).withMirrored("x"));
 // 1600
 sight.add(new Line({
 	from: [distMil.halfFor(1600), 0],
