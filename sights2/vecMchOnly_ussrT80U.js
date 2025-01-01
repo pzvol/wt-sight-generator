@@ -9,6 +9,7 @@ sight.matchVehicle([
 	"ussr_t_80ud",
 	"ussr_t_80um2",
 	"ussr_t_80uk",
+	"ussr_t_80ue1",
 ])
 
 

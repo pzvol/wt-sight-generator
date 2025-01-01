@@ -264,11 +264,11 @@ let init = ({
 	sight.collections["turretAngleLegends"].push(...sight.lastAddedElements);
 
 	sight.add(turretAngleLegend.getTurretAngleLegend({
-		pos: [57.14 * 0.496, 42.76 * 0.496],
-		turretCircleDiameter: 6.45 * 0.496,
-		textSizeMain: 1.65 * 0.496,
-		textSizeSub: 1.2 * 0.496,
-		circleSize: 6.05 * 0.496,
+		pos: [57.14 * 0.497, 42.76 * 0.497],
+		turretCircleDiameter: 6.45 * 0.497,
+		textSizeMain: 1.65 * 0.497,
+		textSizeSub: 1.2 * 0.497,
+		circleSize: 6.05 * 0.497,
 		showSideIndicator: false,
 	}));
 	sight.collections["turretAngleLegends"].push(...sight.lastAddedElements);

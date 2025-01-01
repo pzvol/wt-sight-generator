@@ -240,11 +240,11 @@ sight.add(turretAngleLegend.getTurretAngleLegend({
 	showSideIndicator: false,
 }));
 sight.add(turretAngleLegend.getTurretAngleLegend({
-	pos: [57.14 * 0.496, 42.76 * 0.496],
-	turretCircleDiameter: 6.45 * 0.496,
-	textSizeMain: 1.65 * 0.496,
-	textSizeSub: 1.2 * 0.496,
-	circleSize: 6.05 * 0.496,
+	pos: [57.14 * 0.4975, 42.76 * 0.4975],
+	turretCircleDiameter: 6.45 * 0.4975,
+	textSizeMain: 1.65 * 0.4975,
+	textSizeSub: 1.2 * 0.4975,
+	circleSize: 6.05 * 0.4975,
 	showSideIndicator: false,
 	shellSpeedShown: shellSpeed / 3.6
 }));
